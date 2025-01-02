@@ -1,55 +1,48 @@
 package com.zerofall.ezstorage.block;
 
-import com.zerofall.ezstorage.EZStorage;
-import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
-
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
+import com.zerofall.ezstorage.EZStorage;
+import com.zerofall.ezstorage.configuration.EZConfiguration;
+import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
 public class BlockStorageCore extends EZBlockContainer {
 
-	public BlockStorageCore() {
-		super("storage_core", Material.wood);
-		this.setResistance(6000.0f);
-	}
+    public BlockStorageCore() {
+        super("storage_core", Material.wood);
+        this.setResistance(6000.0f);
+    }
 
-	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntityStorageCore();
-	}
-	
-	@Override
-	public int getRenderType() {
-		return 3;
-	}
-	
-	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TileEntityStorageCore tileEntity = (TileEntityStorageCore)worldIn.getTileEntity(pos);
-		if (tileEntity.inventory.getTotalCount() > 0) {
-			super.breakBlock(worldIn, pos, state);
-		}
-	}
-	
-	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos,
-			IBlockState state, EntityPlayer playerIn, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-			TileEntityStorageCore tileEntity = (TileEntityStorageCore)worldIn.getTileEntity(pos);
-			if (tileEntity.hasCraftBox) {
-				playerIn.openGui(EZStorage.instance, 2, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			} else {
-				playerIn.openGui(EZStorage.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			}
-			
-		}
-		return true;
-	}
-	
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        return new TileEntityStorageCore();
+    }
+
+    @Override
+    public void breakBlock(World worldIn, int x, int y, int z, Block blockBroken, int meta) {
+        TileEntity te = worldIn.getTileEntity(x, y, z);
+        if (te instanceof TileEntityStorageCore && ((TileEntityStorageCore) te).inventory.getTotalCount() > 0) {
+            super.breakBlock(worldIn, x, y, z, blockBroken, meta);
+        }
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX,
+        float subY, float subZ) {
+        if (!worldIn.isRemote) {
+            TileEntityStorageCore tileEntity = (TileEntityStorageCore) worldIn.getTileEntity(x, y, z);
+            if (tileEntity.hasCraftBox || !EZConfiguration.enableSearchBlock) {
+                player.openGui(EZStorage.instance, 2, worldIn, x, y, z);
+            } else {
+                player.openGui(EZStorage.instance, 1, worldIn, x, y, z);
+            }
+
+        }
+        return true;
+    }
+
 }

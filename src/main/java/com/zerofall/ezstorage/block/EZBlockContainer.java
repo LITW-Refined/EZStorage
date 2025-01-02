@@ -1,47 +1,41 @@
 package com.zerofall.ezstorage.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.EZStorage;
 
 public class EZBlockContainer extends StorageMultiblock implements ITileEntityProvider {
 
-	protected EZBlockContainer(String name, Material materialIn) {
-		super(name, materialIn);
-		this.setUnlocalizedName(name);
-		this.setCreativeTab(EZStorage.instance.creativeTab);
-		this.isBlockContainer = true;
-	}
-
-	public int getRenderType()
-    {
-        return -1;
+    protected EZBlockContainer(String name, Material materialIn) {
+        super(name, materialIn);
+        this.setBlockName(name);
+        this.setCreativeTab(EZStorage.instance.creativeTab);
+        this.isBlockContainer = true;
     }
 
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
-    {
-        super.breakBlock(worldIn, pos, state);
-        worldIn.removeTileEntity(pos);
+    @Override
+    public void breakBlock(World worldIn, int x, int y, int z, Block blockBroken, int meta) {
+        super.breakBlock(worldIn, x, y, z, blockBroken, meta);
+        worldIn.removeTileEntity(x, y, z);
     }
 
     /**
      * Called on both Client and Server when World#addBlockEvent is called
      */
-    public boolean onBlockEventReceived(World worldIn, BlockPos pos, IBlockState state, int eventID, int eventParam)
-    {
-        super.onBlockEventReceived(worldIn, pos, state, eventID, eventParam);
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-        return tileentity == null ? false : tileentity.receiveClientEvent(eventID, eventParam);
+    @Override
+    public boolean onBlockEventReceived(World worldIn, int x, int y, int z, int eventId, int eventData) {
+        super.onBlockEventReceived(worldIn, x, y, z, eventId, eventData);
+        TileEntity tileentity = worldIn.getTileEntity(x, y, z);
+        return tileentity == null ? false : tileentity.receiveClientEvent(eventId, eventData);
     }
 
-	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return null;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return null;
+    }
 
 }
