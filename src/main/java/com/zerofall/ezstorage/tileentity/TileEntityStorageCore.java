@@ -21,7 +21,6 @@ import net.minecraft.util.ChatComponentText;
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockInputPort;
 import com.zerofall.ezstorage.block.BlockOutputPort;
-import com.zerofall.ezstorage.block.BlockSearchBox;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.block.StorageMultiblock;
@@ -38,7 +37,6 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
     Set<BlockRef> multiblock = new HashSet<BlockRef>();
     private boolean firstTick = false;
     public boolean hasCraftBox = false;
-    public boolean hasSearchBox = false;
     public boolean disabled = false;
 
     public TileEntityStorageCore() {
@@ -97,7 +95,6 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
         }
         paramNBTTagCompound.setTag("Internal", nbttaglist);
         paramNBTTagCompound.setLong("InternalMax", this.inventory.maxItems);
-        paramNBTTagCompound.setBoolean("hasSearchBox", this.hasSearchBox);
         paramNBTTagCompound.setBoolean("isDisabled", this.disabled);
     }
 
@@ -118,7 +115,6 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
         }
         long maxItems = paramNBTTagCompound.getLong("InternalMax");
         this.inventory.maxItems = maxItems;
-        this.hasSearchBox = paramNBTTagCompound.getBoolean("hasSearchBox");
         this.disabled = paramNBTTagCompound.getBoolean("isDisabled");
     }
 
@@ -128,7 +124,6 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
     public void scanMultiblock(EntityLivingBase entity) {
         inventory.maxItems = 0;
         this.hasCraftBox = false;
-        this.hasSearchBox = false;
         multiblock = new HashSet<BlockRef>();
         BlockRef ref = new BlockRef(this);
         multiblock.add(ref);
@@ -166,9 +161,6 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
                     }
                     if (blockRef.block instanceof BlockCraftingBox) {
                         this.hasCraftBox = true;
-                    }
-                    if (blockRef.block instanceof BlockSearchBox) {
-                        this.hasSearchBox = true;
                     }
                     getValidNeighbors(blockRef, entity);
                 }

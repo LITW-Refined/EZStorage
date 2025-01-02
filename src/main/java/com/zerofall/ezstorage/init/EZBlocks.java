@@ -15,7 +15,6 @@ import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockHyperStorage;
 import com.zerofall.ezstorage.block.BlockInputPort;
 import com.zerofall.ezstorage.block.BlockOutputPort;
-import com.zerofall.ezstorage.block.BlockSearchBox;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.tileentity.TileEntityInputPort;
@@ -33,7 +32,6 @@ public class EZBlocks {
     public static Block input_port;
     public static Block output_port;
     public static Block crafting_box;
-    public static Block search_box;
 
     public static final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
 
@@ -45,7 +43,6 @@ public class EZBlocks {
         input_port = new BlockInputPort();
         output_port = new BlockOutputPort();
         crafting_box = new BlockCraftingBox();
-        search_box = new BlockSearchBox();
     }
 
     public static void register() {
@@ -80,10 +77,6 @@ public class EZBlocks {
             crafting_box,
             crafting_box.getUnlocalizedName()
                 .substring(5));
-        GameRegistry.registerBlock(
-            search_box,
-            search_box.getUnlocalizedName()
-                .substring(5));
         registerRecipes();
     }
 
@@ -95,7 +88,6 @@ public class EZBlocks {
         registerRender(input_port);
         registerRender(output_port);
         registerRender(crafting_box);
-        registerRender(search_box);
     }
 
     public static void registerRender(Block block) {
@@ -164,22 +156,10 @@ public class EZBlocks {
                 "BCB",
                 "ABA",
                 'A',
-                Items.ender_eye,
+                Items.ender_pearl,
                 'B',
                 Blocks.crafting_table,
                 'C',
                 "gemDiamond"));
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(search_box),
-                "ABA",
-                "BCB",
-                "ABA",
-                'A',
-                "blockIron",
-                'B',
-                Items.enchanted_book,
-                'C',
-                Items.compass));
     }
 }

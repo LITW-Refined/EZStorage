@@ -9,8 +9,6 @@ public class EZConfiguration {
     public static int basicCapacity;
     public static int condensedCapacity;
     public static int hyperCapacity;
-    public static boolean enableCraftingBlock;
-    public static boolean enableSearchBlock;
 
     public static void syncConfig() {
         final Configuration config = EZStorage.config;
