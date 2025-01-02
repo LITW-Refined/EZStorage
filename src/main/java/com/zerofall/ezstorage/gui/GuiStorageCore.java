@@ -82,10 +82,12 @@ public class GuiStorageCore extends GuiContainer {
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
-        this.searchField.setVisible(true);
-        this.mc.renderEngine.bindTexture(searchBar);
-        drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 4, 80, 4, 90, 12);
-        this.searchField.drawTextBox();
+        this.searchField.setVisible(this.tileEntity.hasSearchBox);
+        if (this.tileEntity.hasSearchBox) {
+            this.mc.renderEngine.bindTexture(searchBar);
+            drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 4, 80, 4, 90, 12);
+            this.searchField.drawTextBox();
+        }
     }
 
     @Override
@@ -182,7 +184,8 @@ public class GuiStorageCore extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         if (!this.checkHotbarKeys(keyCode)) {
-            if (this.searchField.isFocused() && this.searchField.textboxKeyTyped(typedChar, keyCode)) {
+            if (this.tileEntity.hasSearchBox && this.searchField.isFocused()
+                && this.searchField.textboxKeyTyped(typedChar, keyCode)) {
                 updateFilteredItems();
             } else {
                 super.keyTyped(typedChar, keyCode);

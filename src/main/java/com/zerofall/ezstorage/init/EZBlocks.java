@@ -11,9 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.block.BlockCondensedStorage;
+import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockHyperStorage;
 import com.zerofall.ezstorage.block.BlockInputPort;
 import com.zerofall.ezstorage.block.BlockOutputPort;
+import com.zerofall.ezstorage.block.BlockSearchBox;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.tileentity.TileEntityInputPort;
@@ -30,6 +32,8 @@ public class EZBlocks {
     public static Block hyper_storage_box;
     public static Block input_port;
     public static Block output_port;
+    public static Block crafting_box;
+    public static Block search_box;
 
     public static final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
 
@@ -40,6 +44,8 @@ public class EZBlocks {
         hyper_storage_box = new BlockHyperStorage();
         input_port = new BlockInputPort();
         output_port = new BlockOutputPort();
+        crafting_box = new BlockCraftingBox();
+        search_box = new BlockSearchBox();
     }
 
     public static void register() {
@@ -70,6 +76,14 @@ public class EZBlocks {
             output_port.getUnlocalizedName()
                 .substring(5));
         GameRegistry.registerTileEntity(TileEntityOutputPort.class, "TileEntityOutputPort");
+        GameRegistry.registerBlock(
+            crafting_box,
+            crafting_box.getUnlocalizedName()
+                .substring(5));
+        GameRegistry.registerBlock(
+            search_box,
+            search_box.getUnlocalizedName()
+                .substring(5));
         registerRecipes();
     }
 
@@ -80,6 +94,8 @@ public class EZBlocks {
         registerRender(hyper_storage_box);
         registerRender(input_port);
         registerRender(output_port);
+        registerRender(crafting_box);
+        registerRender(search_box);
     }
 
     public static void registerRender(Block block) {
@@ -141,5 +157,29 @@ public class EZBlocks {
                 "blockQuartz"));
         GameRegistry.addRecipe(
             new ShapedOreRecipe(new ItemStack(output_port), "A", "B", "A", 'A', Blocks.piston, 'B', input_port));
+        GameRegistry.addRecipe(
+            new ShapedOreRecipe(
+                new ItemStack(crafting_box),
+                "ABA",
+                "BCB",
+                "ABA",
+                'A',
+                Items.ender_eye,
+                'B',
+                Blocks.crafting_table,
+                'C',
+                "gemDiamond"));
+        GameRegistry.addRecipe(
+            new ShapedOreRecipe(
+                new ItemStack(search_box),
+                "ABA",
+                "BCB",
+                "ABA",
+                'A',
+                "blockIron",
+                'B',
+                Items.enchanted_book,
+                'C',
+                Items.compass));
     }
 }

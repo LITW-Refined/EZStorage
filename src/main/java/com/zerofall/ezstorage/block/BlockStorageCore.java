@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.EZStorage;
+import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
 public class BlockStorageCore extends EZBlockContainer {
@@ -33,7 +34,13 @@ public class BlockStorageCore extends EZBlockContainer {
     public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX,
         float subY, float subZ) {
         if (!worldIn.isRemote) {
-            player.openGui(EZStorage.instance, 2, worldIn, x, y, z);
+            TileEntityStorageCore tileEntity = (TileEntityStorageCore) worldIn.getTileEntity(x, y, z);
+            if (tileEntity.hasCraftBox || !EZConfiguration.enableSearchBlock) {
+                player.openGui(EZStorage.instance, 2, worldIn, x, y, z);
+            } else {
+                player.openGui(EZStorage.instance, 1, worldIn, x, y, z);
+            }
+
         }
         return true;
     }
