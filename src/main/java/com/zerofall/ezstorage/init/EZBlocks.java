@@ -4,7 +4,9 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +24,8 @@ import com.zerofall.ezstorage.tileentity.TileEntityOutputPort;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+
+// spotless:off
 
 public class EZBlocks {
 
@@ -46,120 +50,33 @@ public class EZBlocks {
     }
 
     public static void register() {
-        GameRegistry.registerBlock(
-            storage_core,
-            storage_core.getUnlocalizedName()
-                .substring(5));
+        GameRegistry.registerBlock(storage_core, storage_core.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityStorageCore.class, "TileEntityStorageCore");
-        GameRegistry.registerBlock(
-            storage_box,
-            storage_box.getUnlocalizedName()
-                .substring(5));
-        GameRegistry.registerBlock(
-            condensed_storage_box,
-            condensed_storage_box.getUnlocalizedName()
-                .substring(5));
-        GameRegistry.registerBlock(
-            hyper_storage_box,
-            hyper_storage_box.getUnlocalizedName()
-                .substring(5));
-        GameRegistry.registerBlock(
-            input_port,
-            input_port.getUnlocalizedName()
-                .substring(5));
+        GameRegistry.registerBlock(storage_box, storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(condensed_storage_box, condensed_storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(hyper_storage_box, hyper_storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityInputPort.class, "TileEntityInputPort");
-        GameRegistry.registerBlock(
-            output_port,
-            output_port.getUnlocalizedName()
-                .substring(5));
+        GameRegistry.registerBlock(output_port, output_port.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityOutputPort.class, "TileEntityOutputPort");
-        GameRegistry.registerBlock(
-            crafting_box,
-            crafting_box.getUnlocalizedName()
-                .substring(5));
-        registerRecipes();
-    }
-
-    public static void registerRenders() {
-        registerRender(storage_core);
-        registerRender(storage_box);
-        registerRender(condensed_storage_box);
-        registerRender(hyper_storage_box);
-        registerRender(input_port);
-        registerRender(output_port);
-        registerRender(crafting_box);
-    }
-
-    public static void registerRender(Block block) {
-        // Nothing todo here for 1.7.10 probably!
-        // Item item = Item.getItemFromBlock(block);
-        // Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new
-        // ModelResourceLocation(Reference.MOD_ID, item.getUnlocalizedName().substring(5), "inventory"));
+        GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
     }
 
     public static void registerRecipes() {
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(storage_core),
-                "ABA",
-                "BCB",
-                "ABA",
-                'A',
-                "logWood",
-                'B',
-                "stickWood",
-                'C',
-                Blocks.chest));
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "B B", "ABA", 'A', "logWood", 'B', Blocks.chest));
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(condensed_storage_box),
-                "ACA",
-                "CBC",
-                "ACA",
-                'A',
-                "blockIron",
-                'B',
-                storage_box,
-                'C',
-                Blocks.iron_bars));
-        GameRegistry.addRecipe(
-            new ItemStack(hyper_storage_box),
-            "ABA",
-            "ACA",
-            "AAA",
-            'A',
-            Blocks.obsidian,
-            'B',
-            Items.nether_star,
-            'C',
-            condensed_storage_box);
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(input_port),
-                "ABA",
-                "BCB",
-                "ABA",
-                'A',
-                Blocks.hopper,
-                'B',
-                Blocks.piston,
-                'C',
-                "blockQuartz"));
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(new ItemStack(output_port), "A", "B", "A", 'A', Blocks.piston, 'B', input_port));
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(crafting_box),
-                "ABA",
-                "BCB",
-                "ABA",
-                'A',
-                Items.ender_pearl,
-                'B',
-                Blocks.crafting_table,
-                'C',
-                "gemDiamond"));
+        String t1_1 = "logWood";
+        String t1_2 = "stickWood";
+
+        String t2_1 = "blockIron";
+        String t2_2 = OreDictionary.getOres("blockBronze", false).size() != 0 ? "blockBronze" : t2_1;
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', t1_1, 'B', t1_2, 'C', Blocks.chest));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "B B", "ABA", 'A', "logWood", 'B', Blocks.chest));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "CBC", "DCD", 'A', t2_1, 'B', storage_box, 'C', Blocks.iron_bars, 'D', t2_2));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(input_port), Blocks.hopper, Blocks.piston, "blockQuartz"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(output_port), Blocks.piston, input_port));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(crafting_box), Items.ender_pearl, Blocks.crafting_table, "gemDiamond"));
     }
 }
+
+// spotless:on

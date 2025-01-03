@@ -55,6 +55,6 @@ public class EZStorage {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.registerRenders();
+        EZBlocks.registerRecipes();
     }
-
 }
