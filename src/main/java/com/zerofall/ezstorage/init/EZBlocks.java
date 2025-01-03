@@ -67,7 +67,7 @@ public class EZBlocks {
         String t1_2 = "stickWood";
 
         String t2_1 = "blockIron";
-        String t2_2 = OreDictionary.getOres("blockBronze", false).size() != 0 ? "blockBronze" : t2_1;
+        String t2_2 = OreDictionary.getOres("blockBronze").size() != 0 ? "blockBronze" : t2_1;
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', t1_1, 'B', t1_2, 'C', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "B B", "ABA", 'A', "logWood", 'B', Blocks.chest));
@@ -76,6 +76,14 @@ public class EZBlocks {
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(input_port), Blocks.hopper, Blocks.piston, "blockQuartz"));
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(output_port), Blocks.piston, input_port));
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(crafting_box), Items.ender_pearl, Blocks.crafting_table, "gemDiamond"));
+
+        if (OreDictionary.getOres("blockDarkSteel").size() != 0) {
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "BCB", "ABA", 'A', "blockDarkSteel", 'B', Blocks.obsidian, 'C', condensed_storage_box));
+        }
+
+        if (OreDictionary.getOres("blockNetherite").size() != 0) {
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "BCB", "ABA", 'A', "blockNetherite", 'B', Blocks.obsidian, 'C', condensed_storage_box));
+        }
     }
 }
 
