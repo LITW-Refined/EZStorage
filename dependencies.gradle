@@ -36,4 +36,5 @@
 dependencies {
     implementation("com.github.GTNewHorizons:NotEnoughItems:2.7.4-GTNH:dev")
     api("com.github.GTNewHorizons:GTNHLib:0.5.15:dev")
+    devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.1:dev")
 }

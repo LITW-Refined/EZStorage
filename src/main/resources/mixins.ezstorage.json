@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "com.zerofall.ezstorage.mixins",
+  "refmap": "mixins.ezstorage.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "overwrites": {
+    "conformVisibility": true
+  }
+}
