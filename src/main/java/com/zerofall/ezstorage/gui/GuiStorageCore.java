@@ -43,6 +43,7 @@ public class GuiStorageCore extends GuiContainer {
     private float currentScroll;
     private GuiTextField searchField;
     private List<ItemGroup> filteredList;
+    private ItemStack mouseOverItem;
 
     @Override
     public void initGui() {
@@ -163,20 +164,24 @@ public class GuiStorageCore extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        cacheMouseOverItem(mouseX, mouseY);
+    }
+
+    protected void cacheMouseOverItem(int mouseX, int mouseY) {
         Integer slot = getSlotAt(mouseX, mouseY);
+
         if (slot != null) {
-            int index = this.tileEntity.inventory.slotCount();
             if (slot < this.filteredList.size()) {
                 ItemGroup group = this.filteredList.get(slot);
+
                 if (group != null) {
-                    index = this.tileEntity.inventory.inventory.indexOf(group);
-                    if (index < 0) {
-                        return;
-                    }
-                    this.renderToolTip(group.itemStack, mouseX, mouseY);
+                    mouseOverItem = group.itemStack;
+                    return;
                 }
             }
         }
+
+        mouseOverItem = null;
     }
 
     @Override
@@ -359,5 +364,9 @@ public class GuiStorageCore extends GuiContainer {
 
     public int rowsVisible() {
         return 6;
+    }
+
+    public ItemStack getMouseOverItem() {
+        return mouseOverItem;
     }
 }

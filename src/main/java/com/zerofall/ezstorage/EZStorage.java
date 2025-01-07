@@ -7,12 +7,14 @@ import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.events.XEventHandler;
 import com.zerofall.ezstorage.gui.GuiHandler;
 import com.zerofall.ezstorage.init.EZBlocks;
+import com.zerofall.ezstorage.nei.NeiHandler;
 import com.zerofall.ezstorage.network.MyMessage;
 import com.zerofall.ezstorage.network.PacketHandler;
 import com.zerofall.ezstorage.network.RecipeMessage;
 import com.zerofall.ezstorage.network.RecipePacketHandler;
 import com.zerofall.ezstorage.proxy.CommonProxy;
 
+import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -56,5 +58,6 @@ public class EZStorage {
     public void init(FMLInitializationEvent event) {
         proxy.registerRenders();
         EZBlocks.registerRecipes();
+        GuiContainerManager.addObjectHandler(new NeiHandler());
     }
 }
