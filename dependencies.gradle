@@ -35,6 +35,7 @@
  */
 dependencies {
     implementation("com.github.GTNewHorizons:NotEnoughItems:2.7.13-GTNH:dev")
+    implementation(rfg.deobf("curse.maven:et-futurum-requiem-441392:5873837")) { transitive = false }
     api("com.github.GTNewHorizons:GTNHLib:0.6.0:dev")
     devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.1:dev")
 }

@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.container.ContainerStorageCoreCrafting;
+import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -20,6 +21,9 @@ public class RecipePacketHandler implements IMessageHandler<RecipeMessage, IMess
     @Override
     public IMessage onMessage(RecipeMessage message, MessageContext ctx) {
         EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        if (IntegrationUtils.isSpectatorMode(player)) {
+            return null; // no response, we're in read-only mode
+        }
         Container container = player.openContainer;
         if (container instanceof ContainerStorageCoreCrafting) {
             ContainerStorageCoreCrafting con = (ContainerStorageCoreCrafting) container;
