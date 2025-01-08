@@ -5,11 +5,16 @@ import net.minecraft.item.ItemStack;
 
 import com.zerofall.ezstorage.gui.GuiStorageCore;
 
+import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.guihook.IContainerObjectHandler;
 import cpw.mods.fml.common.Optional.Interface;
 
 @Interface(iface = "codechicken.nei.guihook.IContainerObjectHandler", modid = "NotEnoughItems")
 public class NeiHandler implements IContainerObjectHandler {
+
+    public static void init() {
+        GuiContainerManager.addObjectHandler(new NeiHandler());
+    }
 
     @Override
     public void guiTick(GuiContainer gui) {}
