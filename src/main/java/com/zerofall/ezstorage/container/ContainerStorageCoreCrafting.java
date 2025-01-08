@@ -148,12 +148,12 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
 
     @Override
     protected int playerInventoryY() {
-        return 162;
+        return 174;
     }
 
     @Override
     protected int rowCount() {
-        return 4;
+        return 5;
     }
 
     @Override

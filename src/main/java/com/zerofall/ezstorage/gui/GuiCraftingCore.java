@@ -12,12 +12,12 @@ public class GuiCraftingCore extends GuiStorageCore {
     public GuiCraftingCore(EntityPlayer player, World world, int x, int y, int z) {
         super(new ContainerStorageCoreCrafting(player, world, x, y, z), world, x, y, z);
         this.xSize = 195;
-        this.ySize = 244;
+        this.ySize = 256;
     }
 
     @Override
     public int rowsVisible() {
-        return 4;
+        return 5;
     }
 
     @Override
