@@ -279,7 +279,7 @@ public class GuiStorageCore extends GuiContainer {
                     }
                 }
             }
-            EZStorage.networkWrapper.sendToServer(new MyMessage(index, mouseButton, mode));
+            EZStorage.instance.networkWrapper.sendToServer(new MyMessage(index, mouseButton, mode));
             ContainerStorageCore container = (ContainerStorageCore) this.inventorySlots;
             container.customSlotClick(index, mouseButton, mode, this.mc.thePlayer);
         } else {

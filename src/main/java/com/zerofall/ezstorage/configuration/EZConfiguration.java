@@ -11,7 +11,7 @@ public class EZConfiguration {
     public static int hyperCapacity;
 
     public static void syncConfig() {
-        final Configuration config = EZStorage.config;
+        final Configuration config = EZStorage.instance.config;
         config.load();
 
         final String OPTIONS = Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "options";

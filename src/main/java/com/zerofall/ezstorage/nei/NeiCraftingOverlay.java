@@ -56,7 +56,7 @@ public class NeiCraftingOverlay implements IOverlayHandler {
                             }
                         }
                 }
-                EZStorage.networkWrapper.sendToServer(new RecipeMessage(recipe));
+                EZStorage.instance.networkWrapper.sendToServer(new RecipeMessage(recipe));
             }
         } catch (final Exception localException) {} catch (final Error localError) {}
     }
