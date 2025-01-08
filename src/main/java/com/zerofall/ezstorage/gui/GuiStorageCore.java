@@ -297,8 +297,8 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     private Integer getSlotAt(int x, int y) {
-        int startX = this.guiLeft + 8;
-        int startY = this.guiTop + 18;
+        int startX = this.guiLeft + 8 - 1;
+        int startY = this.guiTop + 18 - 1;
 
         int clickedX = x - startX;
         int clickedY = y - startY;
