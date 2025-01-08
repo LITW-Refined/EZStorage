@@ -40,6 +40,6 @@ public class NeiHandler implements IContainerObjectHandler {
 
     @Override
     public boolean shouldShowTooltip(GuiContainer gui) {
-        return gui instanceof GuiStorageCore guiStorageCore && guiStorageCore.getMouseOverItem() != null;
+        return true;
     }
 }
