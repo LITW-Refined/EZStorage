@@ -19,7 +19,7 @@ public class ContainerStorageCore extends Container {
         this.tileEntity = ((TileEntityStorageCore) world.getTileEntity(x, y, z));
         int startingY = 18;
         int startingX = 8;
-        IInventory inventory = new InventoryBasic("title", false, this.rowCount() * 9);
+        IInventory inventory = new InventoryBasic("Storage Core", false, this.rowCount() * 9);
         for (int i = 0; i < this.rowCount(); i++) {
             for (int j = 0; j < 9; j++) {
                 addSlotToContainer(new Slot(inventory, j + i * 9, startingX + j * 18, startingY + i * 18));
