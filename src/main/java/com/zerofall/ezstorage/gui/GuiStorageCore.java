@@ -64,10 +64,7 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     public GuiStorageCore(EntityPlayer player, World world, int x, int y, int z) {
-        super(new ContainerStorageCore(player, world, x, y, z));
-        this.tileEntity = (TileEntityStorageCore) world.getTileEntity(x, y, z);
-        this.xSize = 195;
-        this.ySize = 222;
+        this(new ContainerStorageCore(player, world, x, y, z), world, x, y, z);
     }
 
     public GuiStorageCore(ContainerStorageCore containerStorageCore, World world, int x, int y, int z) {
