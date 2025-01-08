@@ -19,13 +19,13 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     public ContainerStorageCoreCrafting(EntityPlayer player, World world, int x, int y, int z) {
         super(player, world, x, y, z);
         this.worldObj = world;
-        this.addSlotToContainer(new SlotCrafting(player, this.craftMatrix, this.craftResult, 0, 116, 117));
+        this.addSlotToContainer(new SlotCrafting(player, this.craftMatrix, this.craftResult, 0, 116, 132));
         int i;
         int j;
 
         for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
-                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 3, 44 + j * 18, 99 + i * 18));
+                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * 3, 44 + j * 18, 114 + i * 18));
             }
         }
         this.onCraftMatrixChanged(this.craftMatrix);
