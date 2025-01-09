@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -96,7 +95,6 @@ public class GuiStorageCore extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         handleScrolling(mouseX, mouseY);
-        // updateFilteredItems();
         DecimalFormat formatter = new DecimalFormat("#,###");
         String totalCount = formatter.format(this.tileEntity.inventory.getTotalCount());
         String max = formatter.format(this.tileEntity.inventory.maxItems);
@@ -346,10 +344,9 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     @Override
-    protected void handleMouseClick(Slot p_146984_1_, final int p_146984_2_, final int p_146984_3_,
-        final int p_146984_4_) {
-        super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
+    public void updateScreen() {
         updateFilteredItems();
+        super.updateScreen();
     }
 
     private void scrollTo(float scroll) {
