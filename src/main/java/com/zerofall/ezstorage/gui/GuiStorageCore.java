@@ -2,7 +2,6 @@ package com.zerofall.ezstorage.gui;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -24,10 +23,14 @@ import org.lwjgl.opengl.GL11;
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
+import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.network.MyMessage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZItemRenderer;
 import com.zerofall.ezstorage.util.ItemGroup;
+
+import codechicken.nei.SearchField;
+import codechicken.nei.api.ItemFilter;
 
 public class GuiStorageCore extends GuiContainer {
 
@@ -200,36 +203,47 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     private void updateFilteredItems() {
-        filteredList = new ArrayList<ItemGroup>(this.tileEntity.inventory.inventory);
-        Iterator<ItemGroup> iterator = this.filteredList.iterator();
-        String s1 = this.searchField.getText()
-            .toLowerCase();
+        String searchText = this.searchField.getText()
+            .trim();
 
-        while (iterator.hasNext()) {
-            ItemGroup group = (ItemGroup) iterator.next();
-            ItemStack itemstack = group.itemStack;
-            boolean flag = false;
-            Iterator<?> iterator1 = itemstack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips)
-                .iterator();
+        if (filteredList == null) {
+            filteredList = new ArrayList<ItemGroup>();
+        }
+        filteredList.clear();
 
-            while (true) {
-                if (iterator1.hasNext()) {
-                    String s = (String) iterator1.next();
+        if (searchText.length() == 0) {
+            filteredList.addAll(this.tileEntity.inventory.inventory);
+        } else if (ModIds.NEI.isLoaded()) {
+            filterItemsViaNei(searchText);
+        } else {
+            filterItems(searchText.toLowerCase());
+        }
+    }
 
-                    if (!EnumChatFormatting.getTextWithoutFormattingCodes(s)
-                        .toLowerCase()
-                        .contains(s1)) {
-                        continue;
-                    }
-
-                    flag = true;
+    private void filterItems(String searchText) {
+        for (ItemGroup group : this.tileEntity.inventory.inventory) {
+            List<String> infos = group.itemStack
+                .getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+            for (String info : infos) {
+                if (EnumChatFormatting.getTextWithoutFormattingCodes(info)
+                    .toLowerCase()
+                    .contains(searchText)) {
+                    filteredList.add(group);
+                    break;
                 }
+            }
+        }
+    }
 
-                if (!flag) {
-                    iterator.remove();
-                }
+    private void filterItemsViaNei(String searchText) {
+        ItemFilter filter = SearchField.getFilter(searchText);
+        boolean matches;
 
-                break;
+        for (ItemGroup group : this.tileEntity.inventory.inventory) {
+            matches = filter.matches(group.itemStack);
+
+            if (matches) {
+                filteredList.add(group);
             }
         }
     }
