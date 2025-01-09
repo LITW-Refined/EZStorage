@@ -12,6 +12,9 @@ import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.gui.GuiStorageCore;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class CraftingTweaksUtils {
 
     private static SimpleTweakProvider providerStorageCore;
@@ -21,6 +24,7 @@ public class CraftingTweaksUtils {
         CraftingTweaksAPI.registerProvider(ContainerStorageCore.class, providerStorageCore);
     }
 
+    @SideOnly(Side.CLIENT)
     public static void initGui(GuiStorageCore gui, List<GuiButton> buttons, int startIndex) {
         providerStorageCore.setGrid(startIndex, 9);
         providerStorageCore.setAlignToGrid(EnumFacing.WEST);

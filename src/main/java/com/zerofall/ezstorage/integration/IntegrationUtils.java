@@ -11,6 +11,9 @@ import com.zerofall.ezstorage.integration.craftingtweaks.CraftingTweaksUtils;
 import com.zerofall.ezstorage.integration.etfuturum.EtFuturumUtils;
 import com.zerofall.ezstorage.nei.NeiHandler;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class IntegrationUtils {
 
     public static void init() {
@@ -32,6 +35,7 @@ public class IntegrationUtils {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     public static void applyCraftingTweaks(GuiScreen gui, List<GuiButton> buttons, int startIndex) {
         if (ModIds.CRAFTINGTWEAKS.isLoaded() && gui instanceof GuiStorageCore guiStorageCore) {
             CraftingTweaksUtils.initGui(guiStorageCore, buttons, startIndex);
