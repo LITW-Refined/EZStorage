@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Loader;
 
 public enum ModIds {
 
+    CRAFTINGTWEAKS("craftingtweaks"),
     NEI("NotEnoughItems"),
     ETFUTURUM("etfuturum");
 

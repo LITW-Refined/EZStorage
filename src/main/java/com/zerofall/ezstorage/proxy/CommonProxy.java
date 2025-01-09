@@ -9,6 +9,7 @@ import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.events.XEventHandler;
 import com.zerofall.ezstorage.gui.GuiHandler;
 import com.zerofall.ezstorage.init.EZBlocks;
+import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.network.MyMessage;
 import com.zerofall.ezstorage.network.PacketHandler;
 import com.zerofall.ezstorage.network.RecipeMessage;
@@ -36,5 +37,6 @@ public class CommonProxy {
 
     public void init(EZStorage instance, FMLInitializationEvent event) {
         EZBlocks.registerRecipes();
+        IntegrationUtils.init();
     }
 }

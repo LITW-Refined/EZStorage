@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -44,6 +45,7 @@ public class GuiStorageCore extends GuiContainer {
     private GuiTextField searchField;
     private List<ItemGroup> filteredList;
     private ItemStack mouseOverItem;
+    protected List<GuiButton> extraButtons;
 
     @Override
     public void initGui() {
@@ -61,6 +63,7 @@ public class GuiStorageCore extends GuiContainer {
         this.searchField.setFocused(true);
         this.searchField.setText("");
         filteredList = new ArrayList<ItemGroup>(this.tileEntity.inventory.inventory);
+        extraButtons = new ArrayList<GuiButton>();
     }
 
     public GuiStorageCore(EntityPlayer player, World world, int x, int y, int z) {
@@ -84,6 +87,9 @@ public class GuiStorageCore extends GuiContainer {
         this.mc.renderEngine.bindTexture(searchBar);
         drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 4, 80, 4, 90, 12);
         this.searchField.drawTextBox();
+        for (GuiButton button : extraButtons) {
+            button.drawButton(mc, mouseX, mouseY);
+        }
     }
 
     @Override

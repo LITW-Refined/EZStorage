@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCoreCrafting;
+import com.zerofall.ezstorage.integration.IntegrationUtils;
 
 public class GuiCraftingCore extends GuiStorageCore {
 
@@ -13,6 +14,12 @@ public class GuiCraftingCore extends GuiStorageCore {
         super(new ContainerStorageCoreCrafting(player, world, x, y, z), world, x, y, z);
         this.xSize = 195;
         this.ySize = 256;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        IntegrationUtils.applyCraftingTweaks(this, extraButtons, inventorySlots.inventorySlots.size() - 9);
     }
 
     @Override
