@@ -20,7 +20,16 @@ EZStorage introduces an early-game storage system that scales and evolves as pla
 
 - [Not Enough Items](https://www.curseforge.com/minecraft/mc-mods/notenoughitems)
   - Current integrated version: [2.7.11-GTNH](https://github.com/GTNewHorizons/NotEnoughItems/releases/latest)
+- [JABBA](https://github.com/GTNewHorizons/Jabba)
+  - Move the storage core from one place to another place using the dolly from Jabba
+  - Current integrated version: [1.5.1](https://github.com/GTNewHorizons/Jabba/releases/releases/latest)
+- [Crafting Tweaks](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks)
+  - Current integrated version: [1.0.88](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks/files/2457094)
 
 ## Remarks
 
 This mod is intented to be a compact storage solution, and not an automated storage network. As of right now, I do not want to include any features like filtered output, network cables, external monitors, wireless access, or anything else remeniscent of Applied Energistics. Any issues created as requests for these features will be immediately closed.
+
+## Contribution
+
+If you want to help adding any feature or make improvements or getting compatibility with another mod, feel free to make a pull request. I only have the time to maintenance this mod at a low level, the lowest effort needed for getting it working nicely on my server and in the modpack.
