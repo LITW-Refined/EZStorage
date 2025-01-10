@@ -12,11 +12,11 @@ import com.zerofall.ezstorage.configuration.EZConfiguration;
 
 public class EZInventory {
 
-    public List<ItemGroup> inventory;
+    public List<ItemStack> inventory;
     public long maxItems = 0;
 
     public EZInventory() {
-        inventory = new ArrayList<ItemGroup>();
+        inventory = new ArrayList<ItemStack>();
     }
 
     public ItemStack input(ItemStack itemStack) {
@@ -31,14 +31,14 @@ public class EZInventory {
     }
 
     public void sort() {
-        Collections.sort(this.inventory, new ItemGroup.CountComparator());
+        Collections.sort(this.inventory, new ItemStackCountComparator());
     }
 
     private ItemStack mergeStack(ItemStack itemStack, int amount) {
         boolean found = false;
-        for (ItemGroup group : inventory) {
-            if (stacksEqual(group.itemStack, itemStack)) {
-                group.count += amount;
+        for (ItemStack group : inventory) {
+            if (stacksEqual(group, itemStack)) {
+                group.stackSize += amount;
                 found = true;
                 break;
             }
@@ -49,7 +49,9 @@ public class EZInventory {
             if (slotCount() > EZConfiguration.maxItemTypes) {
                 return null;
             }
-            inventory.add(new ItemGroup(itemStack, amount));
+            ItemStack copy = itemStack.copy();
+            copy.stackSize = amount;
+            inventory.add(copy);
         }
 
         // Adjust input/return stack
@@ -66,9 +68,9 @@ public class EZInventory {
         if (index >= inventory.size()) {
             return null;
         }
-        ItemGroup group = inventory.get(index);
-        ItemStack stack = group.itemStack.copy();
-        int size = (int) Math.min((long) stack.getMaxStackSize(), group.count);
+        ItemStack group = inventory.get(index);
+        ItemStack stack = group.copy();
+        int size = Math.min(stack.getMaxStackSize(), group.stackSize);
         if (size > 1) {
             if (type == 1) {
                 size = size / 2;
@@ -77,8 +79,8 @@ public class EZInventory {
             }
         }
         stack.stackSize = size;
-        group.count -= size;
-        if (group.count <= 0) {
+        group.stackSize -= size;
+        if (group.stackSize <= 0) {
             inventory.remove(index);
         }
         return stack;
@@ -88,28 +90,28 @@ public class EZInventory {
         if (index >= inventory.size()) {
             return null;
         }
-        ItemGroup group = inventory.get(index);
-        ItemStack stack = group.itemStack.copy();
-        if (size > group.count) {
-            size = (int) Math.min(group.count, Integer.MAX_VALUE);
+        ItemStack group = inventory.get(index);
+        ItemStack stack = group.copy();
+        if (size > group.stackSize) {
+            size = group.stackSize;
         }
         stack.stackSize = size;
-        group.count -= size;
-        if (group.count <= 0) {
+        group.stackSize -= size;
+        if (group.stackSize <= 0) {
             inventory.remove(index);
         }
         return stack;
     }
 
     public ItemStack getItems(ItemStack[] itemStacks) {
-        for (ItemGroup group : inventory) {
+        for (ItemStack group : inventory) {
             for (ItemStack itemStack : itemStacks) {
-                if (stacksEqual(group.itemStack, itemStack)) {
-                    if (group.count >= itemStack.stackSize) {
-                        ItemStack stack = group.itemStack.copy();
+                if (stacksEqual(group, itemStack)) {
+                    if (group.stackSize >= itemStack.stackSize) {
+                        ItemStack stack = group.copy();
                         stack.stackSize = itemStack.stackSize;
-                        group.count -= itemStack.stackSize;
-                        if (group.count <= 0) {
+                        group.stackSize -= itemStack.stackSize;
+                        if (group.stackSize <= 0) {
                             inventory.remove(group);
                         }
                         return stack;
@@ -144,8 +146,8 @@ public class EZInventory {
 
     public long getTotalCount() {
         long count = 0;
-        for (ItemGroup group : inventory) {
-            count += group.count;
+        for (ItemStack group : inventory) {
+            count += group.stackSize;
         }
         return count;
     }

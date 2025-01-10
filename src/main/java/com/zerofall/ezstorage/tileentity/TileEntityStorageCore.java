@@ -26,7 +26,6 @@ import com.zerofall.ezstorage.init.EZBlocks;
 import com.zerofall.ezstorage.util.BlockRef;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZStorageUtils;
-import com.zerofall.ezstorage.util.ItemGroup;
 
 public class TileEntityStorageCore extends TileEntity {
 
@@ -82,12 +81,11 @@ public class TileEntityStorageCore extends TileEntity {
         super.writeToNBT(paramNBTTagCompound);
         NBTTagList nbttaglist = new NBTTagList();
         for (int i = 0; i < this.inventory.slotCount(); ++i) {
-            ItemGroup group = this.inventory.inventory.get(i);
-            if (group != null && group.itemStack != null && group.count > 0) {
+            ItemStack group = this.inventory.inventory.get(i);
+            if (group != null && group.stackSize > 0) {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Index", (byte) i);
-                group.itemStack.writeToNBT(nbttagcompound1);
-                nbttagcompound1.setLong("InternalCount", group.count);
+                group.writeToNBT(nbttagcompound1);
+                nbttagcompound1.setInteger("InternalCount", group.stackSize);
                 nbttaglist.appendTag(nbttagcompound1);
             }
         }
@@ -102,13 +100,16 @@ public class TileEntityStorageCore extends TileEntity {
         NBTTagList nbttaglist = paramNBTTagCompound.getTagList("Internal", 10);
 
         if (nbttaglist != null) {
-            inventory.inventory = new ArrayList<ItemGroup>();
+            inventory.inventory = new ArrayList<ItemStack>();
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
                 ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-                long count = nbttagcompound1.getLong("InternalCount");
-                ItemGroup group = new ItemGroup(stack, count);
-                this.inventory.inventory.add(group);
+                if (nbttagcompound1.hasKey("InternalCount", 3)) {
+                    stack.stackSize = (int) nbttagcompound1.getInteger("InternalCount");
+                } else if (nbttagcompound1.hasKey("InternalCount", 4)) {
+                    stack.stackSize = (int) nbttagcompound1.getLong("InternalCount");
+                }
+                this.inventory.inventory.add(stack);
             }
         }
         long maxItems = paramNBTTagCompound.getLong("InternalMax");

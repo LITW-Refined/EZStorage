@@ -28,7 +28,7 @@ import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.network.MyMessage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZItemRenderer;
-import com.zerofall.ezstorage.util.ItemGroup;
+import com.zerofall.ezstorage.util.ItemStackCountComparator;
 
 import codechicken.nei.SearchField;
 import codechicken.nei.api.ItemFilter;
@@ -46,7 +46,7 @@ public class GuiStorageCore extends GuiContainer {
         "textures/gui/container/creative_inventory/tab_item_search.png");
     private float currentScroll;
     private GuiTextField searchField;
-    private List<ItemGroup> filteredList;
+    private List<ItemStack> filteredList;
     private ItemStack mouseOverItem;
     protected List<GuiButton> extraButtons;
 
@@ -65,7 +65,7 @@ public class GuiStorageCore extends GuiContainer {
         this.searchField.setCanLoseFocus(true);
         this.searchField.setFocused(true);
         this.searchField.setText("");
-        filteredList = new ArrayList<ItemGroup>(this.tileEntity.inventory.inventory);
+        filteredList = new ArrayList<ItemStack>(this.tileEntity.inventory.inventory);
         extraButtons = new ArrayList<GuiButton>();
     }
 
@@ -139,15 +139,14 @@ public class GuiStorageCore extends GuiContainer {
                     break;
                 }
 
-                ItemGroup group = this.filteredList.get(index);
-                ItemStack stack = group.itemStack;
+                ItemStack stack = this.filteredList.get(index);
                 FontRenderer font = null;
                 if (stack != null) font = stack.getItem()
                     .getFontRenderer(stack);
                 if (font == null) font = fontRendererObj;
                 RenderHelper.enableGUIStandardItemLighting();
                 itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), stack, x, y);
-                ezRenderer.renderItemOverlayIntoGUI(font, stack, x, y, "" + group.count);
+                ezRenderer.renderItemOverlayIntoGUI(font, stack, x, y, "" + stack.stackSize);
                 x += 18;
             }
             if (finished) {
@@ -177,10 +176,10 @@ public class GuiStorageCore extends GuiContainer {
 
         if (slot != null) {
             if (slot < this.filteredList.size()) {
-                ItemGroup group = this.filteredList.get(slot);
+                ItemStack group = this.filteredList.get(slot);
 
                 if (group != null) {
-                    mouseOverItem = group.itemStack;
+                    mouseOverItem = group;
                     return;
                 }
             }
@@ -205,7 +204,7 @@ public class GuiStorageCore extends GuiContainer {
             .trim();
 
         if (filteredList == null) {
-            filteredList = new ArrayList<ItemGroup>();
+            filteredList = new ArrayList<ItemStack>();
         }
         filteredList.clear();
 
@@ -217,13 +216,12 @@ public class GuiStorageCore extends GuiContainer {
             filterItems(searchText.toLowerCase());
         }
 
-        Collections.sort(filteredList, new ItemGroup.CountComparator());
+        Collections.sort(filteredList, new ItemStackCountComparator());
     }
 
     private void filterItems(String searchText) {
-        for (ItemGroup group : this.tileEntity.inventory.inventory) {
-            List<String> infos = group.itemStack
-                .getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+        for (ItemStack group : this.tileEntity.inventory.inventory) {
+            List<String> infos = group.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
             for (String info : infos) {
                 if (EnumChatFormatting.getTextWithoutFormattingCodes(info)
                     .toLowerCase()
@@ -239,8 +237,8 @@ public class GuiStorageCore extends GuiContainer {
         ItemFilter filter = SearchField.getFilter(searchText);
         boolean matches;
 
-        for (ItemGroup group : this.tileEntity.inventory.inventory) {
-            matches = filter.matches(group.itemStack);
+        for (ItemStack group : this.tileEntity.inventory.inventory) {
+            matches = filter.matches(group);
 
             if (matches) {
                 filteredList.add(group);
@@ -286,7 +284,7 @@ public class GuiStorageCore extends GuiContainer {
             }
             int index = this.tileEntity.inventory.slotCount();
             if (slot < this.filteredList.size()) {
-                ItemGroup group = this.filteredList.get(slot);
+                ItemStack group = this.filteredList.get(slot);
                 if (group != null) {
                     index = this.tileEntity.inventory.inventory.indexOf(group);
                     if (index < 0) {

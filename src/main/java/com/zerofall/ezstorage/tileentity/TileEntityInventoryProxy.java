@@ -9,7 +9,6 @@ import org.joml.Math;
 
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.util.EZInventory;
-import com.zerofall.ezstorage.util.ItemGroup;
 
 public class TileEntityInventoryProxy extends TileEntity implements ISidedInventory {
 
@@ -18,7 +17,7 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
     @Override
     public int getSizeInventory() {
         if (core == null) {
-            return 0;
+            return 1;
         }
         int size = core.inventory.inventory.size();
         if (core.inventory.getTotalCount() < core.inventory.maxItems
@@ -30,11 +29,8 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        if (index < core.inventory.inventory.size()) {
-            ItemGroup group = core.inventory.inventory.get(index);
-            ItemStack copy = group.itemStack.copy();
-            copy.stackSize = (int) group.count;
-            return copy;
+        if (core != null && index < core.inventory.inventory.size()) {
+            return core.inventory.inventory.get(index);
         }
         return null;
     }
@@ -48,10 +44,18 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (stack != null && stack.stackSize != 0 && isItemValidForSlot(index, stack)) {
+        if (core == null) {
+            return;
+        } else if (stack == null || stack.stackSize == 0) {
+            core.inventory.inventory.remove(index);
+        } else if (index >= core.inventory.inventory.size()) {
             core.inventory.input(stack);
-            core.updateTileEntity();
+        } else if (isItemValidForSlot(index, stack)) {
+            core.inventory.inventory.set(index, stack);
+        } else {
+            return;
         }
+        core.updateTileEntity();
     }
 
     @Override
@@ -85,15 +89,15 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
         // Search for existing group of the given item type
         for (int i = 0; i < itemsCount; i++) {
-            ItemGroup group = core.inventory.inventory.get(i);
-            if (EZInventory.stacksEqual(group.itemStack, stack)) {
+            ItemStack group = core.inventory.inventory.get(i);
+            if (EZInventory.stacksEqual(group, stack)) {
                 foundIndex = i;
             }
         }
 
         // Permit if the destination is a new slot and the item doesn't exist
         if (index >= core.inventory.inventory.size()) {
-            return foundIndex == -1;
+            return true; // return foundIndex == -1;
         }
 
         // Permit if the item eixsts and is in the destination slot
@@ -103,13 +107,13 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
         // If the item doesn't exist, permit if the destination slot is empty
         if (index == -1) {
-            ItemGroup group = core.inventory.inventory.get(index);
-            if (group == null || group.count == 0 || group.itemStack == null) {
+            ItemStack group = core.inventory.inventory.get(index);
+            if (group == null || group.stackSize == 0) {
                 return true;
             }
         }
 
-        // Deny if the item exists but in another slot
+        // Permit if the item exists but in another slot
         return false;
     }
 
@@ -130,8 +134,8 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
         }
 
         // The item in the slot needs to be the same as the given item
-        ItemGroup theGroup = core.inventory.inventory.get(index);
-        return theGroup != null && theGroup.itemStack != null && EZInventory.stacksEqual(theGroup.itemStack, stack);
+        ItemStack theGroup = core.inventory.inventory.get(index);
+        return theGroup != null && EZInventory.stacksEqual(theGroup, stack);
     }
 
     @Override
