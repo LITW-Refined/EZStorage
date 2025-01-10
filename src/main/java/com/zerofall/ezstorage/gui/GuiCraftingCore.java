@@ -14,12 +14,12 @@ public class GuiCraftingCore extends GuiStorageCore {
         super(new ContainerStorageCoreCrafting(player, world, x, y, z), world, x, y, z);
         this.xSize = 195;
         this.ySize = 256;
+        IntegrationUtils.applyCraftingTweaks(this);
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        IntegrationUtils.applyCraftingTweaks(this, extraButtons, inventorySlots.inventorySlots.size() - 9);
     }
 
     @Override

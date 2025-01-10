@@ -1,8 +1,5 @@
 package com.zerofall.ezstorage.integration;
 
-import java.util.List;
-
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -36,9 +33,9 @@ public class IntegrationUtils {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void applyCraftingTweaks(GuiScreen gui, List<GuiButton> buttons, int startIndex) {
+    public static void applyCraftingTweaks(GuiScreen gui) {
         if (ModIds.CRAFTINGTWEAKS.isLoaded() && gui instanceof GuiStorageCore guiStorageCore) {
-            CraftingTweaksUtils.initGui(guiStorageCore, buttons, startIndex);
+            CraftingTweaksUtils.registerStorageCoreCrafting(guiStorageCore.inventorySlots.inventorySlots.size() - 9);
         }
     }
 }
