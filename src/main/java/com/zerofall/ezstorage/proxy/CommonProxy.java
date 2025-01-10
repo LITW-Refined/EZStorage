@@ -1,7 +1,6 @@
 package com.zerofall.ezstorage.proxy;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.EZTab;
@@ -23,8 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 public class CommonProxy {
 
     public void preInit(EZStorage instance, FMLPreInitializationEvent event) {
-        instance.config = new Configuration(event.getSuggestedConfigurationFile());
-        EZConfiguration.syncConfig();
+        EZConfiguration.init();
         instance.creativeTab = new EZTab();
         EZBlocks.init();
         EZBlocks.register();

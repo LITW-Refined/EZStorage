@@ -1,7 +1,5 @@
 package com.zerofall.ezstorage;
 
-import net.minecraftforge.common.config.Configuration;
-
 import com.zerofall.ezstorage.proxy.CommonProxy;
 
 import cpw.mods.fml.common.Mod;
@@ -25,7 +23,6 @@ public class EZStorage {
     public static CommonProxy proxy;
 
     public SimpleNetworkWrapper networkWrapper;
-    public Configuration config;
     public EZTab creativeTab;
 
     @EventHandler

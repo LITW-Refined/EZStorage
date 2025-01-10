@@ -1,26 +1,34 @@
 package com.zerofall.ezstorage.configuration;
 
-import net.minecraftforge.common.config.Configuration;
+import com.gtnewhorizon.gtnhlib.config.Config;
+import com.gtnewhorizon.gtnhlib.config.ConfigException;
+import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
+import com.zerofall.ezstorage.Reference;
 
-import com.zerofall.ezstorage.EZStorage;
-
+@Config(modid = Reference.MOD_ID)
 public class EZConfiguration {
 
+    @Config.Name("capacityStorageBasic")
+    @Config.Comment("Count of items that the basic storage box can hold.")
+    @Config.DefaultInt(400)
+    @Config.RangeInt(min = 1)
     public static int basicCapacity;
+
+    @Config.Name("capacityStorageCondensed")
+    @Config.Comment("Count of items that the condensed storage box can hold.")
+    @Config.DefaultInt(4000)
+    @Config.RangeInt(min = 1)
     public static int condensedCapacity;
+
+    @Config.Name("capacityStorageHyper")
+    @Config.Comment("Count of items that the hyper storage box can hold.")
+    @Config.DefaultInt(400000)
+    @Config.RangeInt(min = 1)
     public static int hyperCapacity;
 
-    public static void syncConfig() {
-        final Configuration config = EZStorage.instance.config;
-        config.load();
-
-        final String OPTIONS = Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "options";
-
-        basicCapacity = config.getInt("Basic Storage Capacity", OPTIONS, 400, 100, 4000, "Basic");
-        condensedCapacity = config.getInt("Condensed Storage Capacity", OPTIONS, 4000, 100, 40000, "Condensed");
-        hyperCapacity = config.getInt("Hyper Storage Capacity", OPTIONS, 400000, 100, 4000000, "Hyper");
-        if (config.hasChanged()) {
-            config.save();
-        }
+    public static void init() {
+        try {
+            ConfigurationManager.registerConfig(EZConfiguration.class);
+        } catch (ConfigException ignore) {}
     }
 }
