@@ -6,7 +6,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,10 +64,10 @@ public class EZBlocks {
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', t1_1, 'B', t1_2, 'C', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "B B", "ABA", 'A', "logWood", 'B', Blocks.chest));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "CBC", "DCD", 'A', t2_1, 'B', storage_box, 'C', Blocks.iron_bars, 'D', t2_2));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "CBC", "DCD", 'A', t2_1, 'B', storage_box, 'C', "ingotIron", 'D', t2_2));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(input_port), Blocks.hopper, Blocks.piston, "blockQuartz"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(crafting_box), Items.ender_pearl, Blocks.crafting_table, "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(input_port), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(crafting_box), " A ", " B ", " C ", 'A', Items.ender_pearl, 'B', Blocks.crafting_table, 'C', "gemDiamond"));
 
         if (OreDictionary.getOres("blockDarkSteel").size() != 0) {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "BCB", "ABA", 'A', "blockDarkSteel", 'B', Blocks.obsidian, 'C', condensed_storage_box));
