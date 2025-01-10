@@ -35,9 +35,13 @@
  */
 dependencies {
     implementation("com.github.GTNewHorizons:NotEnoughItems:2.7.13-GTNH:dev")
+    implementation("com.github.GTNewHorizons:waila:1.8.2:dev") {transitive = false}
+    implementation("com.github.GTNewHorizons:WAILAPlugins:0.6.0:dev") {transitive = false}
     runtimeOnly('com.github.GTNewHorizons:waila:1.8.2:dev') {transitive = false}
     api("com.github.GTNewHorizons:GTNHLib:0.6.0:dev") { transitive = false }
     devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.1:dev") { transitive = false }
     implementation(rfg.deobf("curse.maven:et-futurum-requiem-441392:5873837")) { transitive = false }
     implementation(rfg.deobf("curse.maven:crafting-tweaks-233071:2457094")) { transitive = false }
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:EnderIO:2.9.2:dev")
+    runtimeOnlyNonPublishable rfg.deobf("curse.maven:cofh-core-69162:2388751")
 }
