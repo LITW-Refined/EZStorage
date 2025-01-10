@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import org.joml.Math;
 
+import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.ItemGroup;
 
@@ -20,7 +21,8 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
             return 0;
         }
         int size = core.inventory.inventory.size();
-        if (core.inventory.getTotalCount() < core.inventory.maxItems && core.inventory.slotCount() < 1000) {
+        if (core.inventory.getTotalCount() < core.inventory.maxItems
+            && core.inventory.slotCount() < EZConfiguration.maxItemTypes) {
             size += 1;
         }
         return size;

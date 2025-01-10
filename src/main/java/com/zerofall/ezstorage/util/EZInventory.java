@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import org.joml.Math;
 
+import com.zerofall.ezstorage.configuration.EZConfiguration;
+
 public class EZInventory {
 
     public List<ItemGroup> inventory;
@@ -33,19 +35,24 @@ public class EZInventory {
     }
 
     private ItemStack mergeStack(ItemStack itemStack, int amount) {
+        boolean found = false;
         for (ItemGroup group : inventory) {
             if (stacksEqual(group.itemStack, itemStack)) {
                 group.count += amount;
-                itemStack.stackSize -= amount;
-                if (itemStack.stackSize <= 0) {
-                    return null;
-                } else {
-                    return itemStack;
-                }
+                found = true;
+                break;
             }
         }
-        // Needs to add a space
-        inventory.add(new ItemGroup(itemStack, amount));
+
+        // Add new group, if needed
+        if (!found) {
+            if (slotCount() > EZConfiguration.maxItemTypes) {
+                return null;
+            }
+            inventory.add(new ItemGroup(itemStack, amount));
+        }
+
+        // Adjust input/return stack
         itemStack.stackSize -= amount;
         if (itemStack.stackSize <= 0) {
             return null;
