@@ -2,6 +2,7 @@ package com.zerofall.ezstorage.gui;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -197,9 +198,6 @@ public class GuiStorageCore extends GuiContainer {
                 super.keyTyped(typedChar, keyCode);
             }
         }
-        if (keyCode == 63) {
-            this.tileEntity.sortInventory();
-        }
     }
 
     private void updateFilteredItems() {
@@ -218,6 +216,8 @@ public class GuiStorageCore extends GuiContainer {
         } else {
             filterItems(searchText.toLowerCase());
         }
+
+        Collections.sort(filteredList, new ItemGroup.CountComparator());
     }
 
     private void filterItems(String searchText) {
