@@ -4,6 +4,6 @@ tile.condensed_storage_box.name=Condensed Storage Box
 tile.hyper_storage_box.name=Hyper Storage Box
 tile.input_port.name=Inventory Proxy
 tile.crafting_box.name=Crafting Box
-itemGroup.EZStorage=EZStorage
+itemGroup.EZStorage=Easy Storage
 hud.msg.core.itemscount=%s / %s items
 hud.msg.core.typescount=%s / %s types

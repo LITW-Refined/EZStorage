@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class EZTab extends CreativeTabs {
 
     public EZTab() {
-        super("EZStorage");
+        super(Reference.MOD_NAME);
     }
 
     @Override

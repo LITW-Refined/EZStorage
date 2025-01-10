@@ -4,6 +4,6 @@ tile.condensed_storage_box.name=Kondensierte Speicherbox
 tile.hyper_storage_box.name=Hyper-Speicherbox
 tile.input_port.name=Inventar-Proxy
 tile.crafting_box.name=Crafting-Box
-itemGroup.EZStorage=EZStorage
+itemGroup.EZStorage=Einfacher Speicher
 hud.msg.core.itemscount=%s / %s Items
 hud.msg.core.typescount=%s / %s Typen
