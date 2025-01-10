@@ -6,6 +6,8 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import org.joml.Math;
+
 public class EZInventory {
 
     public List<ItemGroup> inventory;
@@ -66,6 +68,23 @@ public class EZInventory {
             } else if (type == 2) {
                 size = 1;
             }
+        }
+        stack.stackSize = size;
+        group.count -= size;
+        if (group.count <= 0) {
+            inventory.remove(index);
+        }
+        return stack;
+    }
+
+    public ItemStack getItemStackAt(int index, int size) {
+        if (index >= inventory.size()) {
+            return null;
+        }
+        ItemGroup group = inventory.get(index);
+        ItemStack stack = group.itemStack.copy();
+        if (size > group.count) {
+            size = (int) Math.min(group.count, Integer.MAX_VALUE);
         }
         stack.stackSize = size;
         group.count -= size;

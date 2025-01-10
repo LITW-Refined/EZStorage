@@ -16,11 +16,9 @@ import com.zerofall.ezstorage.block.BlockCondensedStorage;
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockHyperStorage;
 import com.zerofall.ezstorage.block.BlockInputPort;
-import com.zerofall.ezstorage.block.BlockOutputPort;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
-import com.zerofall.ezstorage.tileentity.TileEntityInputPort;
-import com.zerofall.ezstorage.tileentity.TileEntityOutputPort;
+import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -34,7 +32,6 @@ public class EZBlocks {
     public static Block condensed_storage_box;
     public static Block hyper_storage_box;
     public static Block input_port;
-    public static Block output_port;
     public static Block crafting_box;
 
     public static final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
@@ -45,7 +42,6 @@ public class EZBlocks {
         condensed_storage_box = new BlockCondensedStorage();
         hyper_storage_box = new BlockHyperStorage();
         input_port = new BlockInputPort();
-        output_port = new BlockOutputPort();
         crafting_box = new BlockCraftingBox();
     }
 
@@ -56,9 +52,7 @@ public class EZBlocks {
         GameRegistry.registerBlock(condensed_storage_box, condensed_storage_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(hyper_storage_box, hyper_storage_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
-        GameRegistry.registerTileEntity(TileEntityInputPort.class, "TileEntityInputPort");
-        GameRegistry.registerBlock(output_port, output_port.getUnlocalizedName().substring(5));
-        GameRegistry.registerTileEntity(TileEntityOutputPort.class, "TileEntityOutputPort");
+        GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
     }
 
@@ -74,7 +68,6 @@ public class EZBlocks {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "CBC", "DCD", 'A', t2_1, 'B', storage_box, 'C', Blocks.iron_bars, 'D', t2_2));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(input_port), Blocks.hopper, Blocks.piston, "blockQuartz"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(output_port), Blocks.piston, input_port));
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(crafting_box), Items.ender_pearl, Blocks.crafting_table, "gemDiamond"));
 
         if (OreDictionary.getOres("blockDarkSteel").size() != 0) {

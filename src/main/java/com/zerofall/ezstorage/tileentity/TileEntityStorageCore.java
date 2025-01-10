@@ -14,13 +14,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockInputPort;
-import com.zerofall.ezstorage.block.BlockOutputPort;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.block.StorageMultiblock;
@@ -30,7 +28,7 @@ import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZStorageUtils;
 import com.zerofall.ezstorage.util.ItemGroup;
 
-public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerListBox {
+public class TileEntityStorageCore extends TileEntity {
 
     public EZInventory inventory;
 
@@ -129,8 +127,7 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
         multiblock.add(ref);
         getValidNeighbors(ref, entity);
         for (BlockRef blockRef : multiblock) {
-            if (blockRef.block instanceof BlockStorage) {
-                BlockStorage sb = (BlockStorage) blockRef.block;
+            if (blockRef.block instanceof BlockStorage sb) {
                 inventory.maxItems += sb.getCapacity();
             }
         }
@@ -148,19 +145,13 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
             if (blockRef.block instanceof StorageMultiblock) {
                 if (multiblock.add(blockRef) && validateSystem(entity)) {
                     if (blockRef.block instanceof BlockInputPort) {
-                        TileEntity te = this.worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
-                        if (te instanceof TileEntityInputPort) {
-                            ((TileEntityInputPort) te).core = this;
-                        }
-                    }
-                    if (blockRef.block instanceof BlockOutputPort) {
-                        TileEntity te = this.worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
-                        if (te instanceof TileEntityOutputPort) {
-                            ((TileEntityOutputPort) te).core = this;
+                        TileEntity te = worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
+                        if (te instanceof TileEntityInventoryProxy teInvProxy) {
+                            teInvProxy.core = this;
                         }
                     }
                     if (blockRef.block instanceof BlockCraftingBox) {
-                        this.hasCraftBox = true;
+                        hasCraftBox = true;
                     }
                     getValidNeighbors(blockRef, entity);
                 }
@@ -176,12 +167,12 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
             }
             if (count > 1) {
                 if (worldObj.isRemote) {
-                    if (entity instanceof EntityPlayer) {
-                        ((EntityPlayer) entity).addChatComponentMessage(
+                    if (entity instanceof EntityPlayer entityPlayer) {
+                        entityPlayer.addChatComponentMessage(
                             new ChatComponentText("You can only have 1 Storage Core per system!"));
                     }
                 } else if (worldObj.getTileEntity(xCoord, yCoord, zCoord)
-                    .getBlockType() == EZBlocks.storage_core) {
+                    .getBlockType() instanceof BlockStorageCore) {
                         worldObj.setBlockToAir(xCoord, yCoord, zCoord);
                         worldObj.spawnEntityInWorld(
                             new EntityItem(worldObj, xCoord, yCoord, zCoord, new ItemStack(EZBlocks.storage_core)));
@@ -208,10 +199,4 @@ public class TileEntityStorageCore extends TileEntity implements IUpdatePlayerLi
             scanMultiblock(null);
         }
     }
-
-    @Override
-    public void update() {
-        // Nothing todo here
-    }
-
 }

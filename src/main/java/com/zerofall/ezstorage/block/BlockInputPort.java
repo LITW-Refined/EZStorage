@@ -4,7 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.zerofall.ezstorage.tileentity.TileEntityInputPort;
+import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 
 public class BlockInputPort extends EZBlockContainer {
 
@@ -14,6 +14,6 @@ public class BlockInputPort extends EZBlockContainer {
 
     @Override
     public TileEntity createTileEntity(World world, int meta) {
-        return new TileEntityInputPort();
+        return new TileEntityInventoryProxy();
     }
 }
