@@ -13,11 +13,8 @@ public class XEventHandler {
     public void onBlockBreak(BreakEvent e) {
         if (!e.world.isRemote) {
             TileEntity tileentity = e.world.getTileEntity(e.x, e.y, e.z);
-            if (tileentity instanceof TileEntityStorageCore) {
-                TileEntityStorageCore core = (TileEntityStorageCore) tileentity;
-                if (core.inventory.getTotalCount() > 0) {
-                    e.setCanceled(true);
-                }
+            if (tileentity instanceof TileEntityStorageCore core && core.inventory.getTotalCount() > 0) {
+                e.setCanceled(true);
             }
         }
     }
