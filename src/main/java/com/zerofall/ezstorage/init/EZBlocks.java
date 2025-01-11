@@ -59,8 +59,8 @@ public class EZBlocks {
         String t1_1 = "logWood";
         String t1_2 = "stickWood";
 
-        String t2_1 = "blockIron";
-        String t2_2 = OreDictionary.getOres("blockBronze").size() != 0 ? "blockBronze" : t2_1;
+        String t2_1 = OreDictionary.getOres("blockBronze").size() != 0 ? "blockBronze" : "blockIron";
+        String t2_2 = t2_1;
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', t1_1, 'B', t1_2, 'C', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "B B", "ABA", 'A', "logWood", 'B', Blocks.chest));
