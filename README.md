@@ -47,3 +47,22 @@ This mod is intented to be a compact storage solution, and not an automated stor
 ## Contribution
 
 If you want to help adding any feature or make improvements or getting compatibility with another mod, feel free to make a pull request. I only have the time to maintenance this mod at a low level, the lowest effort needed for getting it working nicely on my server and in the modpack.
+
+## Changes to the latest official EZStorage version
+
+This fork becomes some changes to be usable on servers, less-buggy
+
+- Many bugfixes and some stability and code improvements
+- Mod compat with Waila, Jabba, Crafting Tweaks, Et Futurum Requiem
+- Re-made the most textures to look nicer and fit better into vanilla worlds
+- Maximum of 1000 different item types per storage (for stability reasons)
+
+## About the 1000 item types limit
+
+As you know, Applied Energistics 2 has a limit of 63 item types per storage cell. As you can place 10 cells within one storage block, the maximum item types per block is 630. This limit is there for a reason. It itends to limit the NBT data stored at the NBT tag of the tile entity (like the storage box or cell rac).
+
+The system that AE2 and Easy Storage use is the same. Each item type will create a new NBT entry with the item definition and the amount of items stored. While storing an item that hasn't been stored already creates a new NBT entry and with this increases the size of the whole NBT tag, storing an item that already has been storaged just changes the amount of items without changing the NBT tag size.
+
+Some items has more NBT data then others. Having a too large NBT tag might lead to a server crash or makes it impossible to login with a client on the server ever again. That's why there is a limit to make those issues less likely. So, don't increase the number in the config on your own risk! It will not break directly, but if, I'll not be responsible for it.
+
+It is planned to change the storage system to a different kind, like Refined Storage for modern Minecraft versions. It uses a file-bases system which would have its own limit.
