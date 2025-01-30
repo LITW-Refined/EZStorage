@@ -32,18 +32,20 @@ public class WailaPlugins extends PluginBase {
         if (accessor.getTileEntity() instanceof TileEntityStorageCore core) {
             long itemsTotal = core.inventory.getTotalCount();
             long itemsMax = core.inventory.maxItems;
-            int typesTotal = core.inventory.slotCount();
             int typesMax = EZConfiguration.maxItemTypes;
             tooltip.add(
                 StatCollector.translateToLocalFormatted(
                     "hud.msg.core.itemscount",
                     formatter.format(itemsTotal),
                     formatter.format(itemsMax)));
-            tooltip.add(
-                StatCollector.translateToLocalFormatted(
-                    "hud.msg.core.typescount",
-                    formatter.format(typesTotal),
-                    formatter.format(typesMax)));
+            if (typesMax < itemsMax) {
+                int typesTotal = core.inventory.slotCount();
+                tooltip.add(
+                    StatCollector.translateToLocalFormatted(
+                        "hud.msg.core.typescount",
+                        formatter.format(typesTotal),
+                        formatter.format(typesMax)));
+            }
         }
     }
 }
