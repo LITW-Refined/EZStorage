@@ -48,7 +48,7 @@ public class EZItemRenderer extends RenderItem {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
-            String var6 = String.valueOf(Math.abs(amount));
+            String var6;
 
             if (amount > 999999999) {
                 var6 = String.valueOf((int) Math.floor(amount / 1000000000.0)) + 'B';
@@ -60,6 +60,8 @@ public class EZItemRenderer extends RenderItem {
                 var6 = "." + (int) Math.floor(amount / 100000.0) + 'M';
             } else if (amount > 9999) {
                 var6 = String.valueOf((int) Math.floor(amount / 1000.0)) + 'K';
+            } else {
+                var6 = String.valueOf(Math.abs(amount));
             }
 
             GL11.glDisable(GL11.GL_LIGHTING);
