@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import codechicken.nei.util.ReadableNumberConverter;
+
 public class EZItemRenderer extends RenderItem {
 
     public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
@@ -48,25 +50,11 @@ public class EZItemRenderer extends RenderItem {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
-            String var6;
-            if (amount > 999999999) {
-                var6 = String.valueOf((int) Math.floor(amount / 1000000000.0)) + 'B';
-            } else if (amount > 99999999) {
-                var6 = "." + (int) Math.floor(amount / 100000000.0) + 'B';
-            } else if (amount > 999999) {
-                var6 = String.valueOf((int) Math.floor(amount / 1000000.0)) + 'M';
-            } else if (amount > 99999) {
-                var6 = "." + (int) Math.floor(amount / 100000.0) + 'M';
-            } else if (amount > 9999) {
-                var6 = String.valueOf((int) Math.floor(amount / 1000.0)) + 'K';
-            } else {
-                var6 = String.valueOf(Math.abs(amount));
-            }
-
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScaled(ScaleFactor, ScaleFactor, ScaleFactor);
+            String var6 = ReadableNumberConverter.INSTANCE.toWideReadableForm(amount);
             int X = (int) (((float) xPosition + offset + 16.0f - fr.getStringWidth(var6) * ScaleFactor) * RScaleFactor);
             int Y = (int) (((float) yPosition + offset + 16.0f - 7.0f * ScaleFactor) * RScaleFactor);
             fr.drawStringWithShadow(var6, X, Y, 16777215);
