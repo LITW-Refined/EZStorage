@@ -129,7 +129,7 @@ public class GuiStorageCore extends GuiContainer {
         if (this.ezRenderer == null) {
             this.ezRenderer = new EZItemRenderer();
         }
-        this.ezRenderer.zLevel = 100.0F;
+        this.ezRenderer.zLevel = 200.0F;
 
         boolean finished = false;
         for (int i = 0; i < this.rowsVisible(); i++) {
