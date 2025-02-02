@@ -27,11 +27,13 @@ import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.network.MyMessage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
+import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZItemRenderer;
 import com.zerofall.ezstorage.util.ItemStackCountComparator;
 
 import codechicken.nei.SearchField;
 import codechicken.nei.api.ItemFilter;
+import cpw.mods.fml.common.Optional.Method;
 
 public class GuiStorageCore extends GuiContainer {
 
@@ -67,7 +69,6 @@ public class GuiStorageCore extends GuiContainer {
         this.searchField.setCanLoseFocus(true);
         this.searchField.setFocused(true);
         this.searchField.setText(searchText);
-        filteredList = new ArrayList<ItemStack>(this.tileEntity.inventory.inventory);
         extraButtons = new ArrayList<GuiButton>();
     }
 
@@ -194,35 +195,81 @@ public class GuiStorageCore extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) {
         if (!this.checkHotbarKeys(keyCode)) {
             if (this.searchField.isFocused() && this.searchField.textboxKeyTyped(typedChar, keyCode)) {
-                updateFilteredItems();
+                updateFilteredItems(true);
             } else {
                 super.keyTyped(typedChar, keyCode);
             }
         }
     }
 
-    private void updateFilteredItems() {
+    private void updateFilteredItems(boolean forceFullUpdate) {
         searchText = this.searchField.getText()
             .trim();
 
         if (filteredList == null) {
             filteredList = new ArrayList<ItemStack>();
         }
-        filteredList.clear();
 
-        if (searchText.length() == 0) {
-            filteredList.addAll(this.tileEntity.inventory.inventory);
-        } else if (ModIds.NEI.isLoaded()) {
-            filterItemsViaNei(searchText);
+        if (forceFullUpdate || !GuiScreen.isShiftKeyDown()) {
+            // Simply refresh the list & sort
+            filteredList.clear();
+            filterItems(searchText, this.tileEntity.inventory.inventory);
+            Collections.sort(filteredList, new ItemStackCountComparator());
         } else {
-            filterItems(searchText.toLowerCase());
-        }
+            // Modify the current list to keep the current sorting
+            List<ItemStack> listNewStacks = new ArrayList<ItemStack>();
 
-        Collections.sort(filteredList, new ItemStackCountComparator());
+            // Adjust stacksize for items present in the list
+            for (ItemStack stackSrc : this.tileEntity.inventory.inventory) {
+                boolean found = false;
+
+                for (ItemStack stackDest : filteredList) {
+                    if (EZInventory.stacksEqual(stackDest, stackSrc)) {
+                        stackDest.stackSize = stackSrc.stackSize;
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    listNewStacks.add(stackSrc);
+                }
+            }
+
+            // Set stacksize of left items to zero
+            for (ItemStack stackDest : filteredList) {
+                boolean found = false;
+
+                for (ItemStack stackSrc : this.tileEntity.inventory.inventory) {
+                    if (EZInventory.stacksEqual(stackSrc, stackDest)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    stackDest.stackSize = 0;
+                }
+            }
+
+            // Insert new items at the end
+            if (listNewStacks.size() != 0) {
+                filterItems(searchText, listNewStacks);
+            }
+        }
     }
 
-    private void filterItems(String searchText) {
-        for (ItemStack group : this.tileEntity.inventory.inventory) {
+    private void filterItems(String searchText, List<ItemStack> input) {
+        if (searchText.length() == 0) {
+            filteredList.addAll(input);
+        } else if (ModIds.NEI.isLoaded()) {
+            filterItemsViaNei(searchText, input);
+        } else {
+            filterItemsViaVanilla(searchText.toLowerCase(), input);
+        }
+    }
+
+    private void filterItemsViaVanilla(String searchText, List<ItemStack> input) {
+        for (ItemStack group : input) {
             List<String> infos = group.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
             for (String info : infos) {
                 if (EnumChatFormatting.getTextWithoutFormattingCodes(info)
@@ -235,11 +282,12 @@ public class GuiStorageCore extends GuiContainer {
         }
     }
 
-    private void filterItemsViaNei(String searchText) {
+    @Method(modid = "NotEnoughItems")
+    private void filterItemsViaNei(String searchText, List<ItemStack> input) {
         ItemFilter filter = SearchField.getFilter(searchText);
         boolean matches;
 
-        for (ItemStack group : this.tileEntity.inventory.inventory) {
+        for (ItemStack group : input) {
             matches = filter.matches(group);
 
             if (matches) {
@@ -360,7 +408,7 @@ public class GuiStorageCore extends GuiContainer {
 
     @Override
     public void updateScreen() {
-        updateFilteredItems();
+        updateFilteredItems(false);
         super.updateScreen();
     }
 
