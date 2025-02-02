@@ -55,8 +55,8 @@ public class EZItemRenderer extends RenderItem {
             GL11.glPushMatrix();
             GL11.glScaled(ScaleFactor, ScaleFactor, ScaleFactor);
             String var6 = ReadableNumberConverter.INSTANCE.toWideReadableForm(amount);
-            int X = (int) (((float) xPosition + offset + 16.0f - fr.getStringWidth(var6) * ScaleFactor) * RScaleFactor);
-            int Y = (int) (((float) yPosition + offset + 16.0f - 7.0f * ScaleFactor) * RScaleFactor);
+            int X = (int) (((float) xPosition + offset + 15.0f - fr.getStringWidth(var6) * ScaleFactor) * RScaleFactor);
+            int Y = (int) (((float) yPosition + offset + 15.0f - 7.0f * ScaleFactor) * RScaleFactor);
             fr.drawStringWithShadow(var6, X, Y, 16777215);
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
