@@ -35,19 +35,21 @@ import codechicken.nei.api.ItemFilter;
 
 public class GuiStorageCore extends GuiContainer {
 
-    TileEntityStorageCore tileEntity;
-    EZItemRenderer ezRenderer;
-    int scrollRow = 0;
-    private boolean isScrolling = false;
-    private boolean wasClicking = false;
-    private static final ResourceLocation creativeInventoryTabs = new ResourceLocation(
+    protected static final ResourceLocation creativeInventoryTabs = new ResourceLocation(
         "textures/gui/container/creative_inventory/tabs.png");
-    private static final ResourceLocation searchBar = new ResourceLocation(
+    protected static final ResourceLocation searchBar = new ResourceLocation(
         "textures/gui/container/creative_inventory/tab_item_search.png");
-    private float currentScroll;
-    private GuiTextField searchField;
-    private List<ItemStack> filteredList;
-    private ItemStack mouseOverItem;
+    protected static String searchText = "";
+
+    protected TileEntityStorageCore tileEntity;
+    protected EZItemRenderer ezRenderer;
+    protected int scrollRow = 0;
+    protected float currentScroll;
+    protected boolean isScrolling = false;
+    protected boolean wasClicking = false;
+    protected GuiTextField searchField;
+    protected ItemStack mouseOverItem;
+    protected List<ItemStack> filteredList;
     protected List<GuiButton> extraButtons;
 
     @Override
@@ -59,12 +61,12 @@ public class GuiStorageCore extends GuiContainer {
             this.guiTop + 6,
             80,
             this.fontRendererObj.FONT_HEIGHT);
-        this.searchField.setMaxStringLength(20);
+        this.searchField.setMaxStringLength(50);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setTextColor(0xFFFFFF);
         this.searchField.setCanLoseFocus(true);
         this.searchField.setFocused(true);
-        this.searchField.setText("");
+        this.searchField.setText(searchText);
         filteredList = new ArrayList<ItemStack>(this.tileEntity.inventory.inventory);
         extraButtons = new ArrayList<GuiButton>();
     }
@@ -200,7 +202,7 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     private void updateFilteredItems() {
-        String searchText = this.searchField.getText()
+        searchText = this.searchField.getText()
             .trim();
 
         if (filteredList == null) {
@@ -302,7 +304,8 @@ public class GuiStorageCore extends GuiContainer {
                 && mouseY >= elementY
                 && mouseY <= elementY + this.searchField.height) {
                 if (mouseButton == 1 || GuiScreen.isShiftKeyDown()) {
-                    this.searchField.setText("");
+                    searchText = "";
+                    this.searchField.setText(searchText);
                 }
                 this.searchField.setFocused(true);
             } else {
