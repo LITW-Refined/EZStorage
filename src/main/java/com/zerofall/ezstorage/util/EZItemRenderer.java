@@ -22,59 +22,56 @@ public class EZItemRenderer extends RenderItem {
 
             if (amount > 999999999999L) amount = 999999999999L;
 
-            if (amount != 0) {
-                if (stack.getItem()
-                    .showDurabilityBar(stack)) {
-                    double health = stack.getItem()
-                        .getDurabilityForDisplay(stack);
-                    int j1 = (int) Math.round(13.0D - health * 13.0D);
-                    int k = (int) Math.round(255.0D - health * 255.0D);
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    GL11.glDisable(GL11.GL_DEPTH_TEST);
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    GL11.glDisable(GL11.GL_ALPHA_TEST);
-                    GL11.glDisable(GL11.GL_BLEND);
-                    Tessellator tessellator = Tessellator.instance;
-                    int l = 255 - k << 16 | k << 8;
-                    int i1 = (255 - k) / 4 << 16 | 0x3F00;
-                    renderQuad(tessellator, xPosition + 2, yPosition + 13, 13, 2, 0);
-                    renderQuad(tessellator, xPosition + 2, yPosition + 13, 12, 1, i1);
-                    renderQuad(tessellator, xPosition + 2, yPosition + 13, j1, 1, l);
-                    // GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down
-                    // the line.
-                    GL11.glEnable(GL11.GL_ALPHA_TEST);
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    GL11.glEnable(GL11.GL_DEPTH_TEST);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                }
-
-                String var6 = String.valueOf(Math.abs(amount));
-
-                if (amount > 999999999) {
-                    var6 = String.valueOf((int) Math.floor(amount / 1000000000.0)) + 'B';
-                } else if (amount > 99999999) {
-                    var6 = "." + (int) Math.floor(amount / 100000000.0) + 'B';
-                } else if (amount > 999999) {
-                    var6 = String.valueOf((int) Math.floor(amount / 1000000.0)) + 'M';
-                } else if (amount > 99999) {
-                    var6 = "." + (int) Math.floor(amount / 100000.0) + 'M';
-                } else if (amount > 9999) {
-                    var6 = String.valueOf((int) Math.floor(amount / 1000.0)) + 'K';
-                }
-
+            if (stack.getItem()
+                .showDurabilityBar(stack)) {
+                double health = stack.getItem()
+                    .getDurabilityForDisplay(stack);
+                int j1 = (int) Math.round(13.0D - health * 13.0D);
+                int k = (int) Math.round(255.0D - health * 255.0D);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GL11.glPushMatrix();
-                GL11.glScaled(ScaleFactor, ScaleFactor, ScaleFactor);
-                int X = (int) (((float) xPosition + offset + 16.0f - fr.getStringWidth(var6) * ScaleFactor)
-                    * RScaleFactor);
-                int Y = (int) (((float) yPosition + offset + 16.0f - 7.0f * ScaleFactor) * RScaleFactor);
-                fr.drawStringWithShadow(var6, X, Y, 16777215);
-                GL11.glPopMatrix();
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glDisable(GL11.GL_ALPHA_TEST);
+                GL11.glDisable(GL11.GL_BLEND);
+                Tessellator tessellator = Tessellator.instance;
+                int l = 255 - k << 16 | k << 8;
+                int i1 = (255 - k) / 4 << 16 | 0x3F00;
+                renderQuad(tessellator, xPosition + 2, yPosition + 13, 13, 2, 0);
+                renderQuad(tessellator, xPosition + 2, yPosition + 13, 12, 1, i1);
+                renderQuad(tessellator, xPosition + 2, yPosition + 13, j1, 1, l);
+                // GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down
+                // the line.
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
+
+            String var6 = String.valueOf(Math.abs(amount));
+
+            if (amount > 999999999) {
+                var6 = String.valueOf((int) Math.floor(amount / 1000000000.0)) + 'B';
+            } else if (amount > 99999999) {
+                var6 = "." + (int) Math.floor(amount / 100000000.0) + 'B';
+            } else if (amount > 999999) {
+                var6 = String.valueOf((int) Math.floor(amount / 1000000.0)) + 'M';
+            } else if (amount > 99999) {
+                var6 = "." + (int) Math.floor(amount / 100000.0) + 'M';
+            } else if (amount > 9999) {
+                var6 = String.valueOf((int) Math.floor(amount / 1000.0)) + 'K';
+            }
+
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScaled(ScaleFactor, ScaleFactor, ScaleFactor);
+            int X = (int) (((float) xPosition + offset + 16.0f - fr.getStringWidth(var6) * ScaleFactor) * RScaleFactor);
+            int Y = (int) (((float) yPosition + offset + 16.0f - 7.0f * ScaleFactor) * RScaleFactor);
+            fr.drawStringWithShadow(var6, X, Y, 16777215);
+            GL11.glPopMatrix();
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             fr.setUnicodeFlag(unicodeFlag);
         }
