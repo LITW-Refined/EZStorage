@@ -49,7 +49,6 @@ public class EZItemRenderer extends RenderItem {
             }
 
             String var6;
-
             if (amount > 999999999) {
                 var6 = String.valueOf((int) Math.floor(amount / 1000000000.0)) + 'B';
             } else if (amount > 99999999) {
