@@ -335,10 +335,16 @@ public class GuiStorageCore extends GuiContainer {
                 mode = 1;
             }
             int index = this.tileEntity.inventory.slotCount();
+            int slotCount = this.tileEntity.inventory.slotCount();
             if (slot < this.filteredList.size()) {
                 ItemStack group = this.filteredList.get(slot);
                 if (group != null) {
-                    index = this.tileEntity.inventory.inventory.indexOf(group);
+                    for (int i = 0; i < slotCount; i++) {
+                        if (EZInventory.stacksEqual(group, this.tileEntity.inventory.inventory.get(i))) {
+                            index = i;
+                            break;
+                        }
+                    }
                     if (index < 0) {
                         return;
                     }
