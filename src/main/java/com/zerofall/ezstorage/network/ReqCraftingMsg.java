@@ -6,15 +6,15 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
-public class RecipeMessage implements IMessage {
+public class ReqCraftingMsg implements IMessage {
 
     NBTTagCompound recipe;
 
-    public RecipeMessage() {
+    public ReqCraftingMsg() {
 
     }
 
-    public RecipeMessage(NBTTagCompound recipe) {
+    public ReqCraftingMsg(NBTTagCompound recipe) {
         this.recipe = recipe;
     }
 

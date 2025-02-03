@@ -25,7 +25,7 @@ import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.integration.ModIds;
-import com.zerofall.ezstorage.network.MyMessage;
+import com.zerofall.ezstorage.network.InvSlotClickedMsg;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZItemRenderer;
@@ -350,7 +350,7 @@ public class GuiStorageCore extends GuiContainer {
                     }
                 }
             }
-            EZStorage.instance.networkWrapper.sendToServer(new MyMessage(index, mouseButton, mode));
+            EZStorage.instance.network.sendToServer(new InvSlotClickedMsg(index, mouseButton, mode));
             ContainerStorageCore container = (ContainerStorageCore) this.inventorySlots;
             container.customSlotClick(index, mouseButton, mode, this.mc.thePlayer);
         } else {

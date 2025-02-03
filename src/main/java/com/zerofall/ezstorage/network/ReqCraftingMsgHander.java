@@ -14,12 +14,12 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class RecipePacketHandler implements IMessageHandler<RecipeMessage, IMessage> {
+public class ReqCraftingMsgHander implements IMessageHandler<ReqCraftingMsg, IMessage> {
 
     ItemStack[][] recipe;
 
     @Override
-    public IMessage onMessage(RecipeMessage message, MessageContext ctx) {
+    public IMessage onMessage(ReqCraftingMsg message, MessageContext ctx) {
         EntityPlayerMP player = ctx.getServerHandler().playerEntity;
         if (IntegrationUtils.isSpectatorMode(player)) {
             return null; // no response, we're in read-only mode
