@@ -5,8 +5,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import org.joml.Math;
-
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.util.EZInventory;
 

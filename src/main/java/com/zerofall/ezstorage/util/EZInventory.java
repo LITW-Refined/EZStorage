@@ -6,8 +6,6 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-import org.joml.Math;
-
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 
 public class EZInventory {
