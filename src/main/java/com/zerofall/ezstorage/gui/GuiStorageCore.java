@@ -144,12 +144,14 @@ public class GuiStorageCore extends GuiContainer {
 
                 ItemStack stack = this.filteredList.get(index);
                 FontRenderer font = null;
-                if (stack != null) font = stack.getItem()
-                    .getFontRenderer(stack);
-                if (font == null) font = fontRendererObj;
-                RenderHelper.enableGUIStandardItemLighting();
-                itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), stack, x, y);
-                ezRenderer.renderItemOverlayIntoGUI(font, stack, x, y, "" + stack.stackSize);
+                if (stack != null) {
+                    font = stack.getItem()
+                        .getFontRenderer(stack);
+                    if (font == null) font = fontRendererObj;
+                    RenderHelper.enableGUIStandardItemLighting();
+                    itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), stack, x, y);
+                    ezRenderer.renderItemOverlayIntoGUI(font, stack, x, y, "" + stack.stackSize);
+                }
                 x += 18;
             }
             if (finished) {
