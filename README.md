@@ -57,7 +57,7 @@ This fork becomes some changes to be usable on servers, less-buggy and a lot of 
 - Mod compat with NEI, Waila, Jabba, Crafting Tweaks, Et Futurum Requiem, etc.
 - Re-made the most textures to look nicer and fit better into vanilla worlds
 - Replaced input and output block with a more enhanced proxy block
-- Configurable maximum different item types per storage
+- Configurable maximum different item types per storage (10000 by default)
 
 ## About the item types limit
 
