@@ -10,10 +10,10 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketHandler implements IMessageHandler<MyMessage, IMessage> {
+public class InvSlotClickedMsgHandler implements IMessageHandler<InvSlotClickedMsg, IMessage> {
 
     @Override
-    public IMessage onMessage(MyMessage message, MessageContext ctx) {
+    public IMessage onMessage(InvSlotClickedMsg message, MessageContext ctx) {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         if (IntegrationUtils.isSpectatorMode(player)) {
             return null; // no response, we're in read-only mode

@@ -6,7 +6,8 @@ public enum ModIds {
 
     CRAFTINGTWEAKS("craftingtweaks"),
     NEI("NotEnoughItems"),
-    ETFUTURUM("etfuturum");
+    ETFUTURUM("etfuturum"),
+    BAUBLES("Baubles");
 
     public final String modId;
 

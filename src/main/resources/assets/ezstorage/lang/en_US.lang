@@ -4,6 +4,12 @@ tile.condensed_storage_box.name=Condensed Storage Box
 tile.hyper_storage_box.name=Hyper Storage Box
 tile.input_port.name=Inventory Proxy
 tile.crafting_box.name=Crafting Box
-itemGroup.EZStorage=Easy Storage
+item.portable_storage_terminal.name=Portable Storage Panel
+itemGroup.Easy Storage=Easy Storage
 hud.msg.core.itemscount=%s / %s items
 hud.msg.core.typescount=%s / %s types
+chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
+chat.msg.storagecore_not_found=Storage core cannot be found
+chat.msg.storagecore_out_of_range=Storage core is out of range
+key.categories.ezstorage=Easy Storage
+key.ezstorage.open_terminal=Open Storage Panel

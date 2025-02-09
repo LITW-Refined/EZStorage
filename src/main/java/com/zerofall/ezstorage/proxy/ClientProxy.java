@@ -11,5 +11,6 @@ public class ClientProxy extends CommonProxy {
     public void init(EZStorage instance, FMLInitializationEvent event) {
         super.init(instance, event);
         IntegrationUtils.initClient();
+        eventHandler.initKeybinds();
     }
 }

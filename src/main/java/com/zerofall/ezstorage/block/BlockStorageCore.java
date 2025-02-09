@@ -34,12 +34,7 @@ public class BlockStorageCore extends EZBlockContainer {
         float subY, float subZ) {
         if (!worldIn.isRemote) {
             TileEntityStorageCore tileEntity = (TileEntityStorageCore) worldIn.getTileEntity(x, y, z);
-            if (tileEntity.hasCraftBox) {
-                player.openGui(EZStorage.instance, 2, worldIn, x, y, z);
-            } else {
-                player.openGui(EZStorage.instance, 1, worldIn, x, y, z);
-            }
-
+            player.openGui(EZStorage.instance, tileEntity.hasCraftBox ? 2 : 1, worldIn, x, y, z);
         }
         return true;
     }

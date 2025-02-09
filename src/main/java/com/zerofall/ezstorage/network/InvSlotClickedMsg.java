@@ -4,15 +4,15 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
-public class MyMessage implements IMessage {
+public class InvSlotClickedMsg implements IMessage {
 
     public int index;
     public int button;
     public int mode;
 
-    public MyMessage() {}
+    public InvSlotClickedMsg() {}
 
-    public MyMessage(int index, int button, int mode) {
+    public InvSlotClickedMsg(int index, int button, int mode) {
         this.index = index;
         this.button = button;
         this.mode = mode;
