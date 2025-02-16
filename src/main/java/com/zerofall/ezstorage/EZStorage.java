@@ -1,5 +1,19 @@
 package com.zerofall.ezstorage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.zerofall.ezstorage.gui.GuiHandler;
+import com.zerofall.ezstorage.network.client.HandlerMsgStorage;
+import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
+import com.zerofall.ezstorage.network.client.MsgReqCrafting;
+import com.zerofall.ezstorage.network.client.MsgReqOpenInvGui;
+import com.zerofall.ezstorage.network.client.MsgReqStorage;
+import com.zerofall.ezstorage.network.server.HandlerMsgInvSlotClicked;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqCrafting;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqOpenInvGui;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqStorage;
+import com.zerofall.ezstorage.network.server.MsgStorage;
 import com.zerofall.ezstorage.proxy.CommonProxy;
 
 import cpw.mods.fml.common.Mod;
@@ -7,7 +21,9 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(
     modid = Reference.MOD_ID,
@@ -22,12 +38,25 @@ public class EZStorage {
     @SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
     public static CommonProxy proxy;
 
-    public SimpleNetworkWrapper networkWrapper;
-    public EZTab creativeTab;
+    public SimpleNetworkWrapper network;
+    public final EZTab creativeTab = new EZTab();
+    public final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(this, event);
+
+        // Register gui handler
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+
+        // Register network handler & packets
+        instance.network = NetworkRegistry.INSTANCE.newSimpleChannel("ezChannel");
+        Integer d = 0;
+        instance.network.registerMessage(HandlerMsgInvSlotClicked.class, MsgInvSlotClicked.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqCrafting.class, MsgReqCrafting.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqOpenInvGui.class, MsgReqOpenInvGui.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqStorage.class, MsgReqStorage.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgStorage.class, MsgStorage.class, d++, Side.CLIENT);
     }
 
     @EventHandler

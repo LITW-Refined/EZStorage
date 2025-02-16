@@ -10,14 +10,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 
+import com.zerofall.ezstorage.util.EZInventory;
+import com.zerofall.ezstorage.util.EZInventoryManager;
+
 public class ContainerStorageCoreCrafting extends ContainerStorageCore {
 
     public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
     public IInventory craftResult = new InventoryCraftResult();
     private World worldObj;
 
-    public ContainerStorageCoreCrafting(EntityPlayer player, World world, int x, int y, int z) {
-        super(player, world, x, y, z);
+    public ContainerStorageCoreCrafting(EntityPlayer player, World world, EZInventory inventory) {
+        this(player, world);
+        this.inventory = inventory;
+    }
+
+    public ContainerStorageCoreCrafting(EntityPlayer player, World world) {
+        super(player);
         this.worldObj = world;
         this.addSlotToContainer(new SlotCrafting(player, this.craftMatrix, this.craftResult, 0, 116, 132));
         int i;
@@ -49,55 +57,54 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                     recipe[i] = this.craftMatrix.getStackInSlot(i);
                 }
 
-                ItemStack itemstack1 = slotObject.getStack();
-                ItemStack itemstack = null;
-                ItemStack original = itemstack1.copy();
+                ItemStack slotStack = slotObject.getStack();
+                ItemStack resultStack = null;
+                ItemStack original = slotStack.copy();
                 int crafted = 0;
-                int maxStackSize = itemstack1.getMaxStackSize();
-                int crafting = itemstack1.stackSize;
+                int maxStackSize = slotStack.getMaxStackSize();
+                int crafting = slotStack.stackSize;
 
-                for (int i = 0; i < itemstack1.getMaxStackSize(); i++) {
+                while (true) {
                     if (!slotObject.getHasStack() || !slotObject.getStack()
-                        .isItemEqual(itemstack1)) {
+                        .isItemEqual(slotStack)) {
                         break;
                     }
                     if (crafting >= maxStackSize) {
                         break;
                     }
 
-                    itemstack1 = slotObject.getStack();
-                    if (crafted + itemstack1.stackSize > itemstack1.getMaxStackSize()) {
+                    slotStack = slotObject.getStack();
+                    if (crafted + slotStack.stackSize > slotStack.getMaxStackSize()) {
                         break;
                     }
 
-                    itemstack = itemstack1.copy();
+                    resultStack = slotStack.copy();
                     boolean merged = this
-                        .mergeItemStack(itemstack1, this.rowCount() * 9, this.rowCount() * 9 + 36, true);
+                        .mergeItemStack(slotStack, this.rowCount() * 9, this.rowCount() * 9 + 36, true);
                     if (!merged) {
                         return null;
                     }
 
                     // It merged! grab another
-                    crafted += itemstack.stackSize;
-                    slotObject.onSlotChange(itemstack1, itemstack);
-                    slotObject.onPickupFromSlot(playerIn, itemstack1);
+                    crafted += resultStack.stackSize;
+                    slotObject.onSlotChange(slotStack, resultStack);
+                    slotObject.onPickupFromSlot(playerIn, slotStack);
 
-                    if (slotObject.getStack() != null && original.isItemEqual(slotObject.getStack())) {
-                        continue;
+                    if (slotObject.getStack() == null || !original.isItemEqual(slotObject.getStack())) {
+                        tryToPopulateCraftingGrid(recipe, playerIn);
                     }
-
-                    tryToPopulateCraftingGrid(recipe, playerIn);
                 }
 
-                if (itemstack == null || itemstack1.stackSize == itemstack.stackSize) {
+                if (resultStack == null || slotStack.stackSize == resultStack.stackSize) {
                     return null;
                 }
 
-                return itemstack;
+                return resultStack;
             }
 
             ItemStack stackInSlot = slotObject.getStack();
-            slotObject.putStack(this.tileEntity.inventory.input(stackInSlot));
+            slotObject.putStack(this.inventory.input(stackInSlot));
+            EZInventoryManager.sendToClients(inventory);
         }
         return null;
     }
@@ -137,7 +144,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 }
                 Slot slot = getSlotFromInventory(this.craftMatrix, j);
                 if (slot != null) {
-                    ItemStack retreived = tileEntity.inventory.getItems(new ItemStack[] { recipe[j] });
+                    ItemStack retreived = inventory.getItems(new ItemStack[] { recipe[j] });
                     if (retreived != null) {
                         slot.putStack(retreived);
                     }
@@ -163,15 +170,22 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     }
 
     public void clearGrid(EntityPlayer playerIn) {
+        boolean cleared = false;
+
         for (int i = 0; i < 9; i++) {
             ItemStack stack = this.craftMatrix.getStackInSlot(i);
             if (stack != null) {
-                ItemStack result = this.tileEntity.input(stack);
+                ItemStack result = this.inventory.input(stack);
                 this.craftMatrix.setInventorySlotContents(i, null);
                 if (result != null) {
                     playerIn.dropPlayerItemWithRandomChoice(result, false);
                 }
+                cleared = true;
             }
+        }
+
+        if (cleared) {
+            EZInventoryManager.sendToClients(inventory);
         }
     }
 }

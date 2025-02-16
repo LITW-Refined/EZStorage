@@ -7,10 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.block.BlockCondensedStorage;
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockHyperStorage;
@@ -32,8 +28,6 @@ public class EZBlocks {
     public static Block hyper_storage_box;
     public static Block input_port;
     public static Block crafting_box;
-
-    public static final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
 
     public static void init() {
         storage_core = new BlockStorageCore();

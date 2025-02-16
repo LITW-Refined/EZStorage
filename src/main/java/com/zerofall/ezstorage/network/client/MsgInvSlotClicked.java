@@ -1,18 +1,18 @@
-package com.zerofall.ezstorage.network;
+package com.zerofall.ezstorage.network.client;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
-public class MyMessage implements IMessage {
+public class MsgInvSlotClicked implements IMessage {
 
     public int index;
     public int button;
     public int mode;
 
-    public MyMessage() {}
+    public MsgInvSlotClicked() {}
 
-    public MyMessage(int index, int button, int mode) {
+    public MsgInvSlotClicked(int index, int button, int mode) {
         this.index = index;
         this.button = button;
         this.mode = mode;

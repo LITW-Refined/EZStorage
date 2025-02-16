@@ -25,8 +25,7 @@ import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.integration.ModIds;
-import com.zerofall.ezstorage.network.MyMessage;
-import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
+import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZItemRenderer;
 import com.zerofall.ezstorage.util.ItemStackCountComparator;
@@ -43,7 +42,6 @@ public class GuiStorageCore extends GuiContainer {
         "textures/gui/container/creative_inventory/tab_item_search.png");
     protected static String searchText = "";
 
-    protected TileEntityStorageCore tileEntity;
     protected EZItemRenderer ezRenderer;
     protected int scrollRow = 0;
     protected float currentScroll;
@@ -73,14 +71,17 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     public GuiStorageCore(EntityPlayer player, World world, int x, int y, int z) {
-        this(new ContainerStorageCore(player, world, x, y, z), world, x, y, z);
+        this(new ContainerStorageCore(player), world, x, y, z);
     }
 
     public GuiStorageCore(ContainerStorageCore containerStorageCore, World world, int x, int y, int z) {
         super(containerStorageCore);
-        this.tileEntity = (TileEntityStorageCore) world.getTileEntity(x, y, z);
         this.xSize = 195;
         this.ySize = 222;
+    }
+
+    public EZInventory getInventory() {
+        return ((ContainerStorageCore) inventorySlots).inventory;
     }
 
     @Override
@@ -103,8 +104,8 @@ public class GuiStorageCore extends GuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         handleScrolling(mouseX, mouseY);
         DecimalFormat formatter = new DecimalFormat("#,###");
-        String totalCount = formatter.format(this.tileEntity.inventory.getTotalCount());
-        String max = formatter.format(this.tileEntity.inventory.maxItems);
+        String totalCount = formatter.format(getInventory().getTotalCount());
+        String max = formatter.format(getInventory().maxItems);
         String amount = totalCount + "/" + max;
         // Right-align text
         int stringWidth = fontRendererObj.getStringWidth(amount);
@@ -215,14 +216,14 @@ public class GuiStorageCore extends GuiContainer {
         if (forceFullUpdate || !GuiScreen.isShiftKeyDown()) {
             // Simply refresh the list & sort
             filteredList.clear();
-            filterItems(searchText, this.tileEntity.inventory.inventory);
+            filterItems(searchText, getInventory().inventory);
             Collections.sort(filteredList, new ItemStackCountComparator());
         } else {
             // Modify the current list to keep the current sorting
             List<ItemStack> listNewStacks = new ArrayList<ItemStack>();
 
             // Adjust stacksize for items present in the list
-            for (ItemStack stackSrc : this.tileEntity.inventory.inventory) {
+            for (ItemStack stackSrc : getInventory().inventory) {
                 boolean found = false;
 
                 for (ItemStack stackDest : filteredList) {
@@ -241,7 +242,7 @@ public class GuiStorageCore extends GuiContainer {
             for (ItemStack stackDest : filteredList) {
                 boolean found = false;
 
-                for (ItemStack stackSrc : this.tileEntity.inventory.inventory) {
+                for (ItemStack stackSrc : getInventory().inventory) {
                     if (EZInventory.stacksEqual(stackSrc, stackDest)) {
                         found = true;
                         break;
@@ -327,30 +328,23 @@ public class GuiStorageCore extends GuiContainer {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-
         Integer slot = getSlotAt(mouseX, mouseY);
         if (slot != null) {
             int mode = 0;
             if (GuiScreen.isShiftKeyDown()) {
                 mode = 1;
             }
-            int index = this.tileEntity.inventory.slotCount();
-            int slotCount = this.tileEntity.inventory.slotCount();
+            int index = getInventory().slotCount();
             if (slot < this.filteredList.size()) {
                 ItemStack group = this.filteredList.get(slot);
                 if (group != null) {
-                    for (int i = 0; i < slotCount; i++) {
-                        if (EZInventory.stacksEqual(group, this.tileEntity.inventory.inventory.get(i))) {
-                            index = i;
-                            break;
-                        }
-                    }
+                    index = getInventory().getIndexOf(group);
                     if (index < 0) {
                         return;
                     }
                 }
             }
-            EZStorage.instance.networkWrapper.sendToServer(new MyMessage(index, mouseButton, mode));
+            EZStorage.instance.network.sendToServer(new MsgInvSlotClicked(index, mouseButton, mode));
             ContainerStorageCore container = (ContainerStorageCore) this.inventorySlots;
             container.customSlotClick(index, mouseButton, mode, this.mc.thePlayer);
         } else {
@@ -397,7 +391,7 @@ public class GuiStorageCore extends GuiContainer {
         int i = Mouse.getEventDWheel();
 
         if (i != 0) {
-            int j = this.tileEntity.inventory.slotCount() / 9 - this.rowsVisible() + 1;
+            int j = getInventory().slotCount() / 9 - this.rowsVisible() + 1;
 
             if (i > 0) {
                 i = 1;
@@ -421,7 +415,7 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     private void scrollTo(float scroll) {
-        int i = (this.tileEntity.inventory.slotCount() + 8) / 9 - this.rowsVisible();
+        int i = (getInventory().slotCount() + 8) / 9 - this.rowsVisible();
         int j = (int) ((double) (scroll * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;

@@ -5,16 +5,33 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 
 public class EZInventory {
 
+    private boolean hasChanges;
     public List<ItemStack> inventory;
     public long maxItems = 0;
+    public String id;
+    public boolean disabled;
 
     public EZInventory() {
         inventory = new ArrayList<ItemStack>();
+    }
+
+    public boolean getHasChanges() {
+        return hasChanges;
+    }
+
+    public void setHasChanges() {
+        hasChanges = true;
+    }
+
+    public void resetHasChanges() {
+        hasChanges = false;
     }
 
     public ItemStack input(ItemStack itemStack) {
@@ -25,11 +42,14 @@ public class EZInventory {
         long space = maxItems - getTotalCount();
         // Only part of the stack can fit
         int amount = (int) Math.min(space, (long) itemStack.stackSize);
-        return mergeStack(itemStack, amount);
+        ItemStack stack = mergeStack(itemStack, amount);
+        setHasChanges();
+        return stack;
     }
 
     public void sort() {
         Collections.sort(this.inventory, new ItemStackCountComparator());
+        setHasChanges();
     }
 
     private ItemStack mergeStack(ItemStack itemStack, int amount) {
@@ -37,6 +57,7 @@ public class EZInventory {
         for (ItemStack group : inventory) {
             if (stacksEqual(group, itemStack)) {
                 group.stackSize += amount;
+                setHasChanges();
                 found = true;
                 break;
             }
@@ -50,6 +71,7 @@ public class EZInventory {
             ItemStack copy = itemStack.copy();
             copy.stackSize = amount;
             inventory.add(copy);
+            setHasChanges();
         }
 
         // Adjust input/return stack
@@ -81,6 +103,7 @@ public class EZInventory {
         if (group.stackSize <= 0) {
             inventory.remove(index);
         }
+        setHasChanges();
         return stack;
     }
 
@@ -98,6 +121,7 @@ public class EZInventory {
         if (group.stackSize <= 0) {
             inventory.remove(index);
         }
+        setHasChanges();
         return stack;
     }
 
@@ -112,6 +136,7 @@ public class EZInventory {
                         if (group.stackSize <= 0) {
                             inventory.remove(group);
                         }
+                        setHasChanges();
                         return stack;
                     }
                     return null;
@@ -119,6 +144,21 @@ public class EZInventory {
             }
         }
         return null;
+    }
+
+    public int getIndexOf(ItemStack itemStack) {
+        int index = inventory.indexOf(itemStack);
+
+        if (index == -1) {
+            for (ItemStack inventoryStack : inventory) {
+                index += 1;
+                if (stacksEqual(itemStack, inventoryStack)) {
+                    return index;
+                }
+            }
+        }
+
+        return index;
     }
 
     public int slotCount() {
@@ -153,5 +193,41 @@ public class EZInventory {
     @Override
     public String toString() {
         return inventory.toString();
+    }
+
+    public void writeToNBT(NBTTagCompound tag) {
+        NBTTagList nbttaglist = new NBTTagList();
+        for (int i = 0; i < this.slotCount(); ++i) {
+            ItemStack group = this.inventory.get(i);
+            if (group != null && group.stackSize > 0) {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                group.writeToNBT(nbttagcompound1);
+                nbttagcompound1.setInteger("InternalCount", group.stackSize);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+        tag.setTag("Internal", nbttaglist);
+        tag.setLong("InternalMax", this.maxItems);
+        tag.setBoolean("isDisabled", this.disabled);
+    }
+
+    public void readFromNBT(NBTTagCompound tag) {
+        NBTTagList nbttaglist = tag.getTagList("Internal", 10);
+
+        if (nbttaglist != null) {
+            inventory = new ArrayList<ItemStack>();
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+                if (nbttagcompound1.hasKey("InternalCount", 3)) {
+                    stack.stackSize = (int) nbttagcompound1.getInteger("InternalCount");
+                } else if (nbttagcompound1.hasKey("InternalCount", 4)) {
+                    stack.stackSize = (int) nbttagcompound1.getLong("InternalCount");
+                }
+                this.inventory.add(stack);
+            }
+        }
+        this.maxItems = tag.getLong("InternalMax");
+        this.disabled = tag.getBoolean("isDisabled");
     }
 }

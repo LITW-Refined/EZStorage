@@ -1,6 +1,5 @@
 package com.zerofall.ezstorage.tileentity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +9,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -22,105 +20,105 @@ import com.zerofall.ezstorage.block.BlockInputPort;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.block.StorageMultiblock;
+import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.init.EZBlocks;
 import com.zerofall.ezstorage.util.BlockRef;
 import com.zerofall.ezstorage.util.EZInventory;
+import com.zerofall.ezstorage.util.EZInventoryManager;
 import com.zerofall.ezstorage.util.EZStorageUtils;
 
 public class TileEntityStorageCore extends TileEntity {
 
-    public EZInventory inventory;
+    private EZInventory inventory;
 
     Set<BlockRef> multiblock = new HashSet<BlockRef>();
     private boolean firstTick = false;
     public boolean hasCraftBox = false;
-    public boolean disabled = false;
+    public String inventoryId = "";
 
-    public TileEntityStorageCore() {
-        inventory = new EZInventory();
+    public long inventoryItemsStored;
+    public long inventoryItemsMax;
+    public int inventoryTypesStored;
+    public int inventoryTypesMax;
+
+    public EZInventory getInventory() {
+        return getInventory(false);
     }
 
-    public ItemStack input(ItemStack stack) {
-        ItemStack result = this.inventory.input(stack);
+    private EZInventory getInventory(boolean allowCreate) {
+        if (inventory == null) {
+            inventory = EZInventoryManager.getInventory(inventoryId);
+
+            if (inventory == null && allowCreate) {
+                inventory = EZInventoryManager.createInventory();
+                inventoryId = inventory.id;
+            }
+        }
+        return inventory;
+    }
+
+    public void updateTileEntity(boolean sendInventoryToClients) {
         this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         this.markDirty();
-        return result;
-    }
 
-    public ItemStack getRandomStack() {
-        ItemStack result = this.inventory.getItemsAt(0, 0);
-        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        this.markDirty();
-        return result;
-    }
-
-    public void sortInventory() {
-        this.inventory.sort();
-        updateTileEntity();
+        if (sendInventoryToClients) {
+            EZInventoryManager.sendToClients(inventory, false);
+        }
     }
 
     public void updateTileEntity() {
-        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        this.markDirty();
+        updateTileEntity(true);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.func_148857_g());
+        NBTTagCompound nbtTag = pkt.func_148857_g();
+        readFromNBT(nbtTag);
+        inventoryItemsStored = nbtTag.getLong("inventoryItemsStored");
+        inventoryItemsMax = nbtTag.getLong("inventoryItemsMax");
+        inventoryTypesStored = nbtTag.getInteger("inventoryTypesStored");
+        inventoryTypesMax = nbtTag.getInteger("inventoryTypesMax");
     }
 
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         writeToNBT(nbtTag);
+        EZInventory inventory = getInventory(true);
+        if (inventory != null) {
+            nbtTag.setLong("inventoryItemsStored", inventory.getTotalCount());
+            nbtTag.setLong("inventoryItemsMax", inventory.maxItems);
+            nbtTag.setInteger("inventoryTypesStored", inventory.slotCount());
+            nbtTag.setInteger("inventoryTypesMax", EZConfiguration.maxItemTypes);
+        }
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, getBlockMetadata(), nbtTag);
     }
 
     @Override
     public void writeToNBT(NBTTagCompound paramNBTTagCompound) {
         super.writeToNBT(paramNBTTagCompound);
-        NBTTagList nbttaglist = new NBTTagList();
-        for (int i = 0; i < this.inventory.slotCount(); ++i) {
-            ItemStack group = this.inventory.inventory.get(i);
-            if (group != null && group.stackSize > 0) {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                group.writeToNBT(nbttagcompound1);
-                nbttagcompound1.setInteger("InternalCount", group.stackSize);
-                nbttaglist.appendTag(nbttagcompound1);
-            }
-        }
-        paramNBTTagCompound.setTag("Internal", nbttaglist);
-        paramNBTTagCompound.setLong("InternalMax", this.inventory.maxItems);
-        paramNBTTagCompound.setBoolean("isDisabled", this.disabled);
+        paramNBTTagCompound.setString("inventoryId", inventoryId);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound paramNBTTagCompound) {
         super.readFromNBT(paramNBTTagCompound);
-        NBTTagList nbttaglist = paramNBTTagCompound.getTagList("Internal", 10);
+        inventoryId = paramNBTTagCompound.getString("inventoryId");
 
-        if (nbttaglist != null) {
-            inventory.inventory = new ArrayList<ItemStack>();
-            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-                if (nbttagcompound1.hasKey("InternalCount", 3)) {
-                    stack.stackSize = (int) nbttagcompound1.getInteger("InternalCount");
-                } else if (nbttagcompound1.hasKey("InternalCount", 4)) {
-                    stack.stackSize = (int) nbttagcompound1.getLong("InternalCount");
-                }
-                this.inventory.inventory.add(stack);
-            }
+        // Migrate old data that was saved to the TE
+        if (paramNBTTagCompound.hasKey("Internal")) {
+            EZInventory inventory = new EZInventory();
+            inventory.readFromNBT(paramNBTTagCompound);
+            EZInventoryManager.createInventory(inventory);
+            inventoryId = inventory.id;
         }
-        long maxItems = paramNBTTagCompound.getLong("InternalMax");
-        this.inventory.maxItems = maxItems;
-        this.disabled = paramNBTTagCompound.getBoolean("isDisabled");
     }
 
     /**
      * Scans the multiblock structure for valid blocks
      */
     public void scanMultiblock(EntityLivingBase entity) {
+        EZInventory inventory = getInventory(true);
         inventory.maxItems = 0;
         this.hasCraftBox = false;
         multiblock = new HashSet<BlockRef>();
@@ -197,7 +195,10 @@ public class TileEntityStorageCore extends TileEntity {
     public void updateEntity() {
         if (!firstTick && worldObj != null) {
             firstTick = true;
-            scanMultiblock(null);
+            if (!worldObj.isRemote) {
+                scanMultiblock(null);
+                EZInventoryManager.sendToClients(getInventory());
+            }
         }
     }
 }

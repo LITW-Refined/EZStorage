@@ -5,6 +5,11 @@ import java.util.List;
 
 import net.minecraft.world.World;
 
+import org.lwjgl.input.Keyboard;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class EZStorageUtils {
 
     public static List<BlockRef> getNeighbors(int xCoord, int yCoord, int zCoord, World world) {
@@ -19,4 +24,8 @@ public class EZStorageUtils {
         return blockList;
     }
 
+    @SideOnly(Side.CLIENT)
+    public static boolean isShiftDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    }
 }

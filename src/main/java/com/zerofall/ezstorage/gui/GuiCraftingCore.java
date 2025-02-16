@@ -11,7 +11,7 @@ import com.zerofall.ezstorage.integration.IntegrationUtils;
 public class GuiCraftingCore extends GuiStorageCore {
 
     public GuiCraftingCore(EntityPlayer player, World world, int x, int y, int z) {
-        super(new ContainerStorageCoreCrafting(player, world, x, y, z), world, x, y, z);
+        super(new ContainerStorageCoreCrafting(player, world), world, x, y, z);
         this.xSize = 195;
         this.ySize = 256;
         IntegrationUtils.applyCraftingTweaks(this);
