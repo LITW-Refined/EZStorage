@@ -1,4 +1,4 @@
-package com.zerofall.ezstorage.network;
+package com.zerofall.ezstorage.network.client;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -6,15 +6,15 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
-public class ReqCraftingMsg implements IMessage {
+public class MsgReqCrafting implements IMessage {
 
-    NBTTagCompound recipe;
+    public NBTTagCompound recipe;
 
-    public ReqCraftingMsg() {
+    public MsgReqCrafting() {
 
     }
 
-    public ReqCraftingMsg(NBTTagCompound recipe) {
+    public MsgReqCrafting(NBTTagCompound recipe) {
         this.recipe = recipe;
     }
 

@@ -1,17 +1,17 @@
-package com.zerofall.ezstorage.network;
+package com.zerofall.ezstorage.network.client;
 
 import com.zerofall.ezstorage.enums.OpenInvGuiSource;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
-public class ReqOpenInvGuiMsg implements IMessage {
+public class MsgReqOpenInvGui implements IMessage {
 
     public OpenInvGuiSource source;
 
-    public ReqOpenInvGuiMsg() {}
+    public MsgReqOpenInvGui() {}
 
-    public ReqOpenInvGuiMsg(OpenInvGuiSource source) {
+    public MsgReqOpenInvGui(OpenInvGuiSource source) {
         this.source = source;
     }
 

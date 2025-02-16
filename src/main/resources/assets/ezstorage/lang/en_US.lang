@@ -6,8 +6,9 @@ tile.input_port.name=Inventory Proxy
 tile.crafting_box.name=Crafting Box
 item.portable_storage_terminal.name=Portable Storage Panel
 itemGroup.Easy Storage=Easy Storage
-hud.msg.core.itemscount=%s / %s items
-hud.msg.core.typescount=%s / %s types
+hud.msg.ezstorage.core.itemscount=%s / %s items
+hud.msg.ezstorage.core.typescount=%s / %s types
+hud.msg.ezstorage.core.inventoryid=%s
 chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Storage core cannot be found
 chat.msg.storagecore_out_of_range=Storage core is out of range

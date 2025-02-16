@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.EZStorage;
-import com.zerofall.ezstorage.network.ReqCraftingMsg;
+import com.zerofall.ezstorage.network.client.MsgReqCrafting;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
@@ -56,7 +56,7 @@ public class NeiCraftingOverlay implements IOverlayHandler {
                             }
                         }
                 }
-                EZStorage.instance.network.sendToServer(new ReqCraftingMsg(recipe));
+                EZStorage.instance.network.sendToServer(new MsgReqCrafting(recipe));
             }
         } catch (final Exception localException) {} catch (final Error localError) {}
     }

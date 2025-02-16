@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
@@ -15,7 +14,11 @@ import net.minecraft.world.WorldServer;
 import com.gtnewhorizon.gtnhlib.GTNHLib;
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.enums.PortableStoragePanelTier;
+import com.zerofall.ezstorage.network.server.MsgStorage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
+import com.zerofall.ezstorage.util.EZInventory;
+import com.zerofall.ezstorage.util.EZInventoryManager;
+import com.zerofall.ezstorage.util.EZInventoryReference;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
@@ -39,13 +42,14 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int meta,
-        float p_77648_8_, float p_77648_9_, float p_77648_10_) {
-        if (!world.isRemote) {
-            TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof TileEntityStorageCore core
-                && itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
-                panel.setStorageCore(itemStack, core);
+    public boolean onItemUseFirst(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int meta,
+        float hitX, float hitY, float hitZ) {
+        TileEntity te = world.getTileEntity(x, y, z);
+
+        if (te instanceof TileEntityStorageCore core && itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
+            if (!world.isRemote) {
+                panel.setInventoryReference(itemStack, core);
+
                 if (player instanceof EntityPlayerMP playerMP) {
                     GTNHLib.proxy.sendMessageAboveHotbar(
                         playerMP,
@@ -57,10 +61,12 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
                         100,
                         true,
                         true);
+                    return true;
                 }
-                return true;
             }
+
         }
+
         return false;
     }
 
@@ -68,33 +74,47 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer player) {
         if (!worldIn.isRemote && itemStackIn.getItem() instanceof ItemPortableStoragePanel panel
             && player instanceof EntityPlayerMP playerMP) {
-            TileEntityStorageCore core = panel.getStorageCore(itemStackIn);
-            if (core != null) {
-                if (isInRange(itemStackIn, core, playerMP)) {
-                    player.openGui(
-                        EZStorage.instance,
-                        core.hasCraftBox ? 2 : 1,
-                        core.getWorldObj(),
-                        core.xCoord,
-                        core.yCoord,
-                        core.zCoord);
-                } else {
-                    GTNHLib.proxy.sendMessageAboveHotbar(
-                        playerMP,
-                        new ChatComponentTranslation("chat.msg.storagecore_out_of_range"),
-                        60,
-                        true,
-                        true);
+            boolean found = false;
+            boolean inRange = false;
+
+            if (validateReference(itemStackIn)) {
+                EZInventoryReference reference = panel.getInventoryReference(itemStackIn);
+                EZInventory inventory = EZInventoryManager.getInventory(reference.inventoryId);
+
+                if (reference != null && inventory != null) {
+                    found = true;
+
+                    if (isInRange(itemStackIn, reference, playerMP)) {
+                        inRange = true;
+                        player.openGui(
+                            EZStorage.instance,
+                            this.getHasCraftingArea(itemStackIn) ? 2 : 1,
+                            reference.getWorld(),
+                            reference.blockX,
+                            reference.blockY,
+                            reference.blockZ);
+                        EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+                    }
                 }
-            } else {
+            }
+
+            if (!found) {
                 GTNHLib.proxy.sendMessageAboveHotbar(
                     playerMP,
                     new ChatComponentTranslation("chat.msg.storagecore_not_found"),
                     60,
                     true,
                     true);
+            } else if (!inRange) {
+                GTNHLib.proxy.sendMessageAboveHotbar(
+                    playerMP,
+                    new ChatComponentTranslation("chat.msg.storagecore_out_of_range"),
+                    60,
+                    true,
+                    true);
             }
         }
+
         return itemStackIn;
     }
 
@@ -106,41 +126,44 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
         this.setDamage(itemStack, tier.meta);
     }
 
-    public TileEntityStorageCore getStorageCore(ItemStack itemStack) {
+    public boolean getHasCraftingArea(ItemStack itemStack) {
         NBTTagCompound tag = itemStack.getTagCompound();
-        TileEntityStorageCore core = null;
 
-        if (tag != null && tag.hasKey("core")) {
-            MinecraftServer server = MinecraftServer.getServer();
-
-            if (server != null) {
-                NBTTagCompound tagCore = tag.getCompoundTag("core");
-                int dimId = tagCore.getInteger("dim");
-                int x = tagCore.getInteger("x");
-                int y = tagCore.getInteger("y");
-                int z = tagCore.getInteger("z");
-                WorldServer dim = null;
-
-                for (WorldServer world : server.worldServers) {
-                    if (world.provider.dimensionId == dimId) {
-                        dim = world;
-                        break;
-                    }
-                }
-
-                if (dim != null && dim.blockExists(x, y, z)) {
-                    TileEntity te = dim.getTileEntity(x, y, z);
-                    if (te instanceof TileEntityStorageCore tecore) {
-                        core = tecore;
-                    }
-                }
-            }
+        if (tag != null) {
+            return tag.getBoolean("hasCraftingArea");
         }
 
-        return core;
+        return false;
     }
 
-    public void setStorageCore(ItemStack itemStack, TileEntityStorageCore core) {
+    public void setHasCraftingArea(ItemStack itemStack, boolean hasCraftingArea) {
+        NBTTagCompound tag = itemStack.getTagCompound();
+
+        if (tag == null) {
+            tag = new NBTTagCompound();
+            itemStack.setTagCompound(tag);
+        }
+
+        tag.setBoolean("hasCraftingArea", hasCraftingArea);
+    }
+
+    public EZInventoryReference getInventoryReference(ItemStack itemStack) {
+        NBTTagCompound tag = itemStack.getTagCompound();
+
+        if (tag != null && tag.hasKey("reference")) {
+            NBTTagCompound tagCore = tag.getCompoundTag("reference");
+            String id = tagCore.getString("inventoryId");
+            int dimId = tagCore.getInteger("blockDimId");
+            int x = tagCore.getInteger("blockX");
+            int y = tagCore.getInteger("blockY");
+            int z = tagCore.getInteger("blockZ");
+            return new EZInventoryReference(id, dimId, x, y, z);
+        }
+
+        return null;
+    }
+
+    public void setInventoryReference(ItemStack itemStack, TileEntityStorageCore core) {
         if (core == null) {
             NBTTagCompound tag = itemStack.getTagCompound();
             if (tag != null) {
@@ -153,15 +176,36 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
                 itemStack.setTagCompound(tag);
             }
             NBTTagCompound tagCore = new NBTTagCompound();
-            tagCore.setInteger("dim", core.getWorldObj().provider.dimensionId);
-            tagCore.setInteger("x", core.xCoord);
-            tagCore.setInteger("y", core.yCoord);
-            tagCore.setInteger("z", core.zCoord);
-            tag.setTag("core", tagCore);
+            tagCore.setString("inventoryId", core.getInventory().id);
+            tagCore.setInteger("blockDimId", core.getWorldObj().provider.dimensionId);
+            tagCore.setInteger("blockX", core.xCoord);
+            tagCore.setInteger("blockY", core.yCoord);
+            tagCore.setInteger("blockZ", core.zCoord);
+            tag.setTag("reference", tagCore);
         }
     }
 
-    public static boolean isInRange(ItemStack itemStackPanel, TileEntityStorageCore core, EntityPlayerMP player) {
+    public boolean validateReference(ItemStack itemStackPanel) {
+        EZInventoryReference reference = this.getInventoryReference(itemStackPanel);
+        boolean isValid = false;
+
+        if (reference != null) {
+            WorldServer dim = reference.getWorld();
+
+            if (dim != null && dim.blockExists(reference.blockX, reference.blockY, reference.blockZ)) {
+                TileEntity te = dim.getTileEntity(reference.blockX, reference.blockY, reference.blockZ);
+                if (te instanceof TileEntityStorageCore tecore && tecore.inventoryId.equals(reference.inventoryId)) {
+                    isValid = true;
+                } else {
+                    this.setInventoryReference(itemStackPanel, null);
+                }
+            }
+        }
+
+        return isValid;
+    }
+
+    public static boolean isInRange(ItemStack itemStackPanel, EZInventoryReference reference, EntityPlayerMP player) {
         if (!(itemStackPanel.getItem() instanceof ItemPortableStoragePanel panel)) {
             return false;
         }
@@ -174,15 +218,15 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
         }
 
         // Check dimension
-        if (core.getWorldObj().provider.dimensionId != player.worldObj.provider.dimensionId) {
+        if (reference.blockDimId != player.worldObj.provider.dimensionId) {
             return false;
         }
 
         // Check position
         final double rangeLimit = tier.range * tier.range;
-        final double offX = core.xCoord - player.posX;
-        final double offY = core.yCoord - player.posY;
-        final double offZ = core.zCoord - player.posZ;
+        final double offX = reference.blockX - player.posX;
+        final double offY = reference.blockY - player.posY;
+        final double offZ = reference.blockZ - player.posZ;
         final double r = offX * offX + offY * offY + offZ * offZ;
         if (r > rangeLimit) {
             return false;

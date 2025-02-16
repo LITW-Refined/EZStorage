@@ -1,12 +1,19 @@
 package com.zerofall.ezstorage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.zerofall.ezstorage.gui.GuiHandler;
-import com.zerofall.ezstorage.network.InvSlotClickedMsg;
-import com.zerofall.ezstorage.network.InvSlotClickedMsgHandler;
-import com.zerofall.ezstorage.network.ReqCraftingMsg;
-import com.zerofall.ezstorage.network.ReqCraftingMsgHander;
-import com.zerofall.ezstorage.network.ReqOpenInvGuiMsg;
-import com.zerofall.ezstorage.network.ReqOpenInvGuiMsgHandler;
+import com.zerofall.ezstorage.network.client.HandlerMsgStorage;
+import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
+import com.zerofall.ezstorage.network.client.MsgReqCrafting;
+import com.zerofall.ezstorage.network.client.MsgReqOpenInvGui;
+import com.zerofall.ezstorage.network.client.MsgReqStorage;
+import com.zerofall.ezstorage.network.server.HandlerMsgInvSlotClicked;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqCrafting;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqOpenInvGui;
+import com.zerofall.ezstorage.network.server.HandlerMsgReqStorage;
+import com.zerofall.ezstorage.network.server.MsgStorage;
 import com.zerofall.ezstorage.proxy.CommonProxy;
 
 import cpw.mods.fml.common.Mod;
@@ -32,7 +39,8 @@ public class EZStorage {
     public static CommonProxy proxy;
 
     public SimpleNetworkWrapper network;
-    public EZTab creativeTab = new EZTab();
+    public final EZTab creativeTab = new EZTab();
+    public final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -44,9 +52,11 @@ public class EZStorage {
         // Register network handler & packets
         instance.network = NetworkRegistry.INSTANCE.newSimpleChannel("ezChannel");
         Integer d = 0;
-        instance.network.registerMessage(InvSlotClickedMsgHandler.class, InvSlotClickedMsg.class, d++, Side.SERVER);
-        instance.network.registerMessage(ReqCraftingMsgHander.class, ReqCraftingMsg.class, d++, Side.SERVER);
-        instance.network.registerMessage(ReqOpenInvGuiMsgHandler.class, ReqOpenInvGuiMsg.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgInvSlotClicked.class, MsgInvSlotClicked.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqCrafting.class, MsgReqCrafting.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqOpenInvGui.class, MsgReqOpenInvGui.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgReqStorage.class, MsgReqStorage.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgStorage.class, MsgStorage.class, d++, Side.CLIENT);
     }
 
     @EventHandler

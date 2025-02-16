@@ -8,8 +8,8 @@ import net.minecraft.util.StatCollector;
 
 import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.block.BlockStorageCore;
-import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
+import com.zerofall.ezstorage.util.EZStorageUtils;
 
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -30,21 +30,25 @@ public class WailaPlugins extends PluginBase {
     @Override
     public void getBody(ItemStack stack, List<String> tooltip, IWailaDataAccessor accessor) {
         if (accessor.getTileEntity() instanceof TileEntityStorageCore core) {
-            long itemsTotal = core.inventory.getTotalCount();
-            long itemsMax = core.inventory.maxItems;
-            int typesMax = EZConfiguration.maxItemTypes;
+            long itemsTotal = core.inventoryItemsStored;
+            long itemsMax = core.inventoryItemsMax;
+            int typesMax = core.inventoryTypesMax;
             tooltip.add(
                 StatCollector.translateToLocalFormatted(
-                    "hud.msg.core.itemscount",
+                    "hud.msg.ezstorage.core.itemscount",
                     formatter.format(itemsTotal),
                     formatter.format(itemsMax)));
             if (typesMax < itemsMax) {
-                int typesTotal = core.inventory.slotCount();
+                int typesTotal = core.inventoryTypesStored;
                 tooltip.add(
                     StatCollector.translateToLocalFormatted(
-                        "hud.msg.core.typescount",
+                        "hud.msg.ezstorage.core.typescount",
                         formatter.format(typesTotal),
                         formatter.format(typesMax)));
+            }
+            if (EZStorageUtils.isShiftDown()) {
+                tooltip.add(
+                    StatCollector.translateToLocalFormatted("hud.msg.ezstorage.core.inventoryid", core.inventoryId));
             }
         }
     }

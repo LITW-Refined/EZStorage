@@ -6,8 +6,9 @@ tile.input_port.name=Inventar-Proxy
 tile.crafting_box.name=Crafting-Box
 item.portable_storage_terminal.name=Portables Speicherbrett
 itemGroup.Easy Storage=Einfacher Speicher
-hud.msg.core.itemscount=%s / %s Items
-hud.msg.core.typescount=%s / %s Typen
+hud.msg.ezstorage.core.itemscount=%s / %s Items
+hud.msg.ezstorage.core.typescount=%s / %s Typen
+hud.msg.ezstorage.core.inventoryid=%s
 chat.msg.storagecore_connected=Verbunden mit Speicherkern bei x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Speicherkern ist unauffindbar
 chat.msg.storagecore_out_of_range=Speicherkern außer Reichweite
