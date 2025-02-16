@@ -38,7 +38,7 @@ public class WailaPlugins extends PluginBase {
                     "hud.msg.ezstorage.core.itemscount",
                     formatter.format(itemsTotal),
                     formatter.format(itemsMax)));
-            if (typesMax < itemsMax) {
+            if (typesMax != 0 && typesMax < itemsMax) {
                 int typesTotal = core.inventoryTypesStored;
                 tooltip.add(
                     StatCollector.translateToLocalFormatted(

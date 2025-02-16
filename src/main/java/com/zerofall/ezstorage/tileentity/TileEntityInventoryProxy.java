@@ -19,7 +19,8 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
         }
         EZInventory inventory = core.getInventory();
         int size = inventory.inventory.size();
-        if (inventory.getTotalCount() < inventory.maxItems && inventory.slotCount() < EZConfiguration.maxItemTypes) {
+        if (inventory.getTotalCount() < inventory.maxItems
+            && (EZConfiguration.maxItemTypes == 0 || inventory.slotCount() < EZConfiguration.maxItemTypes)) {
             size += 1;
         }
         return size;
