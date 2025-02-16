@@ -58,3 +58,4 @@ This fork becomes some changes to be usable on servers, less-buggy and a lot of 
 - Re-made the most textures to look nicer and fit better into vanilla worlds
 - Replaced input and output block with a more enhanced proxy block
 - Configurable maximum different item types per storage (no limit by default)
+- Store storage as separated file on the server instead on the TileEntity and only send to client when open then Gui
