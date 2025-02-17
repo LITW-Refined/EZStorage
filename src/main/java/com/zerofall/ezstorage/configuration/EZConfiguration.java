@@ -25,7 +25,7 @@ public class EZConfiguration {
 
     @Config.Comment("The maximum amount of different items that can be stored within one storage box.\nThe default value tries to ensure the NBT data wont get too large wich would normally lead to world corruption.")
     @Config.DefaultInt(0)
-    @Config.RangeInt(min = 1)
+    @Config.RangeInt(min = 0)
     public static int maxItemTypes;
 
     public static void init() {
