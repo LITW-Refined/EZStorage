@@ -162,6 +162,7 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
         ItemStack stack = getStackInSlot(index);
         if (stack != null) {
             setInventorySlotContents(index, null);
+            core.updateTileEntity();
         }
         return stack;
     }
