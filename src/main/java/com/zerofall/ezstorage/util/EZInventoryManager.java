@@ -95,34 +95,46 @@ public class EZInventoryManager {
     }
 
     private static void saveToFile(EZInventory inventory, File file) {
+        File fileNew = new File(file + ".new");
+        File fileOld = new File(file + ".old");
+
+        // Save to NBT tag
         NBTTagCompound tag = new NBTTagCompound();
         inventory.writeToNBT(tag);
 
-        // This makes the world EXTREMELY buggy:
-        // if (file.exists()) {
-        // File fileOld = new File(file.getAbsolutePath() + ".old");
-        // if (fileOld.exists()) {
-        // try {
-        // fileOld.delete();
-        // } catch (SecurityException ignore) {}
-        // }
-        // try {
-        // file.renameTo(fileOld);
-        // } catch (SecurityException ignore) {}
-        // }
-
         try {
+            // Write to new temporary file
             FileOutputStream outputStream = new FileOutputStream(file);
             CompressedStreamTools.writeCompressed(tag, outputStream);
             outputStream.close();
+
+            // Rename existing file to old file
+            if (fileOld.exists()) {
+                fileOld.delete();
+            }
+            file.renameTo(fileOld);
+
+            // Rename new temporary file
+            if (file.exists()) {
+                file.delete();
+            }
+            fileNew.renameTo(file);
+
+            // Remove new temporary file
+            if (fileNew.exists()) {
+                fileNew.delete();
+            }
+
+            // Reset inventory changes
             inventory.resetHasChanges();
         } catch (IOException ex) {
             ex.printStackTrace();
-            EZStorage.instance.LOG.warn("Couldn't write storage to file system.", ex);
+            EZStorage.instance.LOG.warn("Couldn't write inventory to file system.", ex);
         }
     }
 
     private static EZInventory readFromFile(File file) {
+        File fileOld = new File(file + ".old");
         NBTTagCompound tag;
 
         try {
@@ -130,8 +142,20 @@ public class EZInventoryManager {
             tag = CompressedStreamTools.readCompressed(inputStream);
             inputStream.close();
         } catch (IOException ex) {
+            EZStorage.instance.LOG.warn("Couldn't read inventory file. Try falling back to backup, if exists.", ex);
             ex.printStackTrace();
             tag = null;
+        }
+
+        if (tag == null && fileOld.exists()) {
+            try {
+                FileInputStream inputStream = new FileInputStream(fileOld);
+                tag = CompressedStreamTools.readCompressed(inputStream);
+                inputStream.close();
+            } catch (IOException ex) {
+                EZStorage.instance.LOG.warn("Couldn't read inventory backup file.", ex);
+                ex.printStackTrace();
+            }
         }
 
         if (tag == null) {
