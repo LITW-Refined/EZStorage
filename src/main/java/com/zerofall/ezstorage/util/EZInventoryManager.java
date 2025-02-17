@@ -17,6 +17,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import com.zerofall.ezstorage.EZStorage;
+import com.zerofall.ezstorage.Reference;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.network.server.MsgStorage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
@@ -48,14 +49,11 @@ public class EZInventoryManager {
         }
 
         // Load inventory
-        File file = getFilePath(id);
-        if (file.exists()) {
-            EZInventory inventory = readFromFile(file);
-            if (inventory != null) {
-                inventory.id = id;
-                inventories.add(inventory);
-                return inventory;
-            }
+        EZInventory inventory = readFromFile(getFilePath(id));
+        if (inventory != null) {
+            inventory.id = id;
+            inventories.add(inventory);
+            return inventory;
         }
 
         // Inventory not found
@@ -70,8 +68,10 @@ public class EZInventoryManager {
 
     public static void saveInventory(EZInventory inventory) {
         if (inventories.contains(inventory) && inventory.getHasChanges()) {
-            File file = getFilePath(inventory.id);
-            saveToFile(inventory, file);
+            synchronized (inventory) {
+                File file = getFilePath(inventory.id);
+                saveToFile(inventory, file);
+            }
         }
     }
 
@@ -87,7 +87,7 @@ public class EZInventoryManager {
         File worldDir = DimensionManager.getCurrentSaveRootDirectory();
 
         // EZInventory root directory
-        File inventoryDir = new File(worldDir, "ezinventory/inventories");
+        File inventoryDir = new File(worldDir, Reference.MOD_ID + "/inventories");
         inventoryDir.mkdirs();
 
         // Inventory file
@@ -104,25 +104,26 @@ public class EZInventoryManager {
 
         try {
             // Write to new temporary file
-            FileOutputStream outputStream = new FileOutputStream(file);
+            FileOutputStream outputStream = new FileOutputStream(fileNew);
             CompressedStreamTools.writeCompressed(tag, outputStream);
             outputStream.close();
 
-            // Rename existing file to old file
+            // Delete old backup file
             if (fileOld.exists()) {
                 fileOld.delete();
             }
+
+            // Rename existing file to old backup file
             file.renameTo(fileOld);
 
-            // Rename new temporary file
+            // Delete current existing file
             if (file.exists()) {
                 file.delete();
             }
-            fileNew.renameTo(file);
 
-            // Remove new temporary file
-            if (fileNew.exists()) {
-                fileNew.delete();
+            // Rename new temporary file
+            if (!fileNew.renameTo(file)) {
+                throw new IOException("Error renaming new file.");
             }
 
             // Reset inventory changes
