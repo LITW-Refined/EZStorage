@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,11 +51,16 @@ public class EZInventoryManager {
         }
 
         // Load inventory
-        EZInventory inventory = readFromFile(getFilePath(id));
-        if (inventory != null) {
-            inventory.id = id;
-            inventories.add(inventory);
-            return inventory;
+        NBTTagCompound tag = readFromFile(getFilePath(id));
+        if (tag != null) {
+            EZInventory inventory = new EZInventory();
+            if (inventory != null) {
+                inventory.readFromNBT(tag);
+                inventory.resetHasChanges();
+                inventory.id = id;
+                inventories.add(inventory);
+                return inventory;
+            }
         }
 
         // Inventory not found
@@ -61,24 +68,51 @@ public class EZInventoryManager {
     }
 
     public static void saveInventories() {
+        HashMap<String, NBTTagCompound> cache = new HashMap<String, NBTTagCompound>();
+
+        // Write to NBT
         for (EZInventory inventory : inventories) {
-            saveInventory(inventory);
+            NBTTagCompound tag = new NBTTagCompound();
+            inventory.writeToNBT(tag);
+            inventory.resetHasChanges();
+            cache.put(inventory.id, tag);
+        }
+
+        // Write to file
+        if (!cache.isEmpty()) {
+            new Thread(() -> {
+                synchronized (inventories) {
+                    for (Entry<String, NBTTagCompound> kvp : cache.entrySet()) {
+                        File file = getFilePath(kvp.getKey());
+                        saveToFile(kvp.getValue(), file);
+                    }
+                }
+            }).start();
         }
     }
 
     public static void saveInventory(EZInventory inventory) {
         if (inventories.contains(inventory) && inventory.getHasChanges()) {
-            synchronized (inventory) {
-                File file = getFilePath(inventory.id);
-                saveToFile(inventory, file);
-            }
+            NBTTagCompound tag = new NBTTagCompound();
+            inventory.writeToNBT(tag);
+            inventory.resetHasChanges();
+            File file = getFilePath(inventory.id);
+            new Thread(() -> {
+                synchronized (inventories) {
+                    saveToFile(tag, file);
+                }
+            }).start();
         }
     }
 
     public static void deleteInventory(EZInventory inventory) {
         if (inventories.remove(inventory)) {
             File file = getFilePath(inventory.id);
-            file.delete();
+            new Thread(() -> {
+                synchronized (inventories) {
+                    file.delete();
+                }
+            }).start();;
         }
     }
 
@@ -94,13 +128,9 @@ public class EZInventoryManager {
         return new File(inventoryDir, id.toString() + ".dat");
     }
 
-    private static void saveToFile(EZInventory inventory, File file) {
+    private static void saveToFile(NBTTagCompound tag, File file) {
         File fileNew = new File(file + ".new");
         File fileOld = new File(file + ".old");
-
-        // Save to NBT tag
-        NBTTagCompound tag = new NBTTagCompound();
-        inventory.writeToNBT(tag);
 
         try {
             // Write to new temporary file
@@ -123,18 +153,15 @@ public class EZInventoryManager {
 
             // Rename new temporary file
             if (!fileNew.renameTo(file)) {
-                throw new IOException("Error renaming new file.");
+                throw new IOException("Couldn't rename new temporary file.");
             }
-
-            // Reset inventory changes
-            inventory.resetHasChanges();
         } catch (IOException ex) {
             ex.printStackTrace();
             EZStorage.instance.LOG.warn("Couldn't write inventory to file system.", ex);
         }
     }
 
-    private static EZInventory readFromFile(File file) {
+    private static NBTTagCompound readFromFile(File file) {
         File fileOld = new File(file + ".old");
         NBTTagCompound tag;
 
@@ -159,14 +186,7 @@ public class EZInventoryManager {
             }
         }
 
-        if (tag == null) {
-            return null;
-        }
-
-        EZInventory inventory = new EZInventory();
-        inventory.readFromNBT(tag);
-        inventory.resetHasChanges();
-        return inventory;
+        return tag;
     }
 
     public static void sendToClients(EZInventory inventory) {

@@ -62,7 +62,7 @@ public class EZEventHandler {
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event) {
         if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
-            new Thread(() -> EZInventoryManager.saveInventories()).start();
+            EZInventoryManager.saveInventories();
         }
     }
 }
