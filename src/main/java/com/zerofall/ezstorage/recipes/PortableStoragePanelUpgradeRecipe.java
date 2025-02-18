@@ -43,7 +43,9 @@ public class PortableStoragePanelUpgradeRecipe implements IRecipe {
                 panelItem = panel;
                 tier = panelItem.getTier(panelStack);
                 nextTier = PortableStoragePanelTier.getNextTier(tier);
-                upgradeItem = getUpgradeItem(nextTier);
+                if (nextTier != null) {
+                    upgradeItem = getUpgradeItem(nextTier);
+                }
             } else if (!hasRedstone && slotBlock == Blocks.redstone_block) {
                 hasRedstone = true;
             } else if (!hasUpgradeItem && slotItem == upgradeItem) {
@@ -55,14 +57,16 @@ public class PortableStoragePanelUpgradeRecipe implements IRecipe {
             }
         }
 
-        if (hasRedstone && hasUpgradeItem
-            && panelStack != null
-            && panelItem != null
-            && tier != null
-            && nextTier != null) {
-            result = panelStack.copy();
-            panelItem.setTier(result, nextTier);
-            return true;
+        if (panelStack != null && panelItem != null && hasRedstone) {
+            if (hasUpgradeItem && tier != null && nextTier != null) {
+                result = panelStack.copy();
+                panelItem.setTier(result, nextTier);
+                return true;
+            } else if (hasCraftingUpgrade) {
+                result = panelStack.copy();
+                panelItem.setHasCraftingArea(result, true);
+                return true;
+            }
         }
 
         return false;
