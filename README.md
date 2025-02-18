@@ -4,7 +4,7 @@ Simple storage mod for Minecraft 1.7.10 (Forge).
 
 ## Description
 
-EZStorage (alias Easy Storage) introduces an early-game storage system that scales and evolves as players progress. Want to put 100,000 Cobblestone in 1 slot? No problem. Blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods easier crafting or additional features!
+EZStorage (alias Easy Storage) introduces an early-game storage system that scales and evolves as players progress. Want to put 100k Cobblestone in 1 slot? No problem. Blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
  
 ## Blocks
 
@@ -42,7 +42,7 @@ EZStorage (alias Easy Storage) introduces an early-game storage system that scal
 
 ## Remarks
 
-This mod is intented to be a compact storage solution, and not an automated storage network. As of right now, I do not want to include any features like filtered output, network cables, external monitors, wireless access, or anything else remeniscent of Applied Energistics. Any issues created as requests for these features will be immediately closed.
+This mod is intented to be a compact storage solution, and not an automated storage network. As of right now, I'm not going to include any features like filtered output, network cables, external monitors, or anything else remeniscent of Applied Energistics. If you have an idea how such features would fit nicely in vanilla worlds, feel free to open an issue for discussion. Contribution are also welcome.
 
 ## Contribution
 
@@ -58,4 +58,4 @@ This fork becomes some changes to be usable on servers, less-buggy and a lot of 
 - Re-made the most textures to look nicer and fit better into vanilla worlds
 - Replaced input and output block with a more enhanced proxy block
 - Configurable maximum different item types per storage (no limit by default)
-- Store storage as separated file on the server instead on the TileEntity and only send to client when open then Gui
+- Store storage as separated file in the world's save directory instead directly on the TileEntity (only send to client when needed)
