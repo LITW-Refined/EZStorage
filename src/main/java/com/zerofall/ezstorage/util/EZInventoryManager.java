@@ -72,10 +72,12 @@ public class EZInventoryManager {
 
         // Write to NBT
         for (EZInventory inventory : inventories) {
-            NBTTagCompound tag = new NBTTagCompound();
-            inventory.writeToNBT(tag);
-            inventory.resetHasChanges();
-            cache.put(inventory.id, tag);
+            if (inventory.getHasChanges()) {
+                NBTTagCompound tag = new NBTTagCompound();
+                inventory.writeToNBT(tag);
+                inventory.resetHasChanges();
+                cache.put(inventory.id, tag);
+            }
         }
 
         // Write to file
