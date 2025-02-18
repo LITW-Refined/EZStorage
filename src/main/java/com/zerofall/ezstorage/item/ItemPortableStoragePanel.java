@@ -1,5 +1,7 @@
 package com.zerofall.ezstorage.item;
 
+import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -19,6 +22,7 @@ import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
 import com.zerofall.ezstorage.util.EZInventoryReference;
+import com.zerofall.ezstorage.util.EZStorageUtils;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
@@ -26,6 +30,8 @@ import baubles.api.expanded.BaubleExpandedSlots;
 import baubles.api.expanded.IBaubleExpanded;
 import cpw.mods.fml.common.Optional.Interface;
 import cpw.mods.fml.common.Optional.Method;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Interface(modid = "Baubles", iface = "baubles.api.expanded.IBaubleExpanded")
 public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded {
@@ -117,6 +123,56 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
 
         return itemStackIn;
     }
+
+    // spotless:off
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean shiftPressed) {
+        if (itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
+            shiftPressed = EZStorageUtils.isShiftDown();
+            PortableStoragePanelTier tier = panel.getTier(itemStack);
+            EZInventoryReference reference = panel.getInventoryReference(itemStack);
+            boolean hasCrafting = panel.getHasCraftingArea(itemStack);
+            boolean connected = reference != null && reference.inventoryId != null;
+
+            String strConnected;
+            if (hasCrafting) {
+                strConnected = "§2" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.status.connected") + "§r";
+            } else {
+                strConnected = "§4" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.status.notconnected") + "§r";
+            }
+            tooltip.add(StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.status", strConnected));
+
+            if (reference != null && connected && shiftPressed) {
+                tooltip.add("  ID: " + reference.inventoryId);
+                tooltip.add("  Dim: " + reference.blockDimId);
+                tooltip.add("  X: " + reference.blockX);
+                tooltip.add("  Y: " + reference.blockY);
+                tooltip.add("  Z: " + reference.blockZ);
+            }
+
+            if (tier != null) {
+                String strRange;
+                if (tier.isInfinity) {
+                    strRange = "§2∞";
+                } else {
+                    strRange = "§f" + tier.range;
+                }
+                tooltip.add(StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.range", strRange) + "§r");
+            }
+
+            String strCrafting;
+            if (hasCrafting) {
+                strCrafting = "§2" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.crafting.enabled") + "§r";
+            } else {
+                strCrafting = "§4" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.crafting.disabled") + "§r";
+            }
+            tooltip.add(StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.crafting", strCrafting));
+        }
+    }
+
+    // spotless:on
 
     public PortableStoragePanelTier getTier(ItemStack stack) {
         return PortableStoragePanelTier.getTierFromMeta(this.getDamage(stack));

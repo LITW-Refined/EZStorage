@@ -9,6 +9,13 @@ itemGroup.Easy Storage=Easy Storage
 hud.msg.ezstorage.core.itemscount=%s / %s items
 hud.msg.ezstorage.core.typescount=%s / %s types
 hud.msg.ezstorage.core.inventoryid=%s
+hud.msg.ezstorage.portable.status=Status: %s
+hud.msg.ezstorage.portable.status.connected=Connected
+hud.msg.ezstorage.portable.status.notconnected=Not connected
+hud.msg.ezstorage.portable.range=Range: %s blocks
+hud.msg.ezstorage.portable.crafting=Crafting: %s
+hud.msg.ezstorage.portable.crafting.enabled=Enabled
+hud.msg.ezstorage.portable.crafting.disabled=Disabled
 chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Storage core cannot be found
 chat.msg.storagecore_out_of_range=Storage core is out of range
