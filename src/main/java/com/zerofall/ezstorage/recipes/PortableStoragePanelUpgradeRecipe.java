@@ -1,13 +1,17 @@
 package com.zerofall.ezstorage.recipes;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.enums.PortableStoragePanelTier;
+import com.zerofall.ezstorage.init.EZBlocks;
 import com.zerofall.ezstorage.item.ItemPortableStoragePanel;
 
 public class PortableStoragePanelUpgradeRecipe implements IRecipe {
@@ -21,6 +25,7 @@ public class PortableStoragePanelUpgradeRecipe implements IRecipe {
         ItemPortableStoragePanel panelItem = null;
         boolean hasRedstone = false;
         boolean hasUpgradeItem = false;
+        boolean hasCraftingUpgrade = false;
         PortableStoragePanelTier tier = null;
         PortableStoragePanelTier nextTier = null;
         Item upgradeItem = null;
@@ -32,16 +37,19 @@ public class PortableStoragePanelUpgradeRecipe implements IRecipe {
             }
 
             Item slotItem = slotStack.getItem();
+            Block slotBlock = (slotItem instanceof ItemBlock) ? ((ItemBlock) slotItem).field_150939_a : null;
             if (panelStack == null && slotItem instanceof ItemPortableStoragePanel panel) {
                 panelStack = slotStack;
                 panelItem = panel;
                 tier = panelItem.getTier(panelStack);
                 nextTier = PortableStoragePanelTier.getNextTier(tier);
                 upgradeItem = getUpgradeItem(nextTier);
-            } else if (!hasRedstone && slotItem == Items.redstone) {
+            } else if (!hasRedstone && slotBlock == Blocks.redstone_block) {
                 hasRedstone = true;
             } else if (!hasUpgradeItem && slotItem == upgradeItem) {
                 hasUpgradeItem = true;
+            } else if (!hasCraftingUpgrade && slotBlock == EZBlocks.crafting_box) {
+                hasCraftingUpgrade = true;
             } else {
                 break;
             }
