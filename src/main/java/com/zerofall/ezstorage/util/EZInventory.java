@@ -172,20 +172,22 @@ public class EZInventory {
         if (stack1 == null || stack2 == null) {
             return false;
         }
-        if (stack1.getItem() == stack2.getItem()) {
-            if (stack1.getItemDamage() == stack2.getItemDamage()) {
-                NBTTagCompound stack1Tag = stack1.getTagCompound();
-                NBTTagCompound stack2Tag = stack2.getTagCompound();
-                if (stack1Tag == null && stack2Tag == null) {
-                    return true;
-                }
-                if (stack1Tag == null || stack2Tag == null) {
-                    return false;
-                }
-                if (stack1Tag.equals(stack2Tag)) {
-                    return true;
-                }
-            }
+        if (stack1.getItem() != stack2.getItem()) {
+            return false;
+        }
+        if (stack1.getItemDamage() != stack2.getItemDamage()) {
+            return false;
+        }
+        NBTTagCompound stack1Tag = stack1.getTagCompound();
+        NBTTagCompound stack2Tag = stack2.getTagCompound();
+        if (stack1Tag == null && stack2Tag == null) {
+            return true;
+        }
+        if (stack1Tag == null || stack2Tag == null) {
+            return false;
+        }
+        if (stack1Tag.equals(stack2Tag)) {
+            return true;
         }
         return false;
     }
