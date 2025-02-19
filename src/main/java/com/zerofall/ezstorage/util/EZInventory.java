@@ -174,7 +174,15 @@ public class EZInventory {
         }
         if (stack1.getItem() == stack2.getItem()) {
             if (stack1.getItemDamage() == stack2.getItemDamage()) {
-                if (stack1.getTagCompound() == stack2.getTagCompound()) {
+                NBTTagCompound stack1Tag = stack1.getTagCompound();
+                NBTTagCompound stack2Tag = stack2.getTagCompound();
+                if (stack1Tag == null && stack2Tag == null) {
+                    return true;
+                }
+                if (stack1Tag == null || stack2Tag == null) {
+                    return false;
+                }
+                if (stack1Tag.equals(stack2Tag)) {
                     return true;
                 }
             }

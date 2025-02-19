@@ -243,7 +243,7 @@ public class GuiStorageCore extends GuiContainer {
                 boolean found = false;
 
                 for (ItemStack stackSrc : getInventory().inventory) {
-                    if (EZInventory.stacksEqual(stackSrc, stackDest)) {
+                    if (EZInventory.stacksEqual(stackDest, stackSrc)) {
                         found = true;
                         break;
                     }
