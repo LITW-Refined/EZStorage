@@ -4,9 +4,9 @@ Simple storage mod for Minecraft 1.7.10 (Forge).
 
 ## Description
 
-EZStorage (alias Easy Storage) introduces an early-game storage system that scales and evolves as players progress. Want to put 100k Cobblestone in 1 slot? No problem. Blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
+EZStorage (alias Easy Storage) introduces an early-game storage system that scales and evolves as players progress, while keeping the vanilla flair. Want to put 100k Cobblestone in 1 slot? No problem. The blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
  
-## Blocks
+## Blocks & Items
 
 - **Storage Core**
   - This is the core of your storage system
@@ -23,6 +23,8 @@ EZStorage (alias Easy Storage) introduces an early-game storage system that scal
   - Expose the storage inventory to hoppers, conduits or maschines
 - **Crafting Box**
   - This adds a crafting grid to the GUI of your Storage Core (compatible with NEI + clicking for easy crafting from the internal inventory)
+- **Portable Storage Panel**
+  - This adds a small item that features a wood panel with wireless access to your storage core. It's tier can be upgraded and a crafting grid can also be added.
 
 ## Mod Integration
 
@@ -50,7 +52,7 @@ As from my side, this mod is feature-completed. I'll try fixing bugs as they wer
 
 If you want to help adding any feature or make improvements or getting compatibility with another mod, feel free to make a pull request. I only have the time to maintenance this mod at a low level, the lowest effort needed for getting it working nicely on my server and in the modpack.
 
-## Changes compared to the latest official EZStorage version
+## Changes compared to the original version of EZStorage
 
 This fork becomes some changes to be usable on servers, less-buggy and a lot of feature and code improvements.
 
