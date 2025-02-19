@@ -42,7 +42,9 @@ EZStorage (alias Easy Storage) introduces an early-game storage system that scal
 
 ## Remarks
 
-This mod is intented to be a compact storage solution, and not an automated storage network. As of right now, I'm not going to include any features like filtered output, network cables, external monitors, or anything else remeniscent of Applied Energistics. If you have an idea how such features would fit nicely in vanilla worlds, feel free to open an issue for discussion. Contribution are also welcome.
+This mod is intented to be a compact storage solution, and not an automated storage network. As of right now, I'm not going to include any features like filtered output, network cables, external monitors, or anything else remeniscent of Applied Energistics. If you have an idea how such features would fit nicely in vanilla worlds, feel free to open an issue for discussion. 
+
+The mod is feature-completed as from my side. I'll try fixing bugs as they were found or make improvements where possible. However, any contribution in form of troubleshooting or pull requests for bugfixes, improvements, mod compat, or new features are welcome at any time.
 
 ## Contribution
 
