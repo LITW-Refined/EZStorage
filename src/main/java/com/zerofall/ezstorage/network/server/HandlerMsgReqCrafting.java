@@ -29,21 +29,6 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
         if (container instanceof ContainerStorageCoreCrafting con) {
             EZInventory inventory = con.inventory;
 
-            // // Empty grid into inventory
-            // for (int i = 0; i < 9; i++) {
-            // Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
-            // if (slot != null) {
-            // ItemStack stack = slot.getStack();
-            // if (stack != null) {
-            // ItemStack results = inventory.input(stack);
-            // if (results != null) {
-            // return null;
-            // }
-            // slot.putStack(null);
-            // }
-            // }
-            // }
-
             this.recipe = new ItemStack[9][];
             for (int x = 0; x < this.recipe.length; x++) {
                 NBTTagList list = message.recipe.getTagList("#" + x, 10);
