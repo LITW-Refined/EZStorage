@@ -1,23 +1,26 @@
 package com.zerofall.ezstorage.gui;
 
+import java.util.HashMap;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.container.ContainerStorageCoreCrafting;
-import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
+import com.zerofall.ezstorage.util.EZInventoryManager;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
+    public HashMap<EntityPlayer, String> inventoryIds = new HashMap<EntityPlayer, String>();
+
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileEntityStorageCore core) {
-            EZInventory inventory = core.getInventory();
+        if (inventoryIds.containsKey(player)) {
+            String inventoryId = inventoryIds.remove(player);
+            EZInventory inventory = EZInventoryManager.getInventory(inventoryId);
             if (inventory != null) {
                 if (ID == 1) {
                     return new ContainerStorageCore(player, inventory);
@@ -38,5 +41,4 @@ public class GuiHandler implements IGuiHandler {
         }
         return null;
     }
-
 }

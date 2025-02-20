@@ -92,6 +92,7 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
 
                     if (isInRange(itemStackIn, reference, playerMP)) {
                         inRange = true;
+                        EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
                         player.openGui(
                             EZStorage.instance,
                             this.getHasCraftingArea(itemStackIn) ? 2 : 1,
@@ -243,22 +244,25 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
 
     public boolean validateReference(ItemStack itemStackPanel) {
         EZInventoryReference reference = this.getInventoryReference(itemStackPanel);
-        boolean isValid = false;
+        if (reference == null) {
+            return false;
+        }
 
-        if (reference != null) {
-            WorldServer dim = reference.getWorld();
-
-            if (dim != null && dim.blockExists(reference.blockX, reference.blockY, reference.blockZ)) {
-                TileEntity te = dim.getTileEntity(reference.blockX, reference.blockY, reference.blockZ);
-                if (te instanceof TileEntityStorageCore tecore && tecore.inventoryId.equals(reference.inventoryId)) {
-                    isValid = true;
-                } else {
-                    this.setInventoryReference(itemStackPanel, null);
-                }
+        WorldServer dim = reference.getWorld();
+        if (dim != null && dim.blockExists(reference.blockX, reference.blockY, reference.blockZ)) {
+            TileEntity te = dim.getTileEntity(reference.blockX, reference.blockY, reference.blockZ);
+            if (!(te instanceof TileEntityStorageCore)
+                || !((TileEntityStorageCore) te).inventoryId.equals(reference.inventoryId)) {
+                this.setInventoryReference(itemStackPanel, null);
+                return false;
             }
         }
 
-        return isValid;
+        if (EZInventoryManager.getInventory(reference.inventoryId) == null) {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean isInRange(ItemStack itemStackPanel, EZInventoryReference reference, EntityPlayerMP player) {

@@ -41,13 +41,14 @@ public class EZStorage {
     public SimpleNetworkWrapper network;
     public final EZTab creativeTab = new EZTab();
     public final Logger LOG = LogManager.getLogger(Reference.MOD_ID);
+    public final GuiHandler guiHandler = new GuiHandler();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(this, event);
 
         // Register gui handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, guiHandler);
 
         // Register network handler & packets
         instance.network = NetworkRegistry.INSTANCE.newSimpleChannel("ezChannel");
