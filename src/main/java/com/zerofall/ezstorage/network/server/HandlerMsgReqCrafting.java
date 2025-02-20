@@ -29,17 +29,20 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
         if (container instanceof ContainerStorageCoreCrafting con) {
             EZInventory inventory = con.inventory;
 
-            // Empty grid into inventory
-            for (int i = 0; i < 9; i++) {
-                ItemStack stack = con.craftMatrix.getStackInSlot(i);
-                if (stack != null) {
-                    ItemStack results = inventory.input(stack);
-                    if (results != null) {
-                        return null;
-                    }
-                    con.craftMatrix.setInventorySlotContents(i, null);
-                }
-            }
+            // // Empty grid into inventory
+            // for (int i = 0; i < 9; i++) {
+            // Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
+            // if (slot != null) {
+            // ItemStack stack = slot.getStack();
+            // if (stack != null) {
+            // ItemStack results = inventory.input(stack);
+            // if (results != null) {
+            // return null;
+            // }
+            // slot.putStack(null);
+            // }
+            // }
+            // }
 
             this.recipe = new ItemStack[9][];
             for (int x = 0; x < this.recipe.length; x++) {
@@ -52,13 +55,34 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
                 }
             }
             for (int i = 0; i < this.recipe.length; i++) {
-                if (this.recipe[i] != null && this.recipe[i].length > 0) {
-                    Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
-                    if (slot != null) {
+                Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
+                if (slot != null) {
+                    ItemStack slotStack = slot.getStack();
+
+                    if (i < this.recipe.length && this.recipe[i] != null && this.recipe[i].length > 0) {
+                        boolean isValid = false;
+
+                        if (slotStack != null) {
+                            for (ItemStack recipeStack : this.recipe[i]) {
+                                if (recipeStack.isItemEqual(slot.getStack())) {
+                                    isValid = true;
+                                }
+                            }
+                        }
+
+                        if (isValid) {
+                            continue;
+                        }
+
                         ItemStack retreived = inventory.getItems(this.recipe[i]);
                         if (retreived != null) {
                             slot.putStack(retreived);
+                            continue;
                         }
+                    }
+
+                    if (slotStack != null) {
+                        slot.putStack(null);
                     }
                 }
             }
