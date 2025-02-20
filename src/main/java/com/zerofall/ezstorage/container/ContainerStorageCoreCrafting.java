@@ -184,7 +184,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
             }
         }
 
-        if (cleared) {
+        if (cleared && !playerIn.worldObj.isRemote) {
             EZInventoryManager.sendToClients(inventory);
         }
     }

@@ -5,10 +5,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.zerofall.ezstorage.gui.GuiHandler;
 import com.zerofall.ezstorage.network.client.HandlerMsgStorage;
+import com.zerofall.ezstorage.network.client.MsgClearCraftingGrid;
 import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
 import com.zerofall.ezstorage.network.client.MsgReqCrafting;
 import com.zerofall.ezstorage.network.client.MsgReqOpenInvGui;
 import com.zerofall.ezstorage.network.client.MsgReqStorage;
+import com.zerofall.ezstorage.network.server.HandlerMsgClearCraftingGrid;
 import com.zerofall.ezstorage.network.server.HandlerMsgInvSlotClicked;
 import com.zerofall.ezstorage.network.server.HandlerMsgReqCrafting;
 import com.zerofall.ezstorage.network.server.HandlerMsgReqOpenInvGui;
@@ -58,6 +60,8 @@ public class EZStorage {
         instance.network.registerMessage(HandlerMsgReqOpenInvGui.class, MsgReqOpenInvGui.class, d++, Side.SERVER);
         instance.network.registerMessage(HandlerMsgReqStorage.class, MsgReqStorage.class, d++, Side.SERVER);
         instance.network.registerMessage(HandlerMsgStorage.class, MsgStorage.class, d++, Side.CLIENT);
+        instance.network
+            .registerMessage(HandlerMsgClearCraftingGrid.class, MsgClearCraftingGrid.class, d++, Side.SERVER);
     }
 
     @EventHandler
