@@ -46,7 +46,13 @@ public class BlockStorageCore extends EZBlockContainer {
             if (tileEntity instanceof TileEntityStorageCore core) {
                 EZInventory inventory = core.getInventory();
                 EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
-                player.openGui(EZStorage.instance, core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP) ? 2 : 1, worldIn, x, y, z);
+                player.openGui(
+                    EZStorage.instance,
+                    core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP) ? 2 : 1,
+                    worldIn,
+                    x,
+                    y,
+                    z);
                 EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
             }
         }
