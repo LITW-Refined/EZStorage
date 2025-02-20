@@ -35,7 +35,7 @@ public class NeiHandler implements IContainerObjectHandler {
 
     @Override
     public boolean objectUnderMouse(GuiContainer gui, int mousex, int mousey) {
-        return gui instanceof GuiStorageCore guiStorageCore && guiStorageCore.getMouseOverItem() != null;
+        return false;
     }
 
     @Override
