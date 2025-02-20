@@ -138,7 +138,7 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
             boolean connected = reference != null && reference.inventoryId != null;
 
             String strConnected;
-            if (hasCrafting) {
+            if (connected) {
                 strConnected = "§2" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.status.connected") + "§r";
             } else {
                 strConnected = "§4" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.status.notconnected") + "§r";
