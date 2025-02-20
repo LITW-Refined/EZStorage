@@ -45,15 +45,12 @@ public class BlockStorageCore extends EZBlockContainer {
             TileEntity tileEntity = worldIn.getTileEntity(x, y, z);
             if (tileEntity instanceof TileEntityStorageCore core) {
                 EZInventory inventory = core.getInventory();
-                EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
-                player.openGui(
-                    EZStorage.instance,
-                    core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP) ? 2 : 1,
-                    worldIn,
-                    x,
-                    y,
-                    z);
-                EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+                if (inventory != null) {
+                    boolean enableCraftingGrid = core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP);
+                    EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
+                    player.openGui(EZStorage.instance, enableCraftingGrid ? 2 : 1, worldIn, x, y, z);
+                    EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+                }
             }
         }
         return true;
