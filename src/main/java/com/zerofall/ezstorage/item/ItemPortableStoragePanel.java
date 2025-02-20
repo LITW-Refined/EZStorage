@@ -258,7 +258,7 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
             }
         }
 
-        if (EZInventoryManager.getInventory(reference.inventoryId) == null) {
+        if (reference.inventoryId == null || reference.inventoryId.equals("")) {
             return false;
         }
 
