@@ -165,16 +165,17 @@ public class EZInventoryManager {
 
     private static NBTTagCompound readFromFile(File file) {
         File fileOld = new File(file + ".old");
-        NBTTagCompound tag;
+        NBTTagCompound tag = null;
 
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            tag = CompressedStreamTools.readCompressed(inputStream);
-            inputStream.close();
-        } catch (IOException ex) {
-            EZStorage.instance.LOG.warn("Couldn't read inventory file. Try falling back to backup, if exists.", ex);
-            ex.printStackTrace();
-            tag = null;
+        if (file.exists()) {
+            try {
+                FileInputStream inputStream = new FileInputStream(file);
+                tag = CompressedStreamTools.readCompressed(inputStream);
+                inputStream.close();
+            } catch (IOException ex) {
+                EZStorage.instance.LOG.warn("Couldn't read inventory file. Try falling back to backup, if exists.", ex);
+                ex.printStackTrace();
+            }
         }
 
         if (tag == null && fileOld.exists()) {
