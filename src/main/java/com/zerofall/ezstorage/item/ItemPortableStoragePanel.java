@@ -17,6 +17,7 @@ import net.minecraft.world.WorldServer;
 import com.gtnewhorizon.gtnhlib.GTNHLib;
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.enums.PortableStoragePanelTier;
+import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.network.server.MsgStorage;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
@@ -95,7 +96,7 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
                         EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
                         player.openGui(
                             EZStorage.instance,
-                            this.getHasCraftingArea(itemStackIn) ? 2 : 1,
+                            this.getHasCraftingArea(itemStackIn) && !IntegrationUtils.isSpectatorMode(playerMP) ? 2 : 1,
                             reference.getWorld(),
                             reference.blockX,
                             reference.blockY,
