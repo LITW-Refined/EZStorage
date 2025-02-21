@@ -15,7 +15,7 @@ import cpw.mods.fml.client.config.GuiButtonExt;
 
 public class GuiCraftingCore extends GuiStorageCore {
 
-    protected final GuiButtonExt btnClearCraftingPanel = new GuiButtonExt(10, 215, 106, 8, 8, "");
+    protected GuiButtonExt btnClearCraftingPanel;
 
     public GuiCraftingCore(EntityPlayer player, World world, int x, int y, int z) {
         super(new ContainerStorageCoreCrafting(player, world), world, x, y, z);
@@ -27,6 +27,7 @@ public class GuiCraftingCore extends GuiStorageCore {
     @Override
     public void initGui() {
         super.initGui();
+        btnClearCraftingPanel = new GuiButtonExt(10, guiLeft + 99, guiTop + 114, 8, 8, "");
         buttonList.add(btnClearCraftingPanel);
     }
 
