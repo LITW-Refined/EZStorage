@@ -38,7 +38,7 @@ public class EZInventoryManager {
                 .toString();
             inventories.add(inventory);
         }
-        inventory.resetHasChanges();
+        inventory.setHasChanges();
         return inventory;
     }
 

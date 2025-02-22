@@ -109,7 +109,6 @@ public class TileEntityStorageCore extends TileEntity {
             inventory.readFromNBT(paramNBTTagCompound);
             EZInventoryManager.createInventory(inventory);
             inventoryId = inventory.id;
-            inventory.setHasChanges();
         }
     }
 
