@@ -6,14 +6,12 @@ import java.util.Set;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockInputPort;
@@ -164,18 +162,10 @@ public class TileEntityStorageCore extends TileEntity {
             if (ref.block instanceof BlockStorageCore) {
                 count++;
             }
-            if (count > 1) {
-                if (worldObj.isRemote) {
-                    if (entity instanceof EntityPlayer entityPlayer) {
-                        entityPlayer.addChatComponentMessage(
-                            new ChatComponentText("You can only have 1 Storage Core per system!"));
-                    }
-                } else if (worldObj.getTileEntity(xCoord, yCoord, zCoord)
-                    .getBlockType() instanceof BlockStorageCore) {
-                        worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-                        worldObj.spawnEntityInWorld(
-                            new EntityItem(worldObj, xCoord, yCoord, zCoord, new ItemStack(EZBlocks.storage_core)));
-                    }
+            if (count > 1 && worldObj.getBlock(xCoord, yCoord, zCoord) instanceof BlockStorageCore) {
+                worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+                worldObj.spawnEntityInWorld(
+                    new EntityItem(worldObj, xCoord, yCoord, zCoord, new ItemStack(EZBlocks.storage_core)));
                 return false;
             }
         }
@@ -197,7 +187,6 @@ public class TileEntityStorageCore extends TileEntity {
             firstTick = true;
             if (!worldObj.isRemote) {
                 scanMultiblock(null);
-                EZInventoryManager.sendToClients(getInventory());
             }
         }
     }
