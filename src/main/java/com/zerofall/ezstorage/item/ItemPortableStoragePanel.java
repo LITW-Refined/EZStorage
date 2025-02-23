@@ -27,15 +27,19 @@ import com.zerofall.ezstorage.util.EZStorageUtils;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
+import baubles.api.IBauble;
 import baubles.api.expanded.BaubleExpandedSlots;
 import baubles.api.expanded.IBaubleExpanded;
 import cpw.mods.fml.common.Optional.Interface;
+import cpw.mods.fml.common.Optional.InterfaceList;
 import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Interface(modid = "Baubles", iface = "baubles.api.expanded.IBaubleExpanded")
-public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded {
+@SuppressWarnings("unused")
+@InterfaceList({ @Interface(modid = "Baubles", iface = "baubles.api.IBaubles"),
+    @Interface(modid = "Baubles|Expanded", iface = "baubles.api.expanded.IBaubleExpanded") })
+public class ItemPortableStoragePanel extends EZItem implements IBauble, IBaubleExpanded {
 
     public ItemPortableStoragePanel() {
         super("portable_storage_terminal");
@@ -333,7 +337,7 @@ public class ItemPortableStoragePanel extends EZItem implements IBaubleExpanded 
     }
 
     @Override
-    @Method(modid = "Baubles")
+    @Method(modid = "Baubles|Expanded")
     public String[] getBaubleTypes(ItemStack itemStack) {
         return new String[] { BaubleExpandedSlots.universalType };
     }
