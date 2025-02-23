@@ -12,12 +12,19 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     public TileEntityStorageCore core;
 
+    public EZInventory getInventory() {
+        if (core != null) {
+            return core.getInventory();
+        }
+        return null;
+    }
+
     @Override
     public int getSizeInventory() {
-        if (core == null) {
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
             return 1;
         }
-        EZInventory inventory = core.getInventory();
         int size = inventory.inventory.size();
         if (inventory.getTotalCount() < inventory.maxItems
             && (EZConfiguration.maxItemTypes == 0 || inventory.slotCount() < EZConfiguration.maxItemTypes)) {
@@ -28,31 +35,35 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        if (core != null && index < core.getInventory().inventory.size()) {
-            return core.getInventory().inventory.get(index);
+        EZInventory inventory = getInventory();
+        if (inventory != null && index < inventory.inventory.size()) {
+            return inventory.inventory.get(index);
         }
         return null;
     }
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        ItemStack result = core.getInventory()
-            .getItemStackAt(index, count);
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        ItemStack result = inventory.getItemStackAt(index, count);
         core.updateTileEntity();
         return result;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (core == null) {
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
             return;
         } else if (stack == null || stack.stackSize == 0) {
-            core.getInventory().inventory.remove(index);
-        } else if (index >= core.getInventory().inventory.size()) {
-            core.getInventory()
-                .input(stack);
+            inventory.inventory.remove(index);
+        } else if (index >= inventory.inventory.size()) {
+            inventory.input(stack);
         } else if (isItemValidForSlot(index, stack)) {
-            core.getInventory().inventory.set(index, stack);
+            inventory.inventory.set(index, stack);
         } else {
             return;
         }
@@ -61,7 +72,11 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public int getInventoryStackLimit() {
-        return (int) Math.min(core.getInventory().maxItems, Integer.MAX_VALUE);
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
+            return 0;
+        }
+        return (int) Math.min(inventory.maxItems, Integer.MAX_VALUE);
     }
 
     @Override
@@ -81,11 +96,11 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (core == null) {
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
             return false;
         }
 
-        EZInventory inventory = core.getInventory();
         int foundIndex = -1;
         int itemsCount = inventory.inventory.size();
 
@@ -126,11 +141,10 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, int direction) {
-        if (core == null) {
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
             return false;
         }
-
-        EZInventory inventory = core.getInventory();
 
         // Check if the slot is empty and if the item does not exist yet
         if (index >= inventory.inventory.size()) {
