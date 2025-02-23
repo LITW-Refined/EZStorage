@@ -339,7 +339,9 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
     @Override
     @Method(modid = "Baubles|Expanded")
     public String[] getBaubleTypes(ItemStack itemStack) {
-        return new String[] { BaubleExpandedSlots.universalType };
+        // TODO: Remove non-universal types after universal got upstreamed to jss' fork
+        return new String[] { BaubleExpandedSlots.universalType, BaubleExpandedSlots.amuletType,
+            BaubleExpandedSlots.ringType, BaubleExpandedSlots.beltType };
     }
 
     @Method(modid = "Baubles")
