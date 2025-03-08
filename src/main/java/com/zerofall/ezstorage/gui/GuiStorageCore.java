@@ -22,6 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.Reference;
+import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.container.ContainerStorageCore;
 import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
@@ -63,7 +64,7 @@ public class GuiStorageCore extends GuiContainer {
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setTextColor(0xFFFFFF);
         this.searchField.setCanLoseFocus(true);
-        this.searchField.setFocused(true);
+        this.searchField.setFocused(EZConfiguration.focusGuiInput);
         this.searchField.setText(searchText);
     }
 
