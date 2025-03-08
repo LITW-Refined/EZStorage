@@ -28,6 +28,10 @@ public class EZConfiguration {
     @Config.RangeInt(min = 0)
     public static int maxItemTypes;
 
+    @Config.Comment("Focus the input field when opening a storage GUI.")
+    @Config.DefaultBoolean(true)
+    public static boolean focusGuiInput;
+
     public static void init() {
         try {
             ConfigurationManager.registerConfig(EZConfiguration.class);
