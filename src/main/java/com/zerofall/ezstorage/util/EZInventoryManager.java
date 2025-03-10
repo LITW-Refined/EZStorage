@@ -209,7 +209,8 @@ public class EZInventoryManager {
         for (WorldServer world : server.worldServers) {
             // Send inventory packet to players with open Storage Core gui
             for (EntityPlayer player : world.playerEntities) {
-                if (player.openContainer instanceof ContainerStorageCore && player instanceof EntityPlayerMP playerMP) {
+                if (player.openContainer instanceof ContainerStorageCore container && container.inventory == inventory
+                    && player instanceof EntityPlayerMP playerMP) {
                     EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
                 }
             }
