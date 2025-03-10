@@ -26,6 +26,7 @@ Easy Storage (former EZStorage) introduces an early-game storage system that sca
 - **Portable Storage Panel**
   - This adds a small item that features a wood panel with wireless access to your storage core. It's tier can be upgraded and a crafting grid can also be added.
   - Upgrade by putting in crafting grid together with one redstone block and the upgrade item (ender eye, ender pearl, nether star, crafting box)
+  - No need for chunkloading the target storage core, it works without!
 
 ## Mod Integration
 
