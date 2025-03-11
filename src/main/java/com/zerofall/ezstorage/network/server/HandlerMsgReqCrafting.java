@@ -10,6 +10,7 @@ import com.zerofall.ezstorage.container.ContainerStorageCoreCrafting;
 import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.network.client.MsgReqCrafting;
 import com.zerofall.ezstorage.util.EZInventory;
+import com.zerofall.ezstorage.util.EZInventoryManager;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -71,7 +72,7 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
                     }
                 }
             }
-            return new MsgStorage(inventory.id, inventory);
+            EZInventoryManager.sendToClients(inventory);
         }
 
         return null;

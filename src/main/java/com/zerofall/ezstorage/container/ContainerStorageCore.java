@@ -78,28 +78,37 @@ public class ContainerStorageCore extends Container {
     public ItemStack customSlotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
         int itemIndex = slotId;
         ItemStack heldStack = playerIn.inventory.getItemStack();
+        ItemStack result = null;
+        boolean sendToClients = false;
+
         if (heldStack == null) {
             int type = 0;
             if (clickedButton == 1) {
                 type = 1;
             }
             ItemStack stack = this.inventory.getItemsAt(itemIndex, type);
-            if (stack == null) {
-                return null;
-            }
-            // Shift click
-            if (clickedButton == 0 && mode == 1) {
-                if (!this.mergeItemStack(stack, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
-                    this.inventory.input(stack);
+            if (stack != null) {
+                // Shift click
+                if (clickedButton == 0 && mode == 1) {
+                    if (!this.mergeItemStack(stack, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
+                        this.inventory.input(stack);
+                    }
+                } else {
+                    playerIn.inventory.setItemStack(stack);
                 }
-            } else {
-                playerIn.inventory.setItemStack(stack);
+                sendToClients = true;
+                result = stack;
             }
-            return stack;
         } else {
             playerIn.inventory.setItemStack(this.inventory.input(heldStack));
+            sendToClients = true;
         }
-        return null;
+
+        if (sendToClients) {
+            EZInventoryManager.sendToClients(inventory);
+        }
+
+        return result;
     }
 
     protected int playerInventoryX() {

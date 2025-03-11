@@ -18,7 +18,6 @@ public class HandlerMsgInvSlotClicked implements IMessageHandler<MsgInvSlotClick
         if (!IntegrationUtils.isSpectatorMode(player)
             && player.openContainer instanceof ContainerStorageCore storageContainer) {
             storageContainer.customSlotClick(message.index, message.button, message.mode, player);
-            return new MsgStorage(storageContainer.inventory.id, storageContainer.inventory);
         }
         return null; // no response in this case
     }
