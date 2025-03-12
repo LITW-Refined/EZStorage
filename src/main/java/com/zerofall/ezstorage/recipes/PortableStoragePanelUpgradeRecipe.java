@@ -90,7 +90,7 @@ public class PortableStoragePanelUpgradeRecipe implements IRecipe {
         return result;
     }
 
-    private static Item getUpgradeItem(PortableStoragePanelTier tier) {
+    public static Item getUpgradeItem(PortableStoragePanelTier tier) {
         switch (tier) {
             case TIER_2:
                 return Items.ender_pearl;

@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,8 +18,10 @@ import net.minecraft.world.WorldServer;
 import com.gtnewhorizon.gtnhlib.GTNHLib;
 import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.enums.PortableStoragePanelTier;
+import com.zerofall.ezstorage.init.EZBlocks;
 import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.network.server.MsgStorage;
+import com.zerofall.ezstorage.recipes.PortableStoragePanelUpgradeRecipe;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
@@ -134,9 +137,10 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean shiftPressed) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean unknownFlag) {
         if (itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
-            shiftPressed = EZStorageUtils.isShiftDown();
+            boolean shiftPressed = EZStorageUtils.isShiftDown();
+            boolean ctrlPressed = EZStorageUtils.isCtrlDown();
             PortableStoragePanelTier tier = panel.getTier(itemStack);
             EZInventoryReference reference = panel.getInventoryReference(itemStack);
             boolean hasCrafting = panel.getHasCraftingArea(itemStack);
@@ -175,6 +179,30 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
                 strCrafting = "§4" + StatCollector.translateToLocal("hud.msg.ezstorage.portable.crafting.disabled") + "§r";
             }
             tooltip.add(StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.crafting", strCrafting));
+
+            if (ctrlPressed && tier != null && (!tier.isInfinity || !hasCrafting)) {
+                tooltip.add(StatCollector.translateToLocal("hud.msg.ezstorage.portable.upgrades"));
+                if (tier != PortableStoragePanelTier.TIER_INFINITY) {
+                    tooltip.add("  - " + StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.upgrade.nexttier",
+                        panel.getItemStackDisplayName(null),
+                        Blocks.redstone_block.getLocalizedName(),
+                        PortableStoragePanelUpgradeRecipe.getUpgradeItem(tier).getItemStackDisplayName(null)));
+                }
+                if (!hasCrafting) {
+                    tooltip.add("  - " + StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.upgrade.crafting",
+                        panel.getItemStackDisplayName(null),
+                        Blocks.redstone_block.getLocalizedName(),
+                        EZBlocks.crafting_box.getLocalizedName()));
+                }
+            }
+
+            if (!shiftPressed && connected) {
+                tooltip.add(StatCollector.translateToLocal("hud.msg.ezstorage.general.holdshift"));
+            }
+
+            if (!ctrlPressed && tier != null && (!tier.isInfinity || !hasCrafting)) {
+                tooltip.add(StatCollector.translateToLocal("hud.msg.ezstorage.general.holdctrl"));
+            }
         }
     }
 
