@@ -1,5 +1,7 @@
 package com.zerofall.ezstorage.container;
 
+import java.time.LocalDateTime;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -14,6 +16,7 @@ import com.zerofall.ezstorage.util.EZInventoryManager;
 public class ContainerStorageCore extends Container {
 
     public EZInventory inventory = new EZInventory();
+    public LocalDateTime inventoryUpdateTimestamp = LocalDateTime.now();
 
     public ContainerStorageCore(EntityPlayer player, EZInventory inventory) {
         this(player);

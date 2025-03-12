@@ -1,5 +1,7 @@
 package com.zerofall.ezstorage.network.client;
 
+import java.time.LocalDateTime;
+
 import net.minecraft.client.entity.EntityClientPlayerMP;
 
 import com.zerofall.ezstorage.container.ContainerStorageCore;
@@ -18,6 +20,7 @@ public class HandlerMsgStorage implements IMessageHandler<MsgStorage, IMessage> 
             .getClientPlayerEntity();
         if (player.openContainer instanceof ContainerStorageCore container) {
             message.getInventory(container.inventory);
+            container.inventoryUpdateTimestamp = LocalDateTime.now();
         }
         return null;
     }

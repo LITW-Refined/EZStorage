@@ -1,6 +1,7 @@
 package com.zerofall.ezstorage.gui;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,8 @@ public class GuiStorageCore extends GuiContainer {
     protected GuiTextField searchField;
     protected ItemStack mouseOverItem;
     protected List<ItemStack> filteredList;
+    protected LocalDateTime inventoryUpdateTimestamp;
+    protected boolean needFullUpdate;
 
     @Override
     public void initGui() {
@@ -213,6 +216,7 @@ public class GuiStorageCore extends GuiContainer {
             filteredList.clear();
             filterItems(searchText, getInventory().inventory);
             Collections.sort(filteredList, new ItemStackCountComparator());
+            needFullUpdate = false;
         } else {
             // Modify the current list to keep the current sorting
             List<ItemStack> listNewStacks = new ArrayList<ItemStack>();
@@ -253,6 +257,8 @@ public class GuiStorageCore extends GuiContainer {
             if (listNewStacks.size() != 0) {
                 filterItems(searchText, listNewStacks);
             }
+
+            needFullUpdate = true;
         }
     }
 
@@ -405,7 +411,12 @@ public class GuiStorageCore extends GuiContainer {
 
     @Override
     public void updateScreen() {
-        updateFilteredItems(false);
+        if (inventorySlots instanceof ContainerStorageCore container
+            && (inventoryUpdateTimestamp != container.inventoryUpdateTimestamp
+                || (needFullUpdate && !GuiScreen.isShiftKeyDown()))) {
+            inventoryUpdateTimestamp = container.inventoryUpdateTimestamp;
+            updateFilteredItems(false);
+        }
         super.updateScreen();
     }
 
