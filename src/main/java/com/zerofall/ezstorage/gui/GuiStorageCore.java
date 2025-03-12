@@ -338,11 +338,12 @@ public class GuiStorageCore extends GuiContainer {
             int index = getInventory().slotCount();
             if (slot < this.filteredList.size()) {
                 ItemStack group = this.filteredList.get(slot);
-                if (group != null) {
-                    index = getInventory().getIndexOf(group);
-                    if (index < 0) {
-                        return;
-                    }
+                if (group == null || group.stackSize == 0) {
+                    return;
+                }
+                index = getInventory().getIndexOf(group);
+                if (index < 0) {
+                    return;
                 }
             }
             EZStorage.instance.network.sendToServer(new MsgInvSlotClicked(index, mouseButton, mode));
