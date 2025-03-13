@@ -1,5 +1,10 @@
 package com.zerofall.ezstorage.container;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -52,9 +57,10 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
         Slot slotObject = (Slot) inventorySlots.get(index);
         if (slotObject != null && slotObject.getHasStack()) {
             if (slotObject instanceof SlotCrafting) {
-                ItemStack[] recipe = new ItemStack[9];
+                boolean hasChanges = false;
+                ItemStack[][] recipe = new ItemStack[9][];
                 for (int i = 0; i < 9; i++) {
-                    recipe[i] = this.craftMatrix.getStackInSlot(i);
+                    recipe[i] = new ItemStack[] { this.craftMatrix.getStackInSlot(i) };
                 }
 
                 ItemStack slotStack = slotObject.getStack();
@@ -91,8 +97,14 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                     slotObject.onPickupFromSlot(playerIn, slotStack);
 
                     if (slotObject.getStack() == null || !original.isItemEqual(slotObject.getStack())) {
-                        tryToPopulateCraftingGrid(recipe, playerIn);
+                        if (tryToPopulateCraftingGrid(recipe, playerIn, false)) {
+                            hasChanges = true;
+                        }
                     }
+                }
+
+                if (hasChanges) {
+                    EZInventoryManager.sendToClients(inventory);
                 }
 
                 if (resultStack == null || slotStack.stackSize == resultStack.stackSize) {
@@ -100,11 +112,11 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 }
 
                 return resultStack;
+            } else {
+                ItemStack stackInSlot = slotObject.getStack();
+                slotObject.putStack(this.inventory.input(stackInSlot));
+                EZInventoryManager.sendToClients(inventory);
             }
-
-            ItemStack stackInSlot = slotObject.getStack();
-            slotObject.putStack(this.inventory.input(stackInSlot));
-            EZInventoryManager.sendToClients(inventory);
         }
         return null;
     }
@@ -116,13 +128,13 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 Slot slotObject = inventorySlots.get(slotId);
                 if (slotObject != null) {
                     if (slotObject instanceof SlotCrafting) {
-                        ItemStack[] recipe = new ItemStack[9];
+                        ItemStack[][] recipe = new ItemStack[9][];
                         for (int i = 0; i < 9; i++) {
-                            recipe[i] = this.craftMatrix.getStackInSlot(i);
+                            recipe[i] = new ItemStack[] { this.craftMatrix.getStackInSlot(i) };
                         }
                         ItemStack result = super.slotClick(slotId, clickedButton, mode, playerIn);
-                        if (result != null) {
-                            tryToPopulateCraftingGrid(recipe, playerIn);
+                        if (result != null && tryToPopulateCraftingGrid(recipe, playerIn, false)) {
+                            EZInventoryManager.sendToClients(inventory);
                         }
                         return result;
                     }
@@ -133,24 +145,129 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
-    private void tryToPopulateCraftingGrid(ItemStack[] recipe, EntityPlayer playerIn) {
-        clearGrid(playerIn);
+    public boolean tryToPopulateCraftingGrid(ItemStack[][] recipe, EntityPlayer playerIn, boolean usePlayerInv) {
+        boolean hasChanges = false;
+        HashMap<Integer, ArrayList<Slot>> playerInvSlotsMapping = new HashMap<>();
+
         for (int j = 0; j < recipe.length; j++) {
-            if (recipe[j] != null) {
-                if (recipe[j].stackSize > 1) {
+            ItemStack[] recipeItems = recipe[j];
+
+            Slot slot = getSlotFromInventory(this.craftMatrix, j);
+            if (slot == null) {
+                continue;
+            }
+
+            ItemStack stackInSlot = slot.getStack();
+            if (stackInSlot != null) {
+                if (recipeItems == null || recipeItems.length == 0
+                    || getMatchingItemStackForRecipe(recipeItems, stackInSlot) == null) {
+                    ItemStack result = this.inventory.input(stackInSlot);
+                    this.craftMatrix.setInventorySlotContents(j, null);
+                    if (result == null) {
+                        playerIn.dropPlayerItemWithRandomChoice(result, false);
+                    }
+                    hasChanges = true;
+                } else {
+                    continue;
+                }
+            }
+
+            if (recipeItems == null || recipeItems.length == 0) {
+                continue;
+            }
+
+            ItemStack retreived = null;
+
+            for (int k = 0; k < recipeItems.length; k++) {
+                ItemStack recipeItem = recipeItems[k];
+
+                if (recipeItem == null) {
+                    continue;
+                }
+
+                if (recipeItem.stackSize > 1) {
                     continue;
                 } else {
-                    recipe[j].stackSize = 1;
+                    recipeItem.stackSize = 1;
                 }
-                Slot slot = getSlotFromInventory(this.craftMatrix, j);
-                if (slot != null) {
-                    ItemStack retreived = inventory.getItems(new ItemStack[] { recipe[j] });
+
+                boolean foundInPlayerInv = false;
+                if (usePlayerInv) {
+                    Integer playerInvSize = playerIn.inventory.mainInventory.length;
+                    for (int i = 0; i < playerInvSize; i++) {
+                        ItemStack playerItem = playerIn.inventory.mainInventory[i];
+                        if (playerItem != null && playerItem.isItemEqual(recipeItem)) {
+                            ArrayList<Slot> targetSlots = playerInvSlotsMapping.get(i);
+                            if (targetSlots == null) {
+                                targetSlots = new ArrayList<>();
+                                playerInvSlotsMapping.put(i, targetSlots);
+                            }
+                            if (playerItem.stackSize > targetSlots.size()) {
+                                targetSlots.add(slot);
+                                foundInPlayerInv = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (retreived == null && !foundInPlayerInv) {
+                    retreived = inventory.getItems(new ItemStack[] { recipeItem });
                     if (retreived != null) {
-                        slot.putStack(retreived);
+                        hasChanges = true;
+                        break;
+                    }
+                }
+            }
+
+            if (retreived != null) {
+                slot.putStack(retreived);
+            }
+        }
+
+        if (usePlayerInv && playerInvSlotsMapping.size() != 0) {
+            Set<Entry<Integer, ArrayList<Slot>>> set = playerInvSlotsMapping.entrySet();
+            for (Entry<Integer, ArrayList<Slot>> entry : set) {
+                Integer playerInvSlotId = entry.getKey();
+                ArrayList<Slot> targetSlots = entry.getValue();
+                int targetSlotsCount = targetSlots.size();
+                ItemStack playerInvSlot = playerIn.inventory.mainInventory[playerInvSlotId];
+                if (playerInvSlot == null) {
+                    continue;
+                }
+                int itemsToRequest = (int) (playerInvSlot.stackSize / targetSlotsCount);
+
+                for (int j = 0; j < targetSlotsCount; j++) {
+                    Slot targetSlot = targetSlots.get(j);
+                    if (targetSlot == null) {
+                        continue;
+                    }
+                    if (j == targetSlotsCount - 1) {
+                        playerInvSlot = playerIn.inventory.mainInventory[playerInvSlotId];
+                        if (playerInvSlot == null) {
+                            break;
+                        }
+                        itemsToRequest = playerInvSlot.stackSize;
+                    }
+                    ItemStack retrived = playerIn.inventory.decrStackSize(playerInvSlotId, itemsToRequest);
+                    if (retrived != null) {
+                        targetSlot.putStack(retrived);
                     }
                 }
             }
         }
+
+        return hasChanges;
+    }
+
+    private static ItemStack getMatchingItemStackForRecipe(ItemStack[] recipeItems, ItemStack stack) {
+        for (ItemStack recipeItem : recipeItems) {
+            if (recipeItem.getItem() == stack.getItem()
+                && (recipeItem.getItemDamage() == stack.getItemDamage() || stack.isItemStackDamageable())) {
+                return recipeItem;
+            }
+        }
+        return null;
     }
 
     @Override

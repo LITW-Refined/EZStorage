@@ -2,14 +2,12 @@ package com.zerofall.ezstorage.network.server;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.container.ContainerStorageCoreCrafting;
 import com.zerofall.ezstorage.integration.IntegrationUtils;
 import com.zerofall.ezstorage.network.client.MsgReqCrafting;
-import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -28,7 +26,7 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
         }
         Container container = player.openContainer;
         if (container instanceof ContainerStorageCoreCrafting con) {
-            EZInventory inventory = con.inventory;
+            // EZInventory inventory = con.inventory;
 
             this.recipe = new ItemStack[9][];
             for (int x = 0; x < this.recipe.length; x++) {
@@ -40,39 +38,44 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
                     }
                 }
             }
-            for (int i = 0; i < this.recipe.length; i++) {
-                Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
-                if (slot != null) {
-                    ItemStack slotStack = slot.getStack();
 
-                    if (i < this.recipe.length && this.recipe[i] != null && this.recipe[i].length > 0) {
-                        boolean isValid = false;
-
-                        if (slotStack != null) {
-                            for (ItemStack recipeStack : this.recipe[i]) {
-                                if (recipeStack.isItemEqual(slot.getStack())) {
-                                    isValid = true;
-                                }
-                            }
-                        }
-
-                        if (isValid) {
-                            continue;
-                        }
-
-                        ItemStack retreived = inventory.getItems(this.recipe[i]);
-                        if (retreived != null) {
-                            slot.putStack(retreived);
-                            continue;
-                        }
-                    }
-
-                    if (slotStack != null) {
-                        slot.putStack(null);
-                    }
-                }
+            if (con.tryToPopulateCraftingGrid(recipe, player, true)) {
+                EZInventoryManager.sendToClients(con.inventory);
             }
-            EZInventoryManager.sendToClients(inventory);
+
+            // for (int i = 0; i < this.recipe.length; i++) {
+            // Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
+            // if (slot != null) {
+            // ItemStack slotStack = slot.getStack();
+
+            // if (i < this.recipe.length && this.recipe[i] != null && this.recipe[i].length > 0) {
+            // boolean isValid = false;
+
+            // if (slotStack != null) {
+            // for (ItemStack recipeStack : this.recipe[i]) {
+            // if (recipeStack.isItemEqual(slot.getStack())) {
+            // isValid = true;
+            // }
+            // }
+            // }
+
+            // if (isValid) {
+            // continue;
+            // }
+
+            // ItemStack retreived = inventory.getItems(this.recipe[i]);
+            // if (retreived != null) {
+            // slot.putStack(retreived);
+            // continue;
+            // }
+            // }
+
+            // if (slotStack != null) {
+            // slot.putStack(null);
+            // }
+            // }
+            // }
+            // EZInventoryManager.sendToClients(inventory);
         }
 
         return null;
