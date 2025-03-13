@@ -26,8 +26,6 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
         }
         Container container = player.openContainer;
         if (container instanceof ContainerStorageCoreCrafting con) {
-            // EZInventory inventory = con.inventory;
-
             this.recipe = new ItemStack[9][];
             for (int x = 0; x < this.recipe.length; x++) {
                 NBTTagList list = message.recipe.getTagList("#" + x, 10);
@@ -42,40 +40,6 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
             if (con.tryToPopulateCraftingGrid(recipe, player, true)) {
                 EZInventoryManager.sendToClients(con.inventory);
             }
-
-            // for (int i = 0; i < this.recipe.length; i++) {
-            // Slot slot = con.getSlotFromInventory(con.craftMatrix, i);
-            // if (slot != null) {
-            // ItemStack slotStack = slot.getStack();
-
-            // if (i < this.recipe.length && this.recipe[i] != null && this.recipe[i].length > 0) {
-            // boolean isValid = false;
-
-            // if (slotStack != null) {
-            // for (ItemStack recipeStack : this.recipe[i]) {
-            // if (recipeStack.isItemEqual(slot.getStack())) {
-            // isValid = true;
-            // }
-            // }
-            // }
-
-            // if (isValid) {
-            // continue;
-            // }
-
-            // ItemStack retreived = inventory.getItems(this.recipe[i]);
-            // if (retreived != null) {
-            // slot.putStack(retreived);
-            // continue;
-            // }
-            // }
-
-            // if (slotStack != null) {
-            // slot.putStack(null);
-            // }
-            // }
-            // }
-            // EZInventoryManager.sendToClients(inventory);
         }
 
         return null;
