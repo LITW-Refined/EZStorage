@@ -22,10 +22,8 @@ public class NeiCraftingOverlay implements IOverlayHandler {
     @Override
     public void overlayRecipe(final GuiContainer gui, final IRecipeHandler recipe, final int recipeIndex,
         final boolean shift) {
-        try {
-            final List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
-            overlayRecipe(gui, ingredients, shift);
-        } catch (final Exception localException) {} catch (final Error localError) {}
+        final List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
+        overlayRecipe(gui, ingredients, shift);
     }
 
     public void overlayRecipe(final GuiContainer gui, final List<PositionedStack> ingredients, final boolean shift) {
