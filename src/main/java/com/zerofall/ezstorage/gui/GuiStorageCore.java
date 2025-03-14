@@ -358,6 +358,7 @@ public class GuiStorageCore extends GuiContainer {
                 if (mouseButton == 1 || GuiScreen.isShiftKeyDown()) {
                     searchText = "";
                     this.searchField.setText(searchText);
+                    updateFilteredItems(true);
                 }
                 this.searchField.setFocused(true);
             } else {
