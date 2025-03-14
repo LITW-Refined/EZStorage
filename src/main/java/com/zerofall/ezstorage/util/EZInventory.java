@@ -66,7 +66,7 @@ public class EZInventory {
         // Add new group, if needed
         if (!found) {
             if (EZConfiguration.maxItemTypes != 0 && slotCount() > EZConfiguration.maxItemTypes) {
-                return null;
+                return itemStack;
             }
             ItemStack copy = itemStack.copy();
             copy.stackSize = amount;
