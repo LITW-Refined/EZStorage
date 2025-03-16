@@ -159,20 +159,18 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
 
             ItemStack stackInSlot = slot.getStack();
             if (stackInSlot != null) {
-                if (recipeItems == null || recipeItems.length == 0
-                    || getMatchingItemStackForRecipe(recipeItems, stackInSlot) == null) {
-                    ItemStack result = this.inventory.input(stackInSlot);
-                    this.craftMatrix.setInventorySlotContents(j, null);
-                    if (result == null) {
-                        playerIn.dropPlayerItemWithRandomChoice(result, false);
-                    }
-                    hasChanges = true;
-                } else {
+                if (getMatchingItemStackForRecipe(recipeItems, stackInSlot) != null) {
                     continue;
                 }
+                ItemStack result = this.inventory.input(stackInSlot);
+                if (result == null) {
+                    playerIn.dropPlayerItemWithRandomChoice(result, false);
+                }
+                hasChanges = true;
             }
 
             if (recipeItems == null || recipeItems.length == 0) {
+                slot.putStack(null);
                 continue;
             }
 
@@ -261,6 +259,9 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     }
 
     private static ItemStack getMatchingItemStackForRecipe(ItemStack[] recipeItems, ItemStack stack) {
+        if (recipeItems == null) {
+            return null;
+        }
         for (ItemStack recipeItem : recipeItems) {
             if (recipeItem.getItem() == stack.getItem()
                 && (recipeItem.getItemDamage() == stack.getItemDamage() || stack.isItemStackDamageable())) {
