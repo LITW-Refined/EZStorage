@@ -148,6 +148,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     public boolean tryToPopulateCraftingGrid(ItemStack[][] recipe, EntityPlayer playerIn, boolean usePlayerInv) {
         boolean hasChanges = false;
         HashMap<Integer, ArrayList<Slot>> playerInvSlotsMapping = new HashMap<>();
+        final int craftingSlotsStartIndex = inventorySlots.size() - 3 * 3;
 
         for (int j = 0; j < recipe.length; j++) {
             ItemStack[] recipeItems = recipe[j];
@@ -160,6 +161,9 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
             ItemStack stackInSlot = slot.getStack();
             if (stackInSlot != null) {
                 if (getMatchingItemStackForRecipe(recipeItems, stackInSlot) != null) {
+                    // Force trigger update for this slot because the container might
+                    // be empty when the Gui is shown again after NEI crafting request.
+                    inventoryItemStacks.set(craftingSlotsStartIndex + j, null);
                     continue;
                 }
                 ItemStack result = this.inventory.input(stackInSlot);
