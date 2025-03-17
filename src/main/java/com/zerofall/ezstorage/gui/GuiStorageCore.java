@@ -196,6 +196,8 @@ public class GuiStorageCore extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) {
         if (!this.checkHotbarKeys(keyCode)) {
             if (this.searchField.isFocused() && this.searchField.textboxKeyTyped(typedChar, keyCode)) {
+                currentScroll = 0;
+                scrollRow = 0;
                 updateFilteredItems(true);
             } else {
                 super.keyTyped(typedChar, keyCode);
