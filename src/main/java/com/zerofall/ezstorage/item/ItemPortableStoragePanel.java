@@ -139,12 +139,12 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean unknownFlag) {
         if (itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
-            boolean shiftPressed = EZStorageUtils.isShiftDown();
-            boolean ctrlPressed = EZStorageUtils.isCtrlDown();
-            PortableStoragePanelTier tier = panel.getTier(itemStack);
-            EZInventoryReference reference = panel.getInventoryReference(itemStack);
-            boolean hasCrafting = panel.getHasCraftingArea(itemStack);
-            boolean connected = reference != null && reference.inventoryId != null;
+            final boolean shiftPressed = EZStorageUtils.isShiftDown();
+            final boolean ctrlPressed = EZStorageUtils.isCtrlDown();
+            final PortableStoragePanelTier tier = panel.getTier(itemStack);
+            final EZInventoryReference reference = panel.getInventoryReference(itemStack);
+            final boolean hasCrafting = panel.getHasCraftingArea(itemStack);
+            final boolean connected = reference != null && reference.inventoryId != null;
 
             String strConnected;
             if (connected) {
@@ -182,11 +182,12 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
 
             if (ctrlPressed && tier != null && (!tier.isInfinity || !hasCrafting)) {
                 tooltip.add(StatCollector.translateToLocal("hud.msg.ezstorage.portable.upgrades"));
-                if (tier != PortableStoragePanelTier.TIER_INFINITY) {
+                final PortableStoragePanelTier nextTier = PortableStoragePanelTier.getNextTier(tier);
+                if (nextTier != null) {
                     tooltip.add("  - " + StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.upgrade.nexttier",
                         panel.getItemStackDisplayName(null),
                         Blocks.redstone_block.getLocalizedName(),
-                        PortableStoragePanelUpgradeRecipe.getUpgradeItem(tier).getItemStackDisplayName(null)));
+                        PortableStoragePanelUpgradeRecipe.getUpgradeItem(nextTier).getItemStackDisplayName(null)));
                 }
                 if (!hasCrafting) {
                     tooltip.add("  - " + StatCollector.translateToLocalFormatted("hud.msg.ezstorage.portable.upgrade.crafting",
