@@ -1,8 +1,12 @@
 package com.zerofall.ezstorage.nei;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -11,10 +15,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.EZStorage;
+import com.zerofall.ezstorage.gui.GuiStorageCore;
 import com.zerofall.ezstorage.network.client.MsgReqCrafting;
+import com.zerofall.ezstorage.util.EZInventory;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
+import codechicken.nei.recipe.GuiOverlayButton.ItemOverlayState;
 import codechicken.nei.recipe.IRecipeHandler;
 
 public class NeiCraftingOverlay implements IOverlayHandler {
@@ -65,5 +72,56 @@ public class NeiCraftingOverlay implements IOverlayHandler {
         }
 
         EZStorage.instance.network.sendToServer(new MsgReqCrafting(recipe));
+    }
+
+    @Override
+    public List<ItemOverlayState> presenceOverlay(GuiContainer firstGui, IRecipeHandler recipe, int recipeIndex) {
+        List<ItemStack> invStacks = new ArrayList<ItemStack>();
+
+        // Collect slots of storage core
+        if (firstGui instanceof GuiStorageCore coreGui) {
+            EZInventory inventory = coreGui.getInventory();
+            if (inventory != null) {
+                invStacks.addAll(
+                    inventory.inventory.stream()
+                        .map(s -> s.copy())
+                        .collect(Collectors.toCollection(ArrayList::new)));
+            }
+        }
+
+        // Collect slots of player inventory
+        invStacks
+            .addAll(getFromInventory(firstGui.mc.thePlayer.inventoryContainer.inventorySlots, firstGui.mc.thePlayer));
+
+        final List<ItemOverlayState> itemPresenceSlots = new ArrayList<>();
+        final List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
+
+        for (PositionedStack stack : ingredients) {
+            Optional<ItemStack> used = invStacks.stream()
+                .filter(is -> is.stackSize > 0 && stack.contains(is))
+                .findAny();
+
+            itemPresenceSlots.add(new ItemOverlayState(stack, used.isPresent()));
+
+            if (used.isPresent()) {
+                ItemStack is = used.get();
+                is.stackSize -= 1;
+            }
+        }
+
+        return itemPresenceSlots;
+    }
+
+    private List<ItemStack> getFromInventory(List<Slot> inventorySlots, EntityClientPlayerMP thePlayer) {
+        return inventorySlots.stream()
+            .filter(
+                s -> s != null && s.getStack() != null
+                    && s.getStack().stackSize > 0
+                    && s.isItemValid(s.getStack())
+                    && s.canTakeStack(thePlayer))
+            .map(
+                s -> s.getStack()
+                    .copy())
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 }
