@@ -50,7 +50,7 @@ public class GuiStorageCore extends GuiContainer {
     protected boolean wasClicking = false;
     protected GuiTextField searchField;
     protected ItemStack mouseOverItem;
-    protected List<ItemStack> filteredList;
+    protected List<ItemStack> filteredList = new ArrayList<ItemStack>();
     protected LocalDateTime inventoryUpdateTimestamp;
     protected boolean needFullUpdate;
 
@@ -208,10 +208,6 @@ public class GuiStorageCore extends GuiContainer {
     private void updateFilteredItems(boolean forceFullUpdate) {
         searchText = this.searchField.getText()
             .trim();
-
-        if (filteredList == null) {
-            filteredList = new ArrayList<ItemStack>();
-        }
 
         if (forceFullUpdate || !GuiScreen.isShiftKeyDown()) {
             // Simply refresh the list & sort
@@ -402,7 +398,7 @@ public class GuiStorageCore extends GuiContainer {
         int i = Mouse.getEventDWheel();
 
         if (i != 0) {
-            int j = getInventory().slotCount() / 9 - this.rowsVisible() + 1;
+            int j = filteredList.size() / 9 - this.rowsVisible() + 1;
 
             if (i > 0) {
                 i = 1;
@@ -431,7 +427,7 @@ public class GuiStorageCore extends GuiContainer {
     }
 
     private void scrollTo(float scroll) {
-        int i = (getInventory().slotCount() + 8) / 9 - this.rowsVisible();
+        int i = (filteredList.size() + 8) / 9 - this.rowsVisible();
         int j = (int) ((double) (scroll * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;
