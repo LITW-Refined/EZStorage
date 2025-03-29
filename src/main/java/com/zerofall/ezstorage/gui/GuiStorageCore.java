@@ -332,6 +332,7 @@ public class GuiStorageCore extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         Integer slot = getSlotAt(mouseX, mouseY);
+        boolean searchFieldFocused = searchField.isFocused();
         if (slot != null) {
             int mode = 0;
             if (GuiScreen.isShiftKeyDown()) {
@@ -351,6 +352,7 @@ public class GuiStorageCore extends GuiContainer {
             EZStorage.instance.network.sendToServer(new MsgInvSlotClicked(index, mouseButton, mode));
             ContainerStorageCore container = (ContainerStorageCore) this.inventorySlots;
             container.customSlotClick(index, mouseButton, mode, this.mc.thePlayer);
+            searchFieldFocused = false;
         } else {
             int elementX = this.searchField.xPosition;
             int elementY = this.searchField.yPosition;
@@ -363,9 +365,13 @@ public class GuiStorageCore extends GuiContainer {
                     updateFilteredItems(true);
                 }
                 this.searchField.setFocused(true);
+                searchFieldFocused = true;
             } else {
-                this.searchField.setFocused(false);
+                searchFieldFocused = false;
             }
+        }
+        if (searchField.isFocused() != searchFieldFocused) {
+            searchField.setFocused(searchFieldFocused);
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
