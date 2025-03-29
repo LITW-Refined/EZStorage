@@ -179,6 +179,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
             }
 
             ItemStack retreived = null;
+            boolean hasItem = false;
 
             for (int k = 0; k < recipeItems.length; k++) {
                 ItemStack recipeItem = recipeItems[k];
@@ -207,16 +208,22 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                             if (playerItem.stackSize > targetSlots.size()) {
                                 targetSlots.add(slot);
                                 foundInPlayerInv = true;
+                                hasItem = true;
                                 break;
                             }
                         }
                     }
                 }
 
+                if (foundInPlayerInv) {
+                    break;
+                }
+
                 if (retreived == null && !foundInPlayerInv) {
                     retreived = inventory.getItems(new ItemStack[] { recipeItem });
                     if (retreived != null) {
                         hasChanges = true;
+                        hasItem = true;
                         break;
                     }
                 }
@@ -224,6 +231,8 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
 
             if (retreived != null) {
                 slot.putStack(retreived);
+            } else if (!hasItem) {
+                slot.putStack(null); // Ensure slot it is cleared!
             }
         }
 
@@ -254,6 +263,8 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                     ItemStack retrived = playerIn.inventory.decrStackSize(playerInvSlotId, itemsToRequest);
                     if (retrived != null) {
                         targetSlot.putStack(retrived);
+                    } else {
+                        targetSlot.putStack(null); // Ensure slot it is cleared!
                     }
                 }
             }
