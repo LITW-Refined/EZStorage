@@ -40,7 +40,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SuppressWarnings("unused")
-@InterfaceList({ @Interface(modid = "Baubles", iface = "baubles.api.IBaubles"),
+@InterfaceList({ @Interface(modid = "Baubles", iface = "baubles.api.IBauble"),
     @Interface(modid = "Baubles|Expanded", iface = "baubles.api.expanded.IBaubleExpanded") })
 public class ItemPortableStoragePanel extends EZItem implements IBauble, IBaubleExpanded {
 
