@@ -159,14 +159,15 @@ public class GuiStorageCore extends GuiContainer {
             y += 18;
         }
 
+        this.zLevel = 0.0F;
+        itemRender.zLevel = 0.0F;
+
         int i1 = 175;
         int k = 18;
         int l = k + 108;
         this.mc.getTextureManager()
             .bindTexture(creativeInventoryTabs);
         this.drawTexturedModalRect(i1, k + (int) ((float) (l - k - 17) * this.currentScroll), 232, 0, 12, 15);
-        this.zLevel = 0.0F;
-        itemRender.zLevel = 0.0F;
     }
 
     @Override
