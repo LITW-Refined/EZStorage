@@ -34,14 +34,14 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("com.github.GTNewHorizons:GTNHLib:0.6.0:dev") { transitive = false }
-    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.13-GTNH:dev")
-    devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.8.2:dev") {transitive = false}
+    api("com.github.GTNewHorizons:GTNHLib:0.6.20:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.40-GTNH:dev")
+    devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.8.4:dev") {transitive = false}
     devOnlyNonPublishable("com.github.GTNewHorizons:WAILAPlugins:0.6.0:dev") {transitive = false}
-    devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.1:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.4:dev") { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:et-futurum-requiem-441392:5873837")) { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:crafting-tweaks-233071:2457094")) { transitive = false }
     devOnlyNonPublishable(project.files("libs/BaublesExpanded-2.0.3-dev.jar"))
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:EnderIO:2.9.2:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:EnderIO:2.9.8:dev")
     runtimeOnlyNonPublishable rfg.deobf("curse.maven:cofh-core-69162:2388751")
 }
