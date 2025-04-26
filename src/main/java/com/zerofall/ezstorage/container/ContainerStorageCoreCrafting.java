@@ -67,15 +67,10 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 ItemStack resultStack = null;
                 ItemStack original = slotStack.copy();
                 int crafted = 0;
-                int maxStackSize = slotStack.getMaxStackSize();
-                int crafting = slotStack.stackSize;
 
                 while (true) {
                     if (!slotObject.getHasStack() || !slotObject.getStack()
                         .isItemEqual(slotStack)) {
-                        break;
-                    }
-                    if (crafting >= maxStackSize) {
                         break;
                     }
 
