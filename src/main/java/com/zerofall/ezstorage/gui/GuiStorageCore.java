@@ -162,6 +162,9 @@ public class GuiStorageCore extends GuiContainer {
         this.zLevel = 0.0F;
         itemRender.zLevel = 0.0F;
 
+        // Reset color (Why the hell is that needed!?)
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
         int i1 = 175;
         int k = 18;
         int l = k + 108;
