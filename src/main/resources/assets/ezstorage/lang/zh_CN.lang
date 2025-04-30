@@ -2,22 +2,30 @@ tile.storage_core.name=存储核心
 tile.storage_box.name=存储箱
 tile.condensed_storage_box.name=压缩存储箱
 tile.hyper_storage_box.name=超级存储箱
-tile.input_port.name=物品代理
+tile.input_port.name=库存代理
 tile.crafting_box.name=合成箱
-item.portable_storage_terminal.name=便携式存储面板
+item.portable_storage_terminal.name=便携式存储终端
 itemGroup.Easy Storage=简易存储
-hud.msg.ezstorage.core.itemscount=物品数量：%s / %s
-hud.msg.ezstorage.core.typescount=物品种类：%s / %s
-hud.msg.ezstorage.core.inventoryid=库存ID：%s
+
+hud.msg.ezstorage.general.holdshift=§o<按住 Shift>
+hud.msg.ezstorage.general.holdctrl=§o<按住 Ctrl>
+hud.msg.ezstorage.core.itemscount=%s / %s 个物品
+hud.msg.ezstorage.core.typescount=%s / %s 种类型
+hud.msg.ezstorage.core.inventoryid=%s
 hud.msg.ezstorage.portable.status=状态：%s
 hud.msg.ezstorage.portable.status.connected=已连接
 hud.msg.ezstorage.portable.status.notconnected=未连接
 hud.msg.ezstorage.portable.range=范围：%s 格
-hud.msg.ezstorage.portable.crafting=合成：%s
+hud.msg.ezstorage.portable.crafting=合成功能：%s
 hud.msg.ezstorage.portable.crafting.enabled=已启用
 hud.msg.ezstorage.portable.crafting.disabled=已禁用
-chat.msg.storagecore_connected=已连接到位于 x=%s y=%s z=%s 的存储核心
-chat.msg.storagecore_not_found=找不到存储核心
+hud.msg.ezstorage.portable.upgrades=可用升级：
+hud.msg.ezstorage.portable.upgrade.nexttier=下一等级：%s + %s + %s
+hud.msg.ezstorage.portable.upgrade.crafting=合成箱：%s + %s + %s
+
+chat.msg.storagecore_connected=已连接到存储核心（坐标 x=%s y=%s z=%s）
+chat.msg.storagecore_not_found=未找到存储核心
 chat.msg.storagecore_out_of_range=存储核心超出范围
+
 key.categories.ezstorage=简易存储
-key.ezstorage.open_terminal=打开存储面板
+key.ezstorage.open_terminal=打开存储终端
