@@ -52,7 +52,7 @@ As from my side, this mod is feature-completed. I'll try fixing bugs as they wer
 
 ## Contribution
 
-If you want to help adding any feature or make improvements or getting compatibility with another mod, feel free to make a pull request. I only have the time to maintenance this mod at a low level, the lowest effort needed for getting it working nicely on my server and in the modpack.
+Feel free to open PRs for features, improvements, or compatibility fixes. I'm maintaining this at minimal effort for use on my server/modpack.
 
 ## Changes compared to the original version of EZStorage
 
