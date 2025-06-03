@@ -5,7 +5,7 @@ tile.hyper_storage_box.name=超级存储箱
 tile.input_port.name=库存代理
 tile.crafting_box.name=合成箱
 item.portable_storage_terminal.name=便携式存储终端
-itemGroup.Easy Storage=简易存储
+itemGroup.Simple Storage=简易存储
 
 hud.msg.ezstorage.general.holdshift=§o<按住 Shift>
 hud.msg.ezstorage.general.holdctrl=§o<按住 Ctrl>

@@ -5,7 +5,7 @@ tile.hyper_storage_box.name=Hyper Storage Box
 tile.input_port.name=Inventory Proxy
 tile.crafting_box.name=Crafting Box
 item.portable_storage_terminal.name=Portable Storage Panel
-itemGroup.Easy Storage=Easy Storage
+itemGroup.Simple Storage=Simple Storage
 hud.msg.ezstorage.general.holdshift=§o<Hold Shift>
 hud.msg.ezstorage.general.holdctrl=§o<Hold Ctrl>
 hud.msg.ezstorage.core.itemscount=%s / %s items
@@ -24,5 +24,5 @@ hud.msg.ezstorage.portable.upgrade.crafting=Crafting box: %s + %s + %s
 chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Storage core cannot be found
 chat.msg.storagecore_out_of_range=Storage core is out of range
-key.categories.ezstorage=Easy Storage
+key.categories.ezstorage=Simple Storage
 key.ezstorage.open_terminal=Open Storage Panel

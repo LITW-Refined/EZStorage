@@ -1,10 +1,10 @@
-# Easy Storage
+# Simple Storage
 
 Simple storage mod for Minecraft 1.7.10 (Forge).
 
 ## Description
 
-Easy Storage (former EZStorage) introduces an early-game storage system that scales and evolves as players progress, while keeping the vanilla flair. Want to put 100k Cobblestone in 1 slot? No problem. The blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
+Simple Storage (former EZStorage) introduces an early-game storage system that scales and evolves as players progress, while keeping the vanilla flair. Want to put 100k Cobblestone in 1 slot? No problem. The blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
  
 ## Blocks & Items
 
