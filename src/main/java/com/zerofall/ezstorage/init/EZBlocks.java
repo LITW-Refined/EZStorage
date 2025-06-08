@@ -1,5 +1,6 @@
 package com.zerofall.ezstorage.init;
 
+import com.zerofall.ezstorage.block.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -7,12 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import com.zerofall.ezstorage.block.BlockCondensedStorage;
-import com.zerofall.ezstorage.block.BlockCraftingBox;
-import com.zerofall.ezstorage.block.BlockHyperStorage;
-import com.zerofall.ezstorage.block.BlockInputPort;
-import com.zerofall.ezstorage.block.BlockStorage;
-import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
@@ -28,6 +23,7 @@ public class EZBlocks {
     public static Block hyper_storage_box;
     public static Block input_port;
     public static Block crafting_box;
+    public static Block storage_panel;
 
     public static void init() {
         storage_core = new BlockStorageCore();
@@ -36,6 +32,7 @@ public class EZBlocks {
         hyper_storage_box = new BlockHyperStorage();
         input_port = new BlockInputPort();
         crafting_box = new BlockCraftingBox();
+        storage_panel= new BlockStoragePanel();
     }
 
     public static void register() {
@@ -47,6 +44,7 @@ public class EZBlocks {
         GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(storage_panel, storage_panel.getUnlocalizedName().substring(5));
     }
 
     public static void registerRecipes() {

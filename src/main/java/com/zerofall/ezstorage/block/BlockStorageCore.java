@@ -14,7 +14,7 @@ import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
 
-public class BlockStorageCore extends EZBlockContainer {
+public class BlockStorageCore extends StorageUserInterface {
 
     public BlockStorageCore() {
         super("storage_core", Material.wood);
@@ -37,23 +37,4 @@ public class BlockStorageCore extends EZBlockContainer {
         }
         super.breakBlock(worldIn, x, y, z, blockBroken, meta);
     }
-
-    @Override
-    public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX,
-        float subY, float subZ) {
-        if (!worldIn.isRemote && player instanceof EntityPlayerMP playerMP) {
-            TileEntity tileEntity = worldIn.getTileEntity(x, y, z);
-            if (tileEntity instanceof TileEntityStorageCore core) {
-                EZInventory inventory = core.getInventory();
-                if (inventory != null) {
-                    boolean enableCraftingGrid = core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP);
-                    EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
-                    player.openGui(EZStorage.instance, enableCraftingGrid ? 2 : 1, worldIn, x, y, z);
-                    EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
-                }
-            }
-        }
-        return true;
-    }
-
 }
