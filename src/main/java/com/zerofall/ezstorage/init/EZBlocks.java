@@ -1,5 +1,6 @@
 package com.zerofall.ezstorage.init;
 
+import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.block.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -24,6 +25,7 @@ public class EZBlocks {
     public static Block input_port;
     public static Block crafting_box;
     public static Block storage_panel;
+    public static Block storage_cable;
 
     public static void init() {
         storage_core = new BlockStorageCore();
@@ -32,7 +34,8 @@ public class EZBlocks {
         hyper_storage_box = new BlockHyperStorage();
         input_port = new BlockInputPort();
         crafting_box = new BlockCraftingBox();
-        storage_panel= new BlockStoragePanel();
+        storage_panel = new BlockStoragePanel();
+        storage_cable = new BlockStorageCable();
     }
 
     public static void register() {
@@ -45,6 +48,7 @@ public class EZBlocks {
         GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(storage_panel, storage_panel.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(storage_cable, storage_cable.getUnlocalizedName().substring(5));
     }
 
     public static void registerRecipes() {
@@ -61,6 +65,7 @@ public class EZBlocks {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(input_port), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(crafting_box), " A ", " B ", " C ", 'A', Items.ender_pearl, 'B', Blocks.crafting_table, 'C', "gemDiamond"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_panel), "ABA", "BCB", "ABA", 'A', Blocks.redstone_torch, 'B', Blocks.planks, 'C', EZBlocks.storage_core));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_cable, 16), "AAA", " B ", "AAA", 'A', Blocks.wooden_slab, 'B', EZBlocks.storage_core));
 
         if (OreDictionary.getOres("blockDarkSteel").size() != 0) {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "BCB", "ABA", 'A', "blockDarkSteel", 'B', Blocks.obsidian, 'C', condensed_storage_box));
