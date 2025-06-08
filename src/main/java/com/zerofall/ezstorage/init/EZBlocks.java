@@ -1,7 +1,5 @@
 package com.zerofall.ezstorage.init;
 
-import com.zerofall.ezstorage.EZStorage;
-import com.zerofall.ezstorage.block.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -9,6 +7,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import com.zerofall.ezstorage.block.BlockCondensedStorage;
+import com.zerofall.ezstorage.block.BlockCraftingBox;
+import com.zerofall.ezstorage.block.BlockHyperStorage;
+import com.zerofall.ezstorage.block.BlockInputPort;
+import com.zerofall.ezstorage.block.BlockStorage;
+import com.zerofall.ezstorage.block.BlockStorageCable;
+import com.zerofall.ezstorage.block.BlockStorageCore;
+import com.zerofall.ezstorage.block.BlockStoragePanel;
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
