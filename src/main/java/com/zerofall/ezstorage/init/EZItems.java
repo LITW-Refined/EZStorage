@@ -10,6 +10,8 @@ import com.zerofall.ezstorage.recipes.PortableStoragePanelUpgradeRecipe;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 
+// spotless:off
+
 public class EZItems {
 
     public static Item portable_storage_panel;
@@ -26,18 +28,9 @@ public class EZItems {
     }
 
     public static void registerRecipes() {
-        GameRegistry.addRecipe(
-            new ShapedOreRecipe(
-                new ItemStack(portable_storage_panel),
-                "ABA",
-                "BCB",
-                "ABA",
-                'A',
-                Blocks.redstone_torch,
-                'B',
-                "slabWood",
-                'C',
-                EZBlocks.storage_core));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(portable_storage_panel), "ABA", "BCB", "ABA", 'A', Blocks.redstone_torch, 'B', "slabWood", 'C', EZBlocks.storage_core));
         GameRegistry.addRecipe(new PortableStoragePanelUpgradeRecipe());
     }
 }
+
+// spotless:on
