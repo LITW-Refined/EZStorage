@@ -22,9 +22,7 @@ public abstract class StorageUserInterface extends EZBlockContainer {
     public boolean onBlockActivated(World worldIn, int x, int y, int z, EntityPlayer player, int side, float subX,
         float subY, float subZ) {
         if (!worldIn.isRemote && player instanceof EntityPlayerMP playerMP) {
-
             TileEntityStorageCore core;
-
             TileEntity tileEntity = worldIn.getTileEntity(x, y, z);
             if (tileEntity instanceof TileEntityStorageCore coreFromTileEntity) {
                 core = coreFromTileEntity;
@@ -33,7 +31,9 @@ public abstract class StorageUserInterface extends EZBlockContainer {
                 core = findCore(blockRef, worldIn, null);
             }
 
-            if (core == null) return sendNoCoreMessage(playerMP);
+            if (core == null) {
+                return sendNoCoreMessage(playerMP);
+            }
 
             EZInventory inventory = core.getInventory();
             if (inventory != null) {
