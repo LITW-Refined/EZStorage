@@ -58,20 +58,18 @@ public class EZBlocks {
     }
 
     public static void registerRecipes() {
-        String t1_1 = "logWood";
-        String t1_2 = "stickWood";
 
         String t2_1 = OreDictionary.getOres("blockBronze").size() != 0 ? "blockBronze" : "blockIron";
         String t2_2 = t2_1;
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', t1_1, 'B', t1_2, 'C', Blocks.chest));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "BCB", "ABA", 'A', t1_1, 'B', "plankWood", 'C', Blocks.chest));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_core), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "stickWood", 'C', Blocks.chest));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "plankWood", 'C', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "EBE", "DCD", 'A', t2_1, 'B', storage_box, 'C', "ingotGold", 'D', t2_2, 'E', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(input_port), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(crafting_box), " A ", " B ", " C ", 'A', Items.ender_pearl, 'B', Blocks.crafting_table, 'C', "gemDiamond"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_panel), "ABA", "BCB", "ABA", 'A', Blocks.redstone_torch, 'B', Blocks.planks, 'C', EZBlocks.storage_core));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_cable, 16), "AAA", " B ", "AAA", 'A', Blocks.wooden_slab, 'B', EZBlocks.storage_core));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_panel), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "stickWood", 'C', "plankWood"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_cable, 16), "ABA", "BBB", "ABA", 'A', "logWood", 'B', "stickWood"));
 
         if (OreDictionary.getOres("blockDarkSteel").size() != 0) {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "BCB", "ABA", 'A', "blockDarkSteel", 'B', Blocks.obsidian, 'C', condensed_storage_box));
