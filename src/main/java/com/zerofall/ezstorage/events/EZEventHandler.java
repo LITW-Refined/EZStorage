@@ -65,4 +65,11 @@ public class EZEventHandler {
             EZInventoryManager.saveInventories();
         }
     }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event) {
+        if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+            EZInventoryManager.clearCache();
+        }
+    }
 }

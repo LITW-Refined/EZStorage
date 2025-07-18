@@ -225,4 +225,8 @@ public class EZInventoryManager {
             }
         }
     }
+
+    public static void clearCache() {
+        inventories.clear();
+    }
 }
