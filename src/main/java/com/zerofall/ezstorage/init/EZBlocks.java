@@ -54,8 +54,10 @@ public class EZBlocks {
         GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
-        GameRegistry.registerBlock(storage_panel, storage_panel.getUnlocalizedName().substring(5));
         if (EZConfiguration.experimentalContent) {
+            // This blocks add new options to the game not intended to be included into this mod.
+            // Maybe will move them to another mod, an add-on.
+            GameRegistry.registerBlock(storage_panel, storage_panel.getUnlocalizedName().substring(5));
             GameRegistry.registerBlock(storage_cable, storage_cable.getUnlocalizedName().substring(5));
         }
     }
