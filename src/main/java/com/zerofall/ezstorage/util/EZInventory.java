@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import com.zerofall.ezstorage.EZStorage;
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 
 public class EZInventory {
@@ -229,6 +230,10 @@ public class EZInventory {
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
                 ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+                if (stack == null) {
+                    EZStorage.instance.LOG.warn("An ItemStack loaded from NBT was null.");
+                    continue;
+                }
                 if (nbttagcompound1.hasKey("InternalCount", 3)) {
                     stack.stackSize = (int) nbttagcompound1.getInteger("InternalCount");
                 } else if (nbttagcompound1.hasKey("InternalCount", 4)) {
