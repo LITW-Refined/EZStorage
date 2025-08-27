@@ -11,12 +11,18 @@ public enum ModIds {
     BAUBLESEXPANDED("Baubles|Expanded");
 
     public final String modId;
+    private static boolean loaded;
+    private static boolean loadedCached;
 
     ModIds(String modId) {
         this.modId = modId;
     }
 
     public boolean isLoaded() {
-        return Loader.isModLoaded(modId);
+        if (!loadedCached) {
+            loadedCached = true;
+            loaded = Loader.isModLoaded(modId);
+        }
+        return loaded;
     }
 }
