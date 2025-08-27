@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import com.zerofall.ezstorage.integration.ModIds;
+
 import codechicken.nei.util.ReadableNumberConverter;
 
 public class EZItemRenderer extends RenderItem {
@@ -54,7 +56,12 @@ public class EZItemRenderer extends RenderItem {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScaled(ScaleFactor, ScaleFactor, ScaleFactor);
-            String var6 = ReadableNumberConverter.INSTANCE.toWideReadableForm(amount);
+            String var6;
+            if (ModIds.NEI.isLoaded()) {
+                var6 = ReadableNumberConverter.INSTANCE.toWideReadableForm(amount);
+            } else {
+                var6 = String.valueOf(amount);
+            }
             int X = (int) (((float) xPosition + offset + 15.0f - fr.getStringWidth(var6) * ScaleFactor) * RScaleFactor);
             int Y = (int) (((float) yPosition + offset + 15.0f - 7.0f * ScaleFactor) * RScaleFactor);
             fr.drawStringWithShadow(var6, X, Y, 16777215);
