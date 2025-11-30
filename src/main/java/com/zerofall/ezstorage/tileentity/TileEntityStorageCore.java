@@ -30,7 +30,7 @@ public class TileEntityStorageCore extends TileEntity {
     private EZInventory inventory;
 
     Set<BlockRef> multiblock = new HashSet<BlockRef>();
-    private boolean firstTick = false;
+    private int ticks;
     public boolean hasCraftBox = false;
     public String inventoryId = "";
 
@@ -116,18 +116,31 @@ public class TileEntityStorageCore extends TileEntity {
      * Scans the multiblock structure for valid blocks
      */
     public void scanMultiblock(EntityLivingBase entity) {
+        scanMultiblock(entity, true);
+    }
+
+    /**
+     * Scans the multiblock structure for valid blocks
+     */
+    public void scanMultiblock(EntityLivingBase entity, boolean force) {
         EZInventory inventory = getInventory(true);
+        int maxItems = 0;
         inventory.maxItems = 0;
         this.hasCraftBox = false;
-        multiblock = new HashSet<BlockRef>();
+        var multiblock = new HashSet<BlockRef>();
         BlockRef ref = new BlockRef(this);
         multiblock.add(ref);
         getValidNeighbors(ref, entity);
         for (BlockRef blockRef : multiblock) {
             if (blockRef.block instanceof BlockStorage sb) {
-                inventory.maxItems += sb.getCapacity();
+                maxItems += sb.getCapacity();
             }
         }
+        if (!force && inventory.maxItems == maxItems) {
+            return;
+        }
+        inventory.maxItems = maxItems;
+        this.multiblock = multiblock;
         this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
@@ -183,11 +196,24 @@ public class TileEntityStorageCore extends TileEntity {
 
     @Override
     public void updateEntity() {
-        if (!firstTick && worldObj != null) {
-            firstTick = true;
-            if (!worldObj.isRemote) {
-                scanMultiblock(null);
-            }
+        // First scan
+        if (ticks == 0 && worldObj != null && !worldObj.isRemote) {
+            scanMultiblock(null);
         }
+
+        // 400 ticks = 20 ticks * 20 seconds
+        if (ticks >= 400) {
+
+            // Periodical scan
+            if (!worldObj.isRemote) {
+                scanMultiblock(null, false);
+            }
+
+            // Reset
+            ticks = 0;
+        }
+
+        // Increment
+        ticks += 1;
     }
 }
