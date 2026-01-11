@@ -9,7 +9,7 @@ public enum ModIds {
     ETFUTURUM("etfuturum"),
     BAUBLES("Baubles"),
     BAUBLESEXPANDED("Baubles|Expanded"),
-    HODGEPODGE("lawoeju2398");
+    HODGEPODGE("hodgepodge");
 
     public final String modId;
     private boolean loaded;
