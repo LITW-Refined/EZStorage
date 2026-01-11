@@ -8,6 +8,7 @@ import com.zerofall.ezstorage.events.EZEventHandler;
 import com.zerofall.ezstorage.init.EZBlocks;
 import com.zerofall.ezstorage.init.EZItems;
 import com.zerofall.ezstorage.integration.IntegrationUtils;
+import com.zerofall.ezstorage.integration.ModIds;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -43,5 +44,12 @@ public class CommonProxy {
 
         // Register integrations
         IntegrationUtils.init();
+
+        // Set maxItemTypes
+        if (EZConfiguration.maxItemTypesAutoMode) {
+            EZConfiguration.maxItemTypes = ModIds.HODGEPODGE.isLoaded() ? 65000 : 1000;
+            EZConfiguration.save();
+            EZStorage.instance.LOG.info("Automatically set maxItemTypes to " + EZConfiguration.maxItemTypes);
+        }
     }
 }

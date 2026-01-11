@@ -8,11 +8,12 @@ public enum ModIds {
     NEI("NotEnoughItems"),
     ETFUTURUM("etfuturum"),
     BAUBLES("Baubles"),
-    BAUBLESEXPANDED("Baubles|Expanded");
+    BAUBLESEXPANDED("Baubles|Expanded"),
+    HODGEPODGE("lawoeju2398");
 
     public final String modId;
-    private static boolean loaded;
-    private static boolean loadedCached;
+    private boolean loaded;
+    private boolean loadedCached;
 
     ModIds(String modId) {
         this.modId = modId;

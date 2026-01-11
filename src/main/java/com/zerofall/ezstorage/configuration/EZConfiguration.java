@@ -23,10 +23,14 @@ public class EZConfiguration {
     @Config.RangeInt(min = 1)
     public static int hyperCapacity;
 
-    @Config.Comment("The maximum amount of different items that can be stored within one storage core.\nIn the past this option tried to ensure the NBT data wont get too large wich would normally lead to world corruption. Today it is not needed anymore, that's why the default value is 0 (disbaled).")
+    @Config.Comment("The maximum amount of different items that can be stored within one storage core, 0 disables the feature, -1 enables the automatic mode.\nThis option tries to ensure the NBT data wont get too large wich would normally lead to world corruption (network packages going too large).\nIt is hightly recommended to install hodgepodge to increase the network package size limit!")
     @Config.DefaultInt(0)
     @Config.RangeInt(min = 0)
     public static int maxItemTypes;
+
+    @Config.Comment("If enabled, sets the limit of 'maxItemTypes' automatically to a possibly harmless value, depending if Hodgepodge is present or not.\nIt is hightly recommended to install hodgepodge to increase the network package size limit!")
+    @Config.DefaultBoolean(true)
+    public static boolean maxItemTypesAutoMode;
 
     @Config.Comment("Focus the input field when opening a storage GUI.")
     @Config.DefaultBoolean(true)
@@ -40,5 +44,9 @@ public class EZConfiguration {
         try {
             ConfigurationManager.registerConfig(EZConfiguration.class);
         } catch (ConfigException ignore) {}
+    }
+
+    public static void save() {
+        ConfigurationManager.save(EZConfiguration.class);
     }
 }
