@@ -55,7 +55,7 @@ public class MsgStorage implements IMessage {
             buf.readBytes(bytes);
             try {
                 inventoryNbtTag = net.minecraft.nbt.CompressedStreamTools
-                    .func_152457_a(bytes, new net.minecraft.nbt.NBTSizeTracker(2097152L));
+                    .func_152457_a(bytes, net.minecraft.nbt.NBTSizeTracker.field_152451_a);
             } catch (Exception e) {
                 e.printStackTrace();
             }
