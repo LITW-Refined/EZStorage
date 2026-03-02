@@ -14,7 +14,6 @@ public class NeiHandler implements IContainerObjectHandler {
 
     public static void init() {
         GuiContainerManager.addObjectHandler(new NeiHandler());
-        codechicken.nei.api.API.registerNEIGuiHandler(new com.zerofall.ezstorage.integration.EZNEIHandler());
     }
 
     @Override
