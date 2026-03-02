@@ -16,7 +16,6 @@ public class MsgReqStorage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        // FIX: was writing instead of reading (swapped with toBytes)
         inventoryId = ByteBufUtils.readUTF8String(buf);
     }
 
