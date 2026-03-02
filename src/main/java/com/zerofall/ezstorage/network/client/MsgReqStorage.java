@@ -16,11 +16,11 @@ public class MsgReqStorage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, inventoryId);
+        inventoryId = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        inventoryId = ByteBufUtils.readUTF8String(buf);
+        ByteBufUtils.writeUTF8String(buf, inventoryId);
     }
 }

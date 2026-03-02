@@ -89,7 +89,6 @@ public class NeiCraftingOverlay implements IOverlayHandler {
             }
         }
 
-        // Collect slots of player inventory
         invStacks
             .addAll(getFromInventory(firstGui.mc.thePlayer.inventoryContainer.inventorySlots, firstGui.mc.thePlayer));
 

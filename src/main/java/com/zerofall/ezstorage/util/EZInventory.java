@@ -18,6 +18,7 @@ public class EZInventory {
     public long maxItems = 0;
     public String id;
     public boolean disabled;
+    public ItemStack[] craftMatrix;
 
     public EZInventory() {
         inventory = new ArrayList<ItemStack>();
@@ -220,6 +221,19 @@ public class EZInventory {
         tag.setTag("Internal", nbttaglist);
         tag.setLong("InternalMax", this.maxItems);
         tag.setBoolean("isDisabled", this.disabled);
+
+        if (this.craftMatrix != null) {
+            NBTTagList gridList = new NBTTagList();
+            for (int i = 0; i < 9; i++) {
+                NBTTagCompound slotTag = new NBTTagCompound();
+                slotTag.setByte("Slot", (byte) i);
+                if (this.craftMatrix[i] != null) {
+                    this.craftMatrix[i].writeToNBT(slotTag);
+                }
+                gridList.appendTag(slotTag);
+            }
+            tag.setTag("CraftMatrix", gridList);
+        }
     }
 
     public void readFromNBT(NBTTagCompound tag) {
@@ -244,5 +258,17 @@ public class EZInventory {
         }
         this.maxItems = tag.getLong("InternalMax");
         this.disabled = tag.getBoolean("isDisabled");
+
+        if (tag.hasKey("CraftMatrix", 9)) {
+            NBTTagList gridList = tag.getTagList("CraftMatrix", 10);
+            this.craftMatrix = new ItemStack[9];
+            for (int i = 0; i < gridList.tagCount(); i++) {
+                NBTTagCompound slotTag = gridList.getCompoundTagAt(i);
+                byte slotIndex = slotTag.getByte("Slot");
+                if (slotIndex >= 0 && slotIndex < 9) {
+                    this.craftMatrix[slotIndex] = ItemStack.loadItemStackFromNBT(slotTag);
+                }
+            }
+        }
     }
 }

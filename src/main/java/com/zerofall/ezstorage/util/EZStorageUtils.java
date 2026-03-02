@@ -19,7 +19,6 @@ public class EZStorageUtils {
         blockList.add(new BlockRef(world.getBlock(xCoord, yCoord - 1, zCoord), xCoord, yCoord - 1, zCoord));
         blockList.add(new BlockRef(world.getBlock(xCoord, yCoord + 1, zCoord), xCoord, yCoord + 1, zCoord));
         blockList.add(new BlockRef(world.getBlock(xCoord, yCoord, zCoord - 1), xCoord, yCoord, zCoord - 1));
-        blockList.add(new BlockRef(world.getBlock(xCoord - 1, yCoord, zCoord), xCoord - 1, yCoord, zCoord));
         blockList.add(new BlockRef(world.getBlock(xCoord, yCoord, zCoord + 1), xCoord, yCoord, zCoord + 1));
         return blockList;
     }

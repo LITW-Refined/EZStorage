@@ -23,12 +23,15 @@ public class EZConfiguration {
     @Config.RangeInt(min = 1)
     public static int hyperCapacity;
 
-    @Config.Comment("The maximum amount of different items that can be stored within one storage core, 0 disables the feature, -1 enables the automatic mode.\nThis option tries to ensure the NBT data wont get too large wich would normally lead to world corruption (network packages going too large).\nIt is hightly recommended to install hodgepodge to increase the network package size limit!")
+    @Config.Comment("The maximum amount of different items that can be stored within one storage core, 0 disables the feature, -1 enables the automatic mode.\n"
+        + "This option tries to ensure the NBT data wont get too large wich would normally lead to world corruption (network packages going too large).\n"
+        + "It is hightly recommended to install hodgepodge to increase the network package size limit!")
     @Config.DefaultInt(0)
     @Config.RangeInt(min = 0)
     public static int maxItemTypes;
 
-    @Config.Comment("If enabled, sets the limit of 'maxItemTypes' automatically to a possibly harmless value, depending if Hodgepodge is present or not.\nIt is hightly recommended to install hodgepodge to increase the network package size limit!")
+    @Config.Comment("If enabled, sets the limit of 'maxItemTypes' automatically to a possibly harmless value, depending if Hodgepodge is present or not.\n"
+        + "It is hightly recommended to install hodgepodge to increase the network package size limit!")
     @Config.DefaultBoolean(true)
     public static boolean maxItemTypesAutoMode;
 
@@ -39,6 +42,26 @@ public class EZConfiguration {
     @Config.Comment("Enables experimental content that might not be stable enough or has known quirks.")
     @Config.DefaultBoolean(false)
     public static boolean experimentalContent;
+
+    @Config.Comment("Last used sort mode for the storage GUI. Values: AMOUNT, NAME, MOD")
+    @Config.DefaultString("AMOUNT")
+    public static String guiSortMode;
+
+    @Config.Comment("Last used sort order for the storage GUI. Values: DESCENDING, ASCENDING")
+    @Config.DefaultString("DESCENDING")
+    public static String guiSortOrder;
+
+    @Config.Comment("Last used search mode for the storage GUI. Values: AUTO, NEI_SYNC, NEI_STANDARD, STANDARD")
+    @Config.DefaultString("AUTO")
+    public static String guiSearchMode;
+
+    @Config.Comment("Whether the search text is preserved when reopening the storage GUI.")
+    @Config.DefaultBoolean(false)
+    public static boolean guiSaveSearch;
+
+    @Config.Comment("The saved search text, only used when guiSaveSearch is true.")
+    @Config.DefaultString("")
+    public static String guiSearchText;
 
     public static void init() {
         try {
