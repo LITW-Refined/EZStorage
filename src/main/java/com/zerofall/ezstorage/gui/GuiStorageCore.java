@@ -54,7 +54,8 @@ public class GuiStorageCore extends GuiContainer {
     protected static final ResourceLocation resSearchBar = new ResourceLocation(
         "textures/gui/container/creative_inventory/tab_item_search.png");
     protected static final ResourceLocation resSideButton = new ResourceLocation(
-        Reference.MOD_ID, "textures/gui/storageSideButtonBackground.png");
+        Reference.MOD_ID,
+        "textures/gui/storageSideButtonBackground.png");
 
     protected static String searchText = "";
     protected static SearchMode currentSearchMode = SearchMode.AUTO;
@@ -301,7 +302,8 @@ public class GuiStorageCore extends GuiContainer {
             boolean hovered = btn.contains(mouseX, mouseY);
             boolean active = isActive(btn.id);
 
-            this.mc.getTextureManager().bindTexture(resSideButton);
+            this.mc.getTextureManager()
+                .bindTexture(resSideButton);
             Gui.func_146110_a(btn.x, btn.y, 0, 0, BTN_W, BTN_H, BTN_W, BTN_H);
 
             int border = hovered ? 0xFFFFFFFF : 0xFF222222;
