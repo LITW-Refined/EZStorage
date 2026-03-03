@@ -202,9 +202,9 @@ public class GuiStorageCore extends GuiContainer {
             case BTN_SORT_MODE:
                 switch (currentSortMode) {
                     case NAME:
-                        return "Nm";
+                        return "N";
                     case MOD:
-                        return "Md";
+                        return "M";
                     default:
                         return "#";
                 }
@@ -213,16 +213,16 @@ public class GuiStorageCore extends GuiContainer {
             case BTN_SEARCH_MODE:
                 switch (currentSearchMode) {
                     case AUTO:
-                        return "Au";
+                        return "A";
                     case NEI_SYNC:
-                        return "NS";
+                        return "N+";
                     case NEI_STANDARD:
-                        return "NSt";
+                        return "N";
                     default:
-                        return "St";
+                        return "S";
                 }
             case BTN_SAVE_SEARCH:
-                return "Sv";
+                return "S";
             default:
                 return "?";
         }
