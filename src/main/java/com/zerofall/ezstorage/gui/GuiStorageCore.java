@@ -318,8 +318,6 @@ public class GuiStorageCore extends GuiContainer {
         }
 
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private void drawSideButtonTooltips(int mouseX, int mouseY) {
