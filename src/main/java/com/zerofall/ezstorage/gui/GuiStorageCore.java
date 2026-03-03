@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -48,10 +49,12 @@ import cpw.mods.fml.common.registry.GameData;
 // if not good luck
 public class GuiStorageCore extends GuiContainer {
 
-    protected static final ResourceLocation creativeInventoryTabs = new ResourceLocation(
+    protected static final ResourceLocation resCreativeInventoryTabs = new ResourceLocation(
         "textures/gui/container/creative_inventory/tabs.png");
-    protected static final ResourceLocation searchBar = new ResourceLocation(
+    protected static final ResourceLocation resSearchBar = new ResourceLocation(
         "textures/gui/container/creative_inventory/tab_item_search.png");
+    protected static final ResourceLocation resSideButton = new ResourceLocation(
+        Reference.MOD_ID, "textures/gui/storageSideButtonBackground.png");
 
     protected static String searchText = "";
     protected static SearchMode currentSearchMode = SearchMode.AUTO;
@@ -298,8 +301,8 @@ public class GuiStorageCore extends GuiContainer {
             boolean hovered = btn.contains(mouseX, mouseY);
             boolean active = isActive(btn.id);
 
-            int bg = active ? (hovered ? 0xFF6699CC : 0xFF4477AA) : (hovered ? 0xFFAAAAAA : 0xFF888888);
-            drawRect(btn.x, btn.y, btn.x + BTN_W, btn.y + BTN_H, bg);
+            this.mc.getTextureManager().bindTexture(resSideButton);
+            Gui.func_146110_a(btn.x, btn.y, 0, 0, BTN_W, BTN_H, BTN_W, BTN_H);
 
             int border = hovered ? 0xFFFFFFFF : 0xFF222222;
             drawHorizontalLine(btn.x, btn.x + BTN_W - 1, btn.y, border);
@@ -338,7 +341,7 @@ public class GuiStorageCore extends GuiContainer {
         int y = (this.height - this.ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
         this.searchField.setVisible(true);
-        this.mc.renderEngine.bindTexture(searchBar);
+        this.mc.renderEngine.bindTexture(resSearchBar);
         drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 4, 80, 4, 90, 12);
         this.searchField.drawTextBox();
 
@@ -409,7 +412,7 @@ public class GuiStorageCore extends GuiContainer {
         int k = 18;
         int l = k + 108;
         this.mc.getTextureManager()
-            .bindTexture(creativeInventoryTabs);
+            .bindTexture(resCreativeInventoryTabs);
         this.drawTexturedModalRect(i1, k + (int) ((float) (l - k - 17) * this.currentScroll), 232, 0, 12, 15);
     }
 
