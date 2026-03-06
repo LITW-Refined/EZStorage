@@ -39,3 +39,4 @@ hud.msg.ezstorage.search.mode.nei_standard=Search: NEI Standard
 hud.msg.ezstorage.search.mode.standard=Search: Standard
 hud.msg.ezstorage.savesearch.on=Save Search: ON
 hud.msg.ezstorage.savesearch.off=Save Search: OFF
+gui.msg.ezstorage.amount_count=%s / %s
