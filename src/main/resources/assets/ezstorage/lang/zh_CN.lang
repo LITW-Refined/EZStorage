@@ -39,3 +39,4 @@ hud.msg.ezstorage.search.mode.nei_standard=搜索模式: NEI 标准
 hud.msg.ezstorage.search.mode.standard=搜索模式: 标准
 hud.msg.ezstorage.savesearch.on=保存搜索: 开
 hud.msg.ezstorage.savesearch.off=保存搜索: 关
+hud.msg.ezstorage.amount_count=%s / %s
