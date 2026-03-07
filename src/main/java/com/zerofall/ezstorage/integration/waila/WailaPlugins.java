@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 import com.zerofall.ezstorage.Reference;
+import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZStorageUtils;
@@ -25,6 +26,7 @@ public class WailaPlugins extends PluginBase {
     public void load(IWailaRegistrar registerar) {
         super.load(registerar);
         registerBody(BlockStorageCore.class);
+        registerBody(BlockStorage.class);
     }
 
     @Override
@@ -50,6 +52,9 @@ public class WailaPlugins extends PluginBase {
                 tooltip.add(
                     StatCollector.translateToLocalFormatted("hud.msg.ezstorage.core.inventoryid", core.inventoryId));
             }
+        } else if (accessor.getBlock() instanceof BlockStorage block) {
+            tooltip.add(
+                StatCollector.translateToLocalFormatted("hud.msg.ezstorage.storage.capacity", block.getCapacity()));
         }
     }
 }

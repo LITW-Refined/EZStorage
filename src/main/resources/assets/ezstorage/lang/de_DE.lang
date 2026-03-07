@@ -23,6 +23,7 @@ hud.msg.ezstorage.portable.crafting.disabled=Deaktiviert
 hud.msg.ezstorage.portable.upgrades=Mögliche Upgrades:
 hud.msg.ezstorage.portable.upgrade.nexttier=Nächstes Tier: %s + %s + %s
 hud.msg.ezstorage.portable.upgrade.crafting=Crafting-Box: %s + %s + %s
+hud.msg.ezstorage.storage.capacity=Kapazität: %s Items
 chat.msg.storagecore_connected=Verbunden mit Speicherkern bei x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Speicherkern ist unauffindbar
 chat.msg.storagecore_out_of_range=Speicherkern außer Reichweite

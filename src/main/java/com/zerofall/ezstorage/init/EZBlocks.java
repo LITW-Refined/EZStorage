@@ -16,6 +16,7 @@ import com.zerofall.ezstorage.block.BlockStorageCable;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.block.BlockStoragePanel;
 import com.zerofall.ezstorage.configuration.EZConfiguration;
+import com.zerofall.ezstorage.item.ItemBlockStorage;
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 
@@ -48,9 +49,9 @@ public class EZBlocks {
     public static void register() {
         GameRegistry.registerBlock(storage_core, storage_core.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityStorageCore.class, "TileEntityStorageCore");
-        GameRegistry.registerBlock(storage_box, storage_box.getUnlocalizedName().substring(5));
-        GameRegistry.registerBlock(condensed_storage_box, condensed_storage_box.getUnlocalizedName().substring(5));
-        GameRegistry.registerBlock(hyper_storage_box, hyper_storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(storage_box, ItemBlockStorage.class, storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(condensed_storage_box, ItemBlockStorage.class, condensed_storage_box.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(hyper_storage_box, ItemBlockStorage.class, hyper_storage_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));

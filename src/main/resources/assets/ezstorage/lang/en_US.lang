@@ -23,6 +23,7 @@ hud.msg.ezstorage.portable.crafting.disabled=Disabled
 hud.msg.ezstorage.portable.upgrades=Possible upgrades:
 hud.msg.ezstorage.portable.upgrade.nexttier=Next tier: %s + %s + %s
 hud.msg.ezstorage.portable.upgrade.crafting=Crafting box: %s + %s + %s
+hud.msg.ezstorage.storage.capacity=Capacity: %s items
 chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Storage core cannot be found
 chat.msg.storagecore_out_of_range=Storage core is out of range
