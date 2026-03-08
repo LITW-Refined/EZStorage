@@ -3,6 +3,7 @@ package com.zerofall.ezstorage.network.server;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
+import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.item.ItemPortableStoragePanel;
 import com.zerofall.ezstorage.network.client.MsgReqOpenInvGui;
 
@@ -18,6 +19,9 @@ public class HandlerMsgReqOpenInvGui implements IMessageHandler<MsgReqOpenInvGui
 
         switch (message.source) {
             case BAUBLES:
+                if (!ModIds.BAUBLES.isLoaded()) {
+                    break;
+                }
                 ItemStack itemStack = ItemPortableStoragePanel.getFromBaubles(player);
                 if (itemStack != null && itemStack.getItem() instanceof ItemPortableStoragePanel panel) {
                     panel.onItemRightClick(itemStack, player.getEntityWorld(), player);
