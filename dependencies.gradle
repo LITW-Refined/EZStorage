@@ -39,6 +39,7 @@ dependencies {
     devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.19.22:dev") {transitive = false}
     devOnlyNonPublishable("com.github.GTNewHorizons:WAILAPlugins:0.7.2:dev") {transitive = false}
     devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.18:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-791-GTNH:dev") { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:et-futurum-requiem-441392:5873837")) { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:crafting-tweaks-233071:2457094")) { transitive = false }
     devOnlyNonPublishable(project.files("libs/BaublesExpanded-2.0.3-dev.jar"))

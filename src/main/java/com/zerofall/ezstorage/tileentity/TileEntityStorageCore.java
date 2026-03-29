@@ -145,7 +145,7 @@ public class TileEntityStorageCore extends TileEntity {
 
     /**
      * Recursive function that scans a block's neighbors, and adds valid blocks to the multiblock list
-     * 
+     *
      * @param br
      */
     private void getValidNeighbors(BlockRef br, EntityLivingBase entity) {
