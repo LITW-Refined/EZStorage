@@ -355,7 +355,7 @@ public class GuiStorageCore extends GuiContainer {
         DecimalFormat formatter = new DecimalFormat("#,###");
         String totalCount = formatter.format(getInventory().getTotalCount());
         String max = formatter.format(getInventory().maxItems);
-        String amount = StatCollector.translateToLocalFormatted("gui.msg.ezstorage.amount_count", totalCount, max);
+        String amount = StatCollector.translateToLocalFormatted("hud.msg.ezstorage.amount_count", totalCount, max);
         int stringWidth = fontRendererObj.getStringWidth(amount);
 
         if (stringWidth > 88) {
