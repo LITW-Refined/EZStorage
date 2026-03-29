@@ -5,7 +5,7 @@ Simple storage mod for Minecraft 1.7.10 (Forge).
 ## Description
 
 Simple Storage (former EZStorage) introduces an early-game storage system that scales and evolves as players progress, while keeping the vanilla flair. Want to put 100k Cobblestone in 1 slot? No problem. The blocks in the mod can add a crafting grid, additional storage, and more. Also includes integration into some mods for easier crafting or additional features!
- 
+
 ## Blocks & Items
 
 - **Storage Core**
@@ -20,7 +20,7 @@ Simple Storage (former EZStorage) introduces an early-game storage system that s
 - **Hyper Storage Box**
   - Tier 3 storage add-on
 - **Proxy Port**
-  - Expose the storage inventory to hoppers, conduits or maschines
+  - Expose the storage inventory to hoppers, conduits, machines and AE2 storage bus
 - **Crafting Box**
   - This adds a crafting grid to the GUI of your Storage Core (compatible with NEI + clicking for easy crafting from the internal inventory)
 - **Portable Storage Panel**
@@ -43,6 +43,8 @@ Simple Storage (former EZStorage) introduces an early-game storage system that s
   - Show typical crafting tweaks buttons on crafting grid
 - **Et Futurum Requiem**
   - Spectator mode
+- **Applied Energistics 2**
+  - Inventory proxy can be used with AE storage buses
 
 ## Remarks
 
@@ -65,3 +67,7 @@ This fork becomes some changes to be usable on servers, less-buggy and a lot of 
 - Replaced input and output block with a more enhanced proxy block
 - Configurable maximum different item types per storage (no limit by default)
 - Store storage as separated file in the world's save directory instead directly on the TileEntity (only send to client when needed)
+
+## Development
+
+With vscode you need to run `gradlew eclipse` for the project to correctly recognize the class paths

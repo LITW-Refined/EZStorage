@@ -49,6 +49,20 @@ public class EZInventory {
         return stack;
     }
 
+    public ItemStack simulateInput(ItemStack itemStack) {
+        if (getTotalCount() >= maxItems) {
+            return itemStack;
+        }
+        long space = maxItems - getTotalCount();
+        int amount = (int) Math.min(space, (long) itemStack.stackSize);
+        ItemStack remainder = itemStack.copy();
+        remainder.stackSize -= amount;
+        if (remainder.stackSize <= 0) {
+            return null;
+        }
+        return remainder;
+    }
+
     public void sort() {
         Collections.sort(this.inventory, new ItemStackCountComparator());
         setHasChanges();
@@ -124,6 +138,19 @@ public class EZInventory {
             inventory.remove(index);
         }
         setHasChanges();
+        return stack;
+    }
+
+    public ItemStack simulateRemove(int index, int size) {
+        if (index >= inventory.size()) {
+            return null;
+        }
+        ItemStack group = inventory.get(index);
+        ItemStack stack = group.copy();
+        if (size > group.stackSize) {
+            size = group.stackSize;
+        }
+        stack.stackSize = size;
         return stack;
     }
 
