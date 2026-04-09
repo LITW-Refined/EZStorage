@@ -28,12 +28,12 @@ public class NeiCraftingOverlay implements IOverlayHandler {
 
     @Override
     public void overlayRecipe(final GuiContainer gui, final IRecipeHandler recipe, final int recipeIndex,
-        final boolean shift) {
+        final boolean maxTransfer) {
         final List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
-        overlayRecipe(gui, ingredients, shift);
+        overlayRecipe(gui, ingredients);
     }
 
-    public void overlayRecipe(final GuiContainer gui, final List<PositionedStack> ingredients, final boolean shift) {
+    public void overlayRecipe(final GuiContainer gui, final List<PositionedStack> ingredients) {
         if (!(gui instanceof com.zerofall.ezstorage.gui.GuiCraftingCore)) {
             return;
         }
