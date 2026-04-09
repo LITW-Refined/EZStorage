@@ -28,7 +28,7 @@ public abstract class StorageUserInterface extends EZBlockContainer {
                 core = coreFromTileEntity;
             } else {
                 BlockRef blockRef = new BlockRef(this, x, y, z);
-                core = findCore(blockRef, worldIn, null);
+                core = findCore(blockRef, worldIn);
             }
 
             if (core == null) {

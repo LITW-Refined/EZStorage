@@ -10,9 +10,28 @@ import com.zerofall.ezstorage.util.EZInventory;
 
 public class TileEntityInventoryProxy extends TileEntity implements ISidedInventory {
 
-    public TileEntityStorageCore core;
+    private TileEntityStorageCore core;
+
+    public TileEntityStorageCore getCore() {
+        if (core != null && core.isInvalid()) {
+            core = null;
+        }
+        return core;
+    }
+
+    public void setCore(TileEntityStorageCore core) {
+        if (core != null && core.isInvalid()) {
+            return;
+        }
+        this.core = core;
+    }
+
+    public void clearCore() {
+        this.core = null;
+    }
 
     public EZInventory getInventory() {
+        TileEntityStorageCore core = getCore();
         if (core != null) {
             return core.getInventory();
         }

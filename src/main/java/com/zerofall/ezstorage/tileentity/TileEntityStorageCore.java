@@ -156,7 +156,7 @@ public class TileEntityStorageCore extends TileEntity {
                     if (blockRef.block instanceof BlockInputPort) {
                         TileEntity te = worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
                         if (te instanceof TileEntityInventoryProxy teInvProxy) {
-                            teInvProxy.core = this;
+                            teInvProxy.setCore(this);
                         }
                     }
                     if (blockRef.block instanceof BlockCraftingBox) {

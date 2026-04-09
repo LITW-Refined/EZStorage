@@ -1,7 +1,10 @@
 package com.zerofall.ezstorage.block;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 import net.minecraft.block.material.Material;
@@ -11,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
+import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.BlockRef;
 import com.zerofall.ezstorage.util.EZStorageUtils;
@@ -54,50 +58,104 @@ public class StorageMultiblock extends EZBlock {
 
     /**
      * Attempt to form the multiblock structure by searching for the core, then telling the core to scan the multiblock
-     * 
+     *
      * @param world
      * @param x
      * @param y
      * @param z
      */
     public void attemptMultiblock(World world, int x, int y, int z, EntityLivingBase entity) {
-        if (!world.isRemote) {
-            if (!(this instanceof BlockStorageCore)) {
-                BlockRef br = new BlockRef(this, x, y, z);
-                TileEntityStorageCore core = findCore(br, world, null);
-                if (core != null) {
-                    core.scanMultiblock(entity);
+        if (world.isRemote) {
+            return;
+        }
+
+        List<Set<BlockRef>> groups = findGroups(world, x, y, z);
+        for (Set<BlockRef> group : groups) {
+            TileEntityStorageCore core = findCoreInGroup(group, world);
+            if (core != null) {
+                core.scanMultiblock(entity);
+            } else {
+                clearProxyReferences(group, world);
+            }
+        }
+    }
+
+    private Set<BlockRef> bfsGroup(BlockRef start, World world) {
+        Set<BlockRef> group = new HashSet<>();
+        Queue<BlockRef> queue = new LinkedList<>();
+        queue.add(start);
+        group.add(start);
+        while (!queue.isEmpty()) {
+            BlockRef current = queue.poll();
+            List<BlockRef> neighbors = EZStorageUtils.getNeighbors(current.posX, current.posY, current.posZ, world);
+            for (BlockRef neighbor : neighbors) {
+                if (neighbor.block instanceof StorageMultiblock && group.add(neighbor)) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+        return group;
+    }
+
+    private List<Set<BlockRef>> findGroups(World world, int x, int y, int z) {
+        List<Set<BlockRef>> groups = new ArrayList<>();
+        for (BlockRef neighbor : EZStorageUtils.getNeighbors(x, y, z, world)) {
+            if (neighbor.block instanceof StorageMultiblock) {
+                boolean seen = false;
+                for (Set<BlockRef> group : groups) {
+                    if (group.contains(neighbor)) {
+                        seen = true;
+                        break;
+                    }
+                }
+                if (!seen) {
+                    groups.add(bfsGroup(neighbor, world));
+                }
+            }
+        }
+        return groups;
+    }
+
+    private TileEntityStorageCore findCoreInGroup(Set<BlockRef> group, World world) {
+        for (BlockRef blockRef : group) {
+            if (blockRef.block instanceof BlockStorageCore) {
+                TileEntity te = world.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);
+                if (te instanceof TileEntityStorageCore core) {
+                    return core;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void clearProxyReferences(Set<BlockRef> group, World world) {
+        for (BlockRef blockRef : group) {
+            if (blockRef.block instanceof BlockInputPort) {
+                TileEntity te = world.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);
+                if (te instanceof TileEntityInventoryProxy teInvProxy) {
+                    teInvProxy.clearCore();
                 }
             }
         }
     }
 
-    /**
-     * Recursive function that searches for a StorageCore in a multiblock structure
-     * 
-     * @param br
-     * @param world
-     * @param scanned
-     * @return
-     */
-    public TileEntityStorageCore findCore(BlockRef br, World world, Set<BlockRef> scanned) {
-        if (scanned == null) {
-            scanned = new HashSet<BlockRef>();
-        }
-        List<BlockRef> neighbors = EZStorageUtils.getNeighbors(br.posX, br.posY, br.posZ, world);
-        for (BlockRef blockRef : neighbors) {
-            if (blockRef.block instanceof StorageMultiblock) {
-                if (blockRef.block instanceof BlockStorageCore) {
-                    TileEntity te = world.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);
-                    if (te instanceof TileEntityStorageCore) {
-                        return (TileEntityStorageCore) te;
-                    }
-                } else {
-                    if (scanned.add(blockRef) == true) {
-                        TileEntityStorageCore entity = findCore(blockRef, world, scanned);
-                        if (entity != null) {
-                            return entity;
+    public TileEntityStorageCore findCore(BlockRef br, World world) {
+        Set<BlockRef> scanned = new HashSet<>();
+        Queue<BlockRef> queue = new LinkedList<>();
+        queue.add(br);
+        scanned.add(br);
+        while (!queue.isEmpty()) {
+            BlockRef current = queue.poll();
+            List<BlockRef> neighbors = EZStorageUtils.getNeighbors(current.posX, current.posY, current.posZ, world);
+            for (BlockRef neighbor : neighbors) {
+                if (neighbor.block instanceof StorageMultiblock) {
+                    if (neighbor.block instanceof BlockStorageCore) {
+                        TileEntity te = world.getTileEntity(neighbor.posX, neighbor.posY, neighbor.posZ);
+                        if (te instanceof TileEntityStorageCore core) {
+                            return core;
                         }
+                    } else if (scanned.add(neighbor)) {
+                        queue.add(neighbor);
                     }
                 }
             }
@@ -107,7 +165,7 @@ public class StorageMultiblock extends EZBlock {
 
     /**
      * Recursive function that searches for a StorageCore in a multiblock structure
-     * 
+     *
      * @param br
      * @param world
      * @param scanned

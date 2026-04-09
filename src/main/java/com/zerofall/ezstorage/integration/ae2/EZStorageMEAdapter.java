@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import net.minecraft.item.ItemStack;
 
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
+import com.zerofall.ezstorage.util.EZInventory;
 
 import appeng.api.config.FuzzyMode;
 import appeng.util.InventoryAdaptor;
@@ -27,10 +28,14 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
         return new Iterator<ItemSlot>() {
 
             private int index = 0;
-            private List<ItemStack> inventory = teInvProxy.getInventory().inventory;
+            private List<ItemStack> inventory = teInvProxy.getInventory() == null ? null
+                : teInvProxy.getInventory().inventory;
 
             @Override
             public boolean hasNext() {
+                if (inventory == null) {
+                    return false;
+                }
                 return index < inventory.size() && inventory.get(index) != null;
             }
 
@@ -52,27 +57,28 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
 
     @Override
     public ItemStack removeItems(int amount, ItemStack filter, IInventoryDestination destination) {
-        int index = teInvProxy.getInventory()
-            .getIndexOf(filter);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        int index = inventory.getIndexOf(filter);
         if (index == -1) {
             return null;
         }
-        ItemStack extracted = teInvProxy.getInventory()
-            .getItemStackAt(index, amount);
-
-        return extracted;
+        return inventory.getItemStackAt(index, amount);
     }
 
     @Override
     public ItemStack simulateRemove(int amount, ItemStack filter, IInventoryDestination destination) {
-        int index = teInvProxy.getInventory()
-            .getIndexOf(filter);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        int index = inventory.getIndexOf(filter);
         if (index == -1) {
             return null;
         }
-        ItemStack extracted = teInvProxy.getInventory()
-            .simulateRemove(index, amount);
-        return extracted;
+        return inventory.simulateRemove(index, amount);
     }
 
     @Override
@@ -89,21 +95,29 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
 
     @Override
     public ItemStack addItems(ItemStack toBeAdded) {
-        ItemStack remainder = teInvProxy.getInventory()
-            .input(toBeAdded);
-        return remainder;
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return toBeAdded;
+        }
+        return inventory.input(toBeAdded);
     }
 
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
-        ItemStack remainder = teInvProxy.getInventory()
-            .simulateInput(toBeSimulated);
-        return remainder;
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return toBeSimulated;
+        }
+        return inventory.simulateInput(toBeSimulated);
     }
 
     @Override
     public boolean containsItems() {
-        for (ItemStack itemStack : teInvProxy.getInventory().inventory) {
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return false;
+        }
+        for (ItemStack itemStack : inventory.inventory) {
             if (itemStack != null) {
                 return true;
             }
