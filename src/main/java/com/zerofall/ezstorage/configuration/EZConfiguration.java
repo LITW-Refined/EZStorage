@@ -59,6 +59,10 @@ public class EZConfiguration {
     @Config.DefaultBoolean(false)
     public static boolean guiSaveSearch;
 
+    @Config.Comment("When enabled, clicking on the '+' button in NEI without shift shows ghost items in the crafting grid, instead of moving items.")
+    @Config.DefaultBoolean(true)
+    public static boolean neiCraftingGhostOverlay;
+
     @Config.Comment("The saved search text, only used when guiSaveSearch is true.")
     @Config.DefaultString("")
     public static String guiSearchText;
