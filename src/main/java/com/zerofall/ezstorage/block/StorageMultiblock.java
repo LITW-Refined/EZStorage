@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
+import com.zerofall.ezstorage.tileentity.TileEntityMultiblock;
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.BlockRef;
 import com.zerofall.ezstorage.util.EZStorageUtils;
@@ -61,14 +62,18 @@ public class StorageMultiblock extends EZBlock {
      * @param z
      */
     public void attemptMultiblock(World world, int x, int y, int z, EntityLivingBase entity) {
-        if (!world.isRemote) {
-            if (!(this instanceof BlockStorageCore)) {
-                BlockRef br = new BlockRef(this, x, y, z);
-                TileEntityStorageCore core = findCore(br, world, null);
-                if (core != null) {
-                    core.scanMultiblock(entity);
-                }
-            }
+        if (world.isRemote || this instanceof BlockStorageCore) {
+            return;
+        }
+
+        if (world.getTileEntity(x, y, z) instanceof TileEntityMultiblock te) {
+            te.invalidateConnection();
+        }
+
+        BlockRef br = new BlockRef(this, x, y, z);
+        TileEntityStorageCore core = findCore(br, world, null);
+        if (core != null) {
+            core.scanMultiblock(entity);
         }
     }
 
