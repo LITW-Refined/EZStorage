@@ -176,18 +176,12 @@ public class EZInventory {
     }
 
     public int getIndexOf(ItemStack itemStack) {
-        int index = inventory.indexOf(itemStack);
-
-        if (index == -1) {
-            for (ItemStack inventoryStack : inventory) {
-                index += 1;
-                if (stacksEqual(itemStack, inventoryStack)) {
-                    return index;
-                }
+        for (int i = 0; i < inventory.size(); i++) {
+            if (stacksEqual(inventory.get(i), itemStack)) {
+                return i;
             }
         }
-
-        return index;
+        return -1;
     }
 
     public int slotCount() {
