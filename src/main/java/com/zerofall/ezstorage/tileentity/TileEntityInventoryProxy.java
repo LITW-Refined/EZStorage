@@ -3,21 +3,11 @@ package com.zerofall.ezstorage.tileentity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 
 import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.util.EZInventory;
 
-public class TileEntityInventoryProxy extends TileEntity implements ISidedInventory {
-
-    public TileEntityStorageCore core;
-
-    public EZInventory getInventory() {
-        if (core != null) {
-            return core.getInventory();
-        }
-        return null;
-    }
+public class TileEntityInventoryProxy extends TileEntityMultiblock implements ISidedInventory {
 
     @Override
     public int getSizeInventory() {
@@ -49,7 +39,7 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
             return null;
         }
         ItemStack result = inventory.getItemStackAt(index, count);
-        core.updateTileEntity();
+        getCore().updateTileEntity();
         return result;
     }
 
@@ -67,7 +57,7 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
         } else {
             return;
         }
-        core.updateTileEntity();
+        getCore().updateTileEntity();
     }
 
     @Override
@@ -176,7 +166,7 @@ public class TileEntityInventoryProxy extends TileEntity implements ISidedInvent
         ItemStack stack = getStackInSlot(index);
         if (stack != null) {
             setInventorySlotContents(index, null);
-            core.updateTileEntity();
+            getCore().updateTileEntity();
         }
         return stack;
     }

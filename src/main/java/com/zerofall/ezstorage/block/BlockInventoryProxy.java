@@ -6,9 +6,9 @@ import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
 
-public class BlockInputPort extends EZBlockContainer {
+public class BlockInventoryProxy extends EZBlockContainer {
 
-    public BlockInputPort() {
+    public BlockInventoryProxy() {
         super("input_port", Material.iron);
     }
 

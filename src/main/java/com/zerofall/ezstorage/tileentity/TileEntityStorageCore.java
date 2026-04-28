@@ -14,7 +14,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 import com.zerofall.ezstorage.block.BlockCraftingBox;
-import com.zerofall.ezstorage.block.BlockInputPort;
+import com.zerofall.ezstorage.block.BlockInventoryProxy;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCore;
 import com.zerofall.ezstorage.block.StorageMultiblock;
@@ -144,6 +144,13 @@ public class TileEntityStorageCore extends TileEntity {
     }
 
     /**
+     * Notifies all blocks of the multiblock to validate their connection to the storage core.
+     */
+    public void notifyNeighbor(BlockRef blockRef) {
+        worldObj.notifyBlockOfNeighborChange(blockRef.posX, blockRef.posY, blockRef.posZ, blockRef.block);
+    }
+
+    /**
      * Recursive function that scans a block's neighbors, and adds valid blocks to the multiblock list
      *
      * @param br
@@ -151,19 +158,17 @@ public class TileEntityStorageCore extends TileEntity {
     private void getValidNeighbors(BlockRef br, EntityLivingBase entity) {
         List<BlockRef> neighbors = EZStorageUtils.getNeighbors(br.posX, br.posY, br.posZ, worldObj);
         for (BlockRef blockRef : neighbors) {
-            if (blockRef.block instanceof StorageMultiblock) {
-                if (multiblock.add(blockRef) && validateSystem(entity)) {
-                    if (blockRef.block instanceof BlockInputPort) {
-                        TileEntity te = worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
-                        if (te instanceof TileEntityInventoryProxy teInvProxy) {
-                            teInvProxy.core = this;
-                        }
+            if (blockRef.block instanceof StorageMultiblock && multiblock.add(blockRef) && validateSystem(entity)) {
+                if (blockRef.block instanceof BlockInventoryProxy) {
+                    TileEntity te = worldObj.getTileEntity(blockRef.posX, blockRef.posY, blockRef.posZ);;
+                    if (te instanceof TileEntityMultiblock teInvProxy) {
+                        teInvProxy.setCore(this);
                     }
-                    if (blockRef.block instanceof BlockCraftingBox) {
-                        hasCraftBox = true;
-                    }
-                    getValidNeighbors(blockRef, entity);
                 }
+                if (blockRef.block instanceof BlockCraftingBox) {
+                    hasCraftBox = true;
+                }
+                getValidNeighbors(blockRef, entity);
             }
         }
     }

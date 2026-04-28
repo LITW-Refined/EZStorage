@@ -10,7 +10,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import com.zerofall.ezstorage.block.BlockCondensedStorage;
 import com.zerofall.ezstorage.block.BlockCraftingBox;
 import com.zerofall.ezstorage.block.BlockHyperStorage;
-import com.zerofall.ezstorage.block.BlockInputPort;
+import com.zerofall.ezstorage.block.BlockInventoryProxy;
 import com.zerofall.ezstorage.block.BlockStorage;
 import com.zerofall.ezstorage.block.BlockStorageCable;
 import com.zerofall.ezstorage.block.BlockStorageCore;
@@ -30,7 +30,7 @@ public class EZBlocks {
     public static Block storage_box;
     public static Block condensed_storage_box;
     public static Block hyper_storage_box;
-    public static Block input_port;
+    public static Block inventory_proxy;
     public static Block crafting_box;
     public static Block storage_panel;
     public static Block storage_cable;
@@ -40,7 +40,7 @@ public class EZBlocks {
         storage_box = new BlockStorage();
         condensed_storage_box = new BlockCondensedStorage();
         hyper_storage_box = new BlockHyperStorage();
-        input_port = new BlockInputPort();
+        inventory_proxy = new BlockInventoryProxy();
         crafting_box = new BlockCraftingBox();
         storage_panel = new BlockStoragePanel();
         storage_cable = new BlockStorageCable();
@@ -52,7 +52,7 @@ public class EZBlocks {
         GameRegistry.registerBlock(storage_box, ItemBlockStorage.class, storage_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(condensed_storage_box, ItemBlockStorage.class, condensed_storage_box.getUnlocalizedName().substring(5));
         GameRegistry.registerBlock(hyper_storage_box, ItemBlockStorage.class, hyper_storage_box.getUnlocalizedName().substring(5));
-        GameRegistry.registerBlock(input_port, input_port.getUnlocalizedName().substring(5));
+        GameRegistry.registerBlock(inventory_proxy, inventory_proxy.getUnlocalizedName().substring(5));
         GameRegistry.registerTileEntity(TileEntityInventoryProxy.class, "TileEntityInputPort");
         GameRegistry.registerBlock(crafting_box, crafting_box.getUnlocalizedName().substring(5));
         if (EZConfiguration.experimentalContent) {
@@ -72,7 +72,7 @@ public class EZBlocks {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_box), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "plankWood", 'C', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "EBE", "DCD", 'A', t2_1, 'B', storage_box, 'C', "ingotGold", 'D', t2_2, 'E', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(input_port), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(inventory_proxy), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(crafting_box), " A ", " B ", " C ", 'A', Items.ender_pearl, 'B', Blocks.crafting_table, 'C', "gemDiamond"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_panel), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "stickWood", 'C', "plankWood"));
         

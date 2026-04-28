@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import net.minecraft.item.ItemStack;
 
 import com.zerofall.ezstorage.tileentity.TileEntityInventoryProxy;
+import com.zerofall.ezstorage.util.EZInventory;
 
 import appeng.api.config.FuzzyMode;
 import appeng.util.InventoryAdaptor;
@@ -52,26 +53,29 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
 
     @Override
     public ItemStack removeItems(int amount, ItemStack filter, IInventoryDestination destination) {
-        int index = teInvProxy.getInventory()
-            .getIndexOf(filter);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        int index = inventory.getIndexOf(filter);
         if (index == -1) {
             return null;
         }
-        ItemStack extracted = teInvProxy.getInventory()
-            .getItemStackAt(index, amount);
-
+        ItemStack extracted = inventory.getItemStackAt(index, amount);
         return extracted;
     }
 
     @Override
     public ItemStack simulateRemove(int amount, ItemStack filter, IInventoryDestination destination) {
-        int index = teInvProxy.getInventory()
-            .getIndexOf(filter);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        int index = inventory.getIndexOf(filter);
         if (index == -1) {
             return null;
         }
-        ItemStack extracted = teInvProxy.getInventory()
-            .simulateRemove(index, amount);
+        ItemStack extracted = inventory.simulateRemove(index, amount);
         return extracted;
     }
 
@@ -89,21 +93,31 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
 
     @Override
     public ItemStack addItems(ItemStack toBeAdded) {
-        ItemStack remainder = teInvProxy.getInventory()
-            .input(toBeAdded);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        ItemStack remainder = inventory.input(toBeAdded);
         return remainder;
     }
 
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
-        ItemStack remainder = teInvProxy.getInventory()
-            .simulateInput(toBeSimulated);
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return null;
+        }
+        ItemStack remainder = inventory.simulateInput(toBeSimulated);
         return remainder;
     }
 
     @Override
     public boolean containsItems() {
-        for (ItemStack itemStack : teInvProxy.getInventory().inventory) {
+        EZInventory inventory = teInvProxy.getInventory();
+        if (inventory == null) {
+            return false;
+        }
+        for (ItemStack itemStack : inventory.inventory) {
             if (itemStack != null) {
                 return true;
             }
