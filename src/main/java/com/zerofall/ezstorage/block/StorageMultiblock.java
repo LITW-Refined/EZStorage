@@ -98,7 +98,7 @@ public class StorageMultiblock extends EZBlock {
                         return (TileEntityStorageCore) te;
                     }
                 } else {
-                    if (scanned.add(blockRef) == true) {
+                    if (scanned.add(blockRef)) {
                         TileEntityStorageCore entity = findCore(blockRef, world, scanned);
                         if (entity != null) {
                             return entity;
