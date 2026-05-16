@@ -34,15 +34,15 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("com.github.GTNewHorizons:GTNHLib:0.9.31:dev") { transitive = false }
-    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.71-GTNH:dev")
-    devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.19.22:dev") {transitive = false}
+    api("com.github.GTNewHorizons:GTNHLib:0.9.67:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.98-GTNH:dev")
+    devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.19.28:dev") {transitive = false}
     devOnlyNonPublishable("com.github.GTNewHorizons:WAILAPlugins:0.7.2:dev") {transitive = false}
-    devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.18:dev") { transitive = false }
-    devOnlyNonPublishable("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-791-GTNH:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:Jabba:1.5.20:dev") { transitive = false }
+    devOnlyNonPublishable("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-938-GTNH:dev") { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:et-futurum-requiem-441392:5873837")) { transitive = false }
     devOnlyNonPublishable(rfg.deobf("curse.maven:crafting-tweaks-233071:2457094")) { transitive = false }
     devOnlyNonPublishable(project.files("libs/BaublesExpanded-2.0.3-dev.jar"))
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:EnderIO:2.10.20:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:EnderIO:5.2.62:dev")
     runtimeOnlyNonPublishable rfg.deobf("curse.maven:cofh-core-69162:2388751")
 }
