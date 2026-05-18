@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -431,15 +432,20 @@ public class GuiStorageCore extends GuiContainer {
             }
         }
 
-        // Space key bulk import: player inventory / hotbar areas
-        if (mouseButton == 0 && Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-            if (isOverPlayerInventory(mouseX, mouseY)) {
-                EZStorage.instance.network.sendToServer(new MsgBulkImport(false));
-                return;
-            }
-            if (isOverPlayerHotbar(mouseX, mouseY)) {
-                EZStorage.instance.network.sendToServer(new MsgBulkImport(true));
-                return;
+        // Bulk import: check player slot index (configurable key, default SPACE)
+        // 0-8 = hotbar, 9-35 = main inventory
+        if (mouseButton == 0 && Keyboard.isKeyDown(EZStorage.proxy.eventHandler.keybindBulkAction.getKeyCode())) {
+            Slot slot = getSlotUnderMouse(mouseX, mouseY);
+            if (slot != null && slot.getHasStack()) {
+                int slotIndex = slot.getSlotIndex();
+                if (slotIndex >= 0 && slotIndex < 9) {
+                    EZStorage.instance.network.sendToServer(new MsgBulkImport(true));
+                    return;
+                }
+                if (slotIndex >= 9 && slotIndex < 36) {
+                    EZStorage.instance.network.sendToServer(new MsgBulkImport(false));
+                    return;
+                }
             }
         }
 
@@ -469,7 +475,7 @@ public class GuiStorageCore extends GuiContainer {
         Integer slot = getSlotAt(mouseX, mouseY);
         if (slot != null) {
             int mode;
-            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+            if (Keyboard.isKeyDown(EZStorage.proxy.eventHandler.keybindBulkAction.getKeyCode())) {
                 mode = 2;
             } else if (GuiScreen.isShiftKeyDown()) {
                 mode = 1;
@@ -490,6 +496,11 @@ public class GuiStorageCore extends GuiContainer {
             EZStorage.instance.network.sendToServer(new MsgInvSlotClicked(index, mouseButton, mode));
             ContainerStorageCore container = (ContainerStorageCore) this.inventorySlots;
             container.customSlotClick(index, mouseButton, mode, this.mc.thePlayer);
+            // Refresh filtered list after client-side prediction,
+            // otherwise the GUI shows stale items that have already been
+            // extracted (especially noticeable when extracting all with
+            // space+click).
+            container.inventoryUpdateTimestamp = LocalDateTime.now();
             wantFocus = false;
         }
 
@@ -505,18 +516,27 @@ public class GuiStorageCore extends GuiContainer {
             && mouseY < fy + this.searchField.height + 4;
     }
 
-    private boolean isOverPlayerInventory(int mouseX, int mouseY) {
-        int px = this.guiLeft + 8;
-        int py = this.guiTop + 140;
-        return mouseX >= px && mouseX < px + 162
-            && mouseY >= py && mouseY < py + 54;
+    /**
+     * Find the container Slot under the mouse cursor.
+     * GuiContainer.getSlotAtPosition is private in 1.7.10 RFG builds,
+     * so we replicate the logic here.
+     */
+    private Slot getSlotUnderMouse(int mouseX, int mouseY) {
+        for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i++) {
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i);
+            if (isMouseOverSlot(slot, mouseX, mouseY)) {
+                return slot;
+            }
+        }
+        return null;
     }
 
-    private boolean isOverPlayerHotbar(int mouseX, int mouseY) {
-        int px = this.guiLeft + 8;
-        int py = this.guiTop + 140 + 58;
-        return mouseX >= px && mouseX < px + 162
-            && mouseY >= py && mouseY < py + 18;
+    private boolean isMouseOverSlot(Slot slot, int mouseX, int mouseY) {
+        int relX = mouseX - this.guiLeft;
+        int relY = mouseY - this.guiTop;
+        int sx = slot.xDisplayPosition;
+        int sy = slot.yDisplayPosition;
+        return relX >= sx - 1 && relX < sx + 17 && relY >= sy - 1 && relY < sy + 17;
     }
 
     private Integer getSlotAt(int x, int y) {
@@ -572,8 +592,8 @@ public class GuiStorageCore extends GuiContainer {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        // Q key drop item (only when search field is not focused and an item is hovered)
-        if (!this.searchField.isFocused() && keyCode == Keyboard.KEY_Q) {
+        // Drop item (configurable key, default Q; only when search field is not focused and an item is hovered)
+        if (!this.searchField.isFocused() && keyCode == EZStorage.proxy.eventHandler.keybindDropItem.getKeyCode()) {
             ItemStack hovered = getMouseOverItem();
             if (hovered != null) {
                 int invIndex = getInventory().getIndexOf(hovered);
