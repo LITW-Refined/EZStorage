@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -32,6 +33,8 @@ import com.zerofall.ezstorage.enums.SearchMode;
 import com.zerofall.ezstorage.enums.SortMode;
 import com.zerofall.ezstorage.enums.SortOrder;
 import com.zerofall.ezstorage.integration.ModIds;
+import com.zerofall.ezstorage.network.client.MsgBulkImport;
+import com.zerofall.ezstorage.network.client.MsgDropItem;
 import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZItemRenderer;
@@ -428,6 +431,18 @@ public class GuiStorageCore extends GuiContainer {
             }
         }
 
+        // Space key bulk import: player inventory / hotbar areas
+        if (mouseButton == 0 && Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+            if (isOverPlayerInventory(mouseX, mouseY)) {
+                EZStorage.instance.network.sendToServer(new MsgBulkImport(false));
+                return;
+            }
+            if (isOverPlayerHotbar(mouseX, mouseY)) {
+                EZStorage.instance.network.sendToServer(new MsgBulkImport(true));
+                return;
+            }
+        }
+
         boolean wantFocus;
         if (isOverSearchField(mouseX, mouseY)) {
             ItemStack heldItem = this.mc.thePlayer.inventory.getItemStack();
@@ -453,7 +468,14 @@ public class GuiStorageCore extends GuiContainer {
 
         Integer slot = getSlotAt(mouseX, mouseY);
         if (slot != null) {
-            int mode = GuiScreen.isShiftKeyDown() ? 1 : 0;
+            int mode;
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+                mode = 2;
+            } else if (GuiScreen.isShiftKeyDown()) {
+                mode = 1;
+            } else {
+                mode = 0;
+            }
             int index = getInventory().slotCount();
             if (slot < this.filteredList.size()) {
                 ItemStack group = this.filteredList.get(slot);
@@ -481,6 +503,20 @@ public class GuiStorageCore extends GuiContainer {
         return mouseX >= fx && mouseX < fx + this.searchField.width
             && mouseY >= fy
             && mouseY < fy + this.searchField.height + 4;
+    }
+
+    private boolean isOverPlayerInventory(int mouseX, int mouseY) {
+        int px = this.guiLeft + 8;
+        int py = this.guiTop + 140;
+        return mouseX >= px && mouseX < px + 162
+            && mouseY >= py && mouseY < py + 54;
+    }
+
+    private boolean isOverPlayerHotbar(int mouseX, int mouseY) {
+        int px = this.guiLeft + 8;
+        int py = this.guiTop + 140 + 58;
+        return mouseX >= px && mouseX < px + 162
+            && mouseY >= py && mouseY < py + 18;
     }
 
     private Integer getSlotAt(int x, int y) {
@@ -536,6 +572,26 @@ public class GuiStorageCore extends GuiContainer {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
+        // Q key drop item (only when search field is not focused and an item is hovered)
+        if (!this.searchField.isFocused() && keyCode == Keyboard.KEY_Q) {
+            ItemStack hovered = getMouseOverItem();
+            if (hovered != null) {
+                int invIndex = getInventory().getIndexOf(hovered);
+                if (invIndex >= 0) {
+                    int amount;
+                    if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown()) {
+                        amount = -1;
+                    } else if (GuiScreen.isCtrlKeyDown()) {
+                        amount = hovered.getMaxStackSize();
+                    } else {
+                        amount = 1;
+                    }
+                    EZStorage.instance.network.sendToServer(new MsgDropItem(invIndex, amount));
+                }
+            }
+            return;
+        }
+
         if (!this.checkHotbarKeys(keyCode)) {
             if (this.searchField.isFocused() && this.searchField.textboxKeyTyped(typedChar, keyCode)) {
                 currentScroll = 0;
