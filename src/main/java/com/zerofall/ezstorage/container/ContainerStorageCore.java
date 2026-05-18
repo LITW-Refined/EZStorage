@@ -85,6 +85,17 @@ public class ContainerStorageCore extends Container {
         boolean sendToClients = false;
 
         if (heldStack == null) {
+            // mode=2: space key → extract all and merge into player inventory
+            if (mode == 2) {
+                ItemStack all = this.inventory.extractAll(itemIndex);
+                if (all != null) {
+                    if (!this.mergeItemStack(all, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
+                        this.inventory.input(all);
+                    }
+                    sendToClients = true;
+                }
+                return null;
+            }
             int type = 0;
             if (clickedButton == 1) {
                 type = 1;
@@ -131,6 +142,38 @@ public class ContainerStorageCore extends Container {
         super.onContainerClosed(playerIn);
         if (!playerIn.worldObj.isRemote) {
             this.inventory.sort();
+            EZInventoryManager.sendToClients(inventory);
+        }
+    }
+
+    public void importPlayerInventory(EntityPlayer player, boolean hotbarOnly) {
+        InventoryPlayer inv = player.inventory;
+        int start = hotbarOnly ? 0 : 9;
+        int end = hotbarOnly ? 9 : 36;
+        for (int i = start; i < end; i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack != null) {
+                ItemStack remainder = this.inventory.input(stack);
+                inv.setInventorySlotContents(i, remainder);
+            }
+        }
+        EZInventoryManager.sendToClients(inventory);
+    }
+
+    public void dropItem(int itemIndex, int amount, EntityPlayer player) {
+        if (itemIndex >= this.inventory.slotCount()) {
+            return;
+        }
+        ItemStack toDrop;
+        if (amount <= 0) {
+            toDrop = this.inventory.extractAll(itemIndex);
+        } else if (amount == 1) {
+            toDrop = this.inventory.extractOne(itemIndex);
+        } else {
+            toDrop = this.inventory.extractStack(itemIndex);
+        }
+        if (toDrop != null && toDrop.stackSize > 0) {
+            player.dropPlayerItemWithRandomChoice(toDrop, false);
             EZInventoryManager.sendToClients(inventory);
         }
     }
