@@ -89,7 +89,8 @@ public class ContainerStorageCore extends Container {
             if (mode == 2) {
                 ItemStack all = this.inventory.extractAll(itemIndex);
                 if (all != null) {
-                    if (!this.mergeItemStack(all, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
+                    this.mergeItemStack(all, this.rowCount() * 9, this.rowCount() * 9 + 36, true);
+                    if (all.stackSize > 0) {
                         this.inventory.input(all);
                     }
                     sendToClients = true;
