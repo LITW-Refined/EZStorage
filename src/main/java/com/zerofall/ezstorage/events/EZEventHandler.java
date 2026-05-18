@@ -28,12 +28,24 @@ public class EZEventHandler {
     private KeyBinding keybindOpenTerminal;
 
     @SideOnly(Side.CLIENT)
+    public KeyBinding keybindBulkAction;
+
+    @SideOnly(Side.CLIENT)
+    public KeyBinding keybindDropItem;
+
+    @SideOnly(Side.CLIENT)
     public void initKeybinds() {
         keybindOpenTerminal = new KeyBinding(
             "key.ezstorage.open_terminal",
             Keyboard.CHAR_NONE,
             "key.categories.ezstorage");
         ClientRegistry.registerKeyBinding(keybindOpenTerminal);
+
+        keybindBulkAction = new KeyBinding("key.ezstorage.bulk_action", Keyboard.KEY_SPACE, "key.categories.ezstorage");
+        ClientRegistry.registerKeyBinding(keybindBulkAction);
+
+        keybindDropItem = new KeyBinding("key.ezstorage.drop_item", Keyboard.KEY_Q, "key.categories.ezstorage");
+        ClientRegistry.registerKeyBinding(keybindDropItem);
     }
 
     @SubscribeEvent
