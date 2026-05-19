@@ -27,8 +27,12 @@ hud.msg.ezstorage.storage.capacity=Kapazität: %s Items
 chat.msg.storagecore_connected=Verbunden mit Speicherkern bei x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Speicherkern ist unauffindbar
 chat.msg.storagecore_out_of_range=Speicherkern außer Reichweite
+chat.msg.ezstorage.inventory_full=Inventar ist voll. Bitte schaffe zuerst Platz.
 key.categories.ezstorage=Einfacher Speicher
 key.ezstorage.open_terminal=Speicherbrett öffnen
+key.ezstorage.bulk_action=Alle Gegenstände verschieben
+key.ezstorage.drop_item=Gegenstand fallen lassen
+key.ezstorage.pick_block=Block aus Terminal nehmen
 hud.msg.ezstorage.sort.mode.amount=Sortieren nach: Menge
 hud.msg.ezstorage.sort.mode.name=Sortieren nach: Name
 hud.msg.ezstorage.sort.mode.mod=Sortieren nach: Mod
