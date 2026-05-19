@@ -175,6 +175,25 @@ public class EZInventory {
         return null;
     }
 
+    public ItemStack extractAll(int index) {
+        if (index >= inventory.size()) {
+            return null;
+        }
+        ItemStack group = inventory.get(index);
+        ItemStack result = group.copy();
+        inventory.remove(index);
+        setHasChanges();
+        return result;
+    }
+
+    public ItemStack extractOne(int index) {
+        return getItemsAt(index, 2);
+    }
+
+    public ItemStack extractStack(int index) {
+        return getItemsAt(index, 0);
+    }
+
     public int getIndexOf(ItemStack itemStack) {
         for (int i = 0; i < inventory.size(); i++) {
             if (stacksEqual(inventory.get(i), itemStack)) {
