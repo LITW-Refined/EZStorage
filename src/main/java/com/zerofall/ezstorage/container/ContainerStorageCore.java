@@ -174,7 +174,14 @@ public class ContainerStorageCore extends Container {
             toDrop = this.inventory.extractStack(itemIndex);
         }
         if (toDrop != null && toDrop.stackSize > 0) {
-            player.dropPlayerItemWithRandomChoice(toDrop, false);
+            int maxStack = toDrop.getMaxStackSize();
+            while (toDrop.stackSize > 0) {
+                int dropSize = Math.min(toDrop.stackSize, maxStack);
+                ItemStack dropStack = toDrop.copy();
+                dropStack.stackSize = dropSize;
+                toDrop.stackSize -= dropSize;
+                player.dropPlayerItemWithRandomChoice(dropStack, false);
+            }
             EZInventoryManager.sendToClients(inventory);
         }
     }
