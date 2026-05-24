@@ -8,14 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import org.lwjgl.input.Keyboard;
 
 import com.zerofall.ezstorage.EZStorage;
-import com.zerofall.ezstorage.configuration.EZConfiguration;
 import com.zerofall.ezstorage.enums.OpenInvGuiSource;
 import com.zerofall.ezstorage.integration.ModIds;
 import com.zerofall.ezstorage.network.client.MsgPickBlockFromTerminal;
@@ -86,20 +84,6 @@ public class EZEventHandler {
         }
         if (p != null && keybindPickBlock.isPressed()) {
             handlePickBlock();
-        }
-    }
-
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void onMouseEvent(MouseEvent event) {
-        // Only handle button press (not release), and match configured button
-        if (event.button != EZConfiguration.pickBlockTriggerButton || !event.buttonstate) {
-            return;
-        }
-
-        if (handlePickBlock()) {
-            // Cancel the vanilla pick block behavior
-            event.setCanceled(true);
         }
     }
 

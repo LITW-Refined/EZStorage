@@ -22,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -434,7 +433,7 @@ public class GuiStorageCore extends GuiContainer {
 
         // Bulk import: check player slot index (configurable key, default SPACE)
         // 0-8 = hotbar, 9-35 = main inventory
-        if (mouseButton == 0 && Keyboard.isKeyDown(EZStorage.proxy.eventHandler.keybindBulkAction.getKeyCode())) {
+        if (mouseButton == 0 && EZStorage.proxy.eventHandler.keybindBulkAction.isPressed()) {
             Slot slot = getSlotUnderMouse(mouseX, mouseY);
             if (slot != null && slot.getHasStack()) {
                 int slotIndex = slot.getSlotIndex();
@@ -475,7 +474,7 @@ public class GuiStorageCore extends GuiContainer {
         Integer slot = getSlotAt(mouseX, mouseY);
         if (slot != null) {
             int mode;
-            if (Keyboard.isKeyDown(EZStorage.proxy.eventHandler.keybindBulkAction.getKeyCode())) {
+            if (EZStorage.proxy.eventHandler.keybindBulkAction.isPressed()) {
                 mode = 2;
             } else if (GuiScreen.isShiftKeyDown()) {
                 mode = 1;

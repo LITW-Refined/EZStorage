@@ -43,12 +43,6 @@ public class EZConfiguration {
     @Config.DefaultBoolean(false)
     public static boolean experimentalContent;
 
-    @Config.Comment("The mouse button used to trigger pick-block from the portable storage terminal.\n"
-        + "0 = left button, 1 = right button, 2 = middle button (default).")
-    @Config.DefaultInt(2)
-    @Config.RangeInt(min = 0, max = 4)
-    public static int pickBlockTriggerButton;
-
     @Config.Comment("Last used sort mode for the storage GUI. Values: AMOUNT, NAME, MOD")
     @Config.DefaultString("AMOUNT")
     public static String guiSortMode;
