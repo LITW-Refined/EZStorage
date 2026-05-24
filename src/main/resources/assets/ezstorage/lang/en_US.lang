@@ -27,8 +27,12 @@ hud.msg.ezstorage.storage.capacity=Capacity: %s items
 chat.msg.storagecore_connected=Connected to Storage Core at x=%s y=%s z=%s
 chat.msg.storagecore_not_found=Storage core cannot be found
 chat.msg.storagecore_out_of_range=Storage core is out of range
+chat.msg.ezstorage.inventory_full=Inventory is full. Please free up some space first.
 key.categories.ezstorage=Simple Storage
 key.ezstorage.open_terminal=Open Storage Panel
+key.ezstorage.bulk_action=Move All Items
+key.ezstorage.drop_item=Drop Item
+key.ezstorage.pick_block=Pick Block from Terminal
 hud.msg.ezstorage.sort.mode.amount=Sort by: Amount
 hud.msg.ezstorage.sort.mode.name=Sort by: Name
 hud.msg.ezstorage.sort.mode.mod=Sort by: Mod
