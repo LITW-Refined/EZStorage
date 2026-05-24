@@ -38,9 +38,6 @@ public class EZEventHandler {
     public KeyBinding keybindBulkAction;
 
     @SideOnly(Side.CLIENT)
-    public KeyBinding keybindDropItem;
-
-    @SideOnly(Side.CLIENT)
     public KeyBinding keybindPickBlock;
 
     @SideOnly(Side.CLIENT)
@@ -53,9 +50,6 @@ public class EZEventHandler {
 
         keybindBulkAction = new KeyBinding("key.ezstorage.bulk_action", Keyboard.KEY_SPACE, "key.categories.ezstorage");
         ClientRegistry.registerKeyBinding(keybindBulkAction);
-
-        keybindDropItem = new KeyBinding("key.ezstorage.drop_item", Keyboard.KEY_Q, "key.categories.ezstorage");
-        ClientRegistry.registerKeyBinding(keybindDropItem);
 
         keybindPickBlock = new KeyBinding("key.ezstorage.pick_block", Keyboard.CHAR_NONE, "key.categories.ezstorage");
         ClientRegistry.registerKeyBinding(keybindPickBlock);

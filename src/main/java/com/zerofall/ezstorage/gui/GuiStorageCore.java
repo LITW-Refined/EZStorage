@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -592,7 +593,8 @@ public class GuiStorageCore extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         // Drop item (configurable key, default Q; only when search field is not focused and an item is hovered)
-        if (!this.searchField.isFocused() && keyCode == EZStorage.proxy.eventHandler.keybindDropItem.getKeyCode()) {
+        if (!this.searchField.isFocused()
+            && keyCode == Minecraft.getMinecraft().gameSettings.keyBindDrop.getKeyCode()) {
             ItemStack hovered = getMouseOverItem();
             if (hovered != null) {
                 int invIndex = getInventory().getIndexOf(hovered);
