@@ -10,17 +10,24 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
 
 public class ContainerStorageCore extends Container {
 
     public EZInventory inventory = new EZInventory();
+    public TileEntityStorageCore coreTileEntity;
     public LocalDateTime inventoryUpdateTimestamp = LocalDateTime.now();
 
     public ContainerStorageCore(EntityPlayer player, EZInventory inventory) {
         this(player);
         this.inventory = inventory;
+    }
+
+    public ContainerStorageCore(EntityPlayer player, EZInventory inventory, TileEntityStorageCore coreTileEntity) {
+        this(player, inventory);
+        this.coreTileEntity = coreTileEntity;
     }
 
     public ContainerStorageCore(EntityPlayer player) {
@@ -64,8 +71,12 @@ public class ContainerStorageCore extends Container {
         Slot slotObject = (Slot) inventorySlots.get(index);
         if (slotObject != null && slotObject.getHasStack()) {
             ItemStack stackInSlot = slotObject.getStack();
-            slotObject.putStack(this.inventory.input(stackInSlot));
-            EZInventoryManager.sendToClients(inventory);
+            if (coreTileEntity != null) {
+                slotObject.putStack(coreTileEntity.unifiedInput(stackInSlot));
+            } else {
+                slotObject.putStack(this.inventory.input(stackInSlot));
+            }
+            EZInventoryManager.sendToClients(inventory, coreTileEntity);
         }
         return null;
     }
@@ -87,11 +98,20 @@ public class ContainerStorageCore extends Container {
         if (heldStack == null) {
             // mode=2: space key → extract all and merge into player inventory
             if (mode == 2) {
-                ItemStack all = this.inventory.extractAll(itemIndex);
+                ItemStack all;
+                if (coreTileEntity != null) {
+                    all = coreTileEntity.unifiedExtract(itemIndex, 0);
+                } else {
+                    all = this.inventory.extractAll(itemIndex);
+                }
                 if (all != null) {
                     this.mergeItemStack(all, this.rowCount() * 9, this.rowCount() * 9 + 36, true);
                     if (all.stackSize > 0) {
-                        this.inventory.input(all);
+                        if (coreTileEntity != null) {
+                            coreTileEntity.unifiedInput(all);
+                        } else {
+                            this.inventory.input(all);
+                        }
                     }
                     sendToClients = true;
                 }
@@ -101,12 +121,21 @@ public class ContainerStorageCore extends Container {
             if (clickedButton == 1) {
                 type = 1;
             }
-            ItemStack stack = this.inventory.getItemsAt(itemIndex, type);
+            ItemStack stack;
+            if (coreTileEntity != null) {
+                stack = coreTileEntity.unifiedExtract(itemIndex, type);
+            } else {
+                stack = this.inventory.getItemsAt(itemIndex, type);
+            }
             if (stack != null) {
                 // Shift click
                 if (clickedButton == 0 && mode == 1) {
                     if (!this.mergeItemStack(stack, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
-                        this.inventory.input(stack);
+                        if (coreTileEntity != null) {
+                            coreTileEntity.unifiedInput(stack);
+                        } else {
+                            this.inventory.input(stack);
+                        }
                     }
                 } else {
                     playerIn.inventory.setItemStack(stack);
@@ -115,12 +144,18 @@ public class ContainerStorageCore extends Container {
                 result = stack;
             }
         } else {
-            playerIn.inventory.setItemStack(this.inventory.input(heldStack));
+            ItemStack remainder;
+            if (coreTileEntity != null) {
+                remainder = coreTileEntity.unifiedInput(heldStack);
+            } else {
+                remainder = this.inventory.input(heldStack);
+            }
+            playerIn.inventory.setItemStack(remainder);
             sendToClients = true;
         }
 
         if (sendToClients) {
-            EZInventoryManager.sendToClients(inventory);
+            EZInventoryManager.sendToClients(inventory, coreTileEntity);
         }
 
         return result;
@@ -143,7 +178,7 @@ public class ContainerStorageCore extends Container {
         super.onContainerClosed(playerIn);
         if (!playerIn.worldObj.isRemote) {
             this.inventory.sort();
-            EZInventoryManager.sendToClients(inventory);
+            EZInventoryManager.sendToClients(inventory, coreTileEntity);
         }
     }
 
@@ -154,11 +189,16 @@ public class ContainerStorageCore extends Container {
         for (int i = start; i < end; i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null) {
-                ItemStack remainder = this.inventory.input(stack);
+                ItemStack remainder;
+                if (coreTileEntity != null) {
+                    remainder = coreTileEntity.unifiedInput(stack);
+                } else {
+                    remainder = this.inventory.input(stack);
+                }
                 inv.setInventorySlotContents(i, remainder);
             }
         }
-        EZInventoryManager.sendToClients(inventory);
+        EZInventoryManager.sendToClients(inventory, coreTileEntity);
     }
 
     public void dropItem(int itemIndex, int amount, EntityPlayer player) {
@@ -167,11 +207,23 @@ public class ContainerStorageCore extends Container {
         }
         ItemStack toDrop;
         if (amount <= 0) {
-            toDrop = this.inventory.extractAll(itemIndex);
+            if (coreTileEntity != null) {
+                toDrop = coreTileEntity.unifiedExtract(itemIndex, 0);
+            } else {
+                toDrop = this.inventory.extractAll(itemIndex);
+            }
         } else if (amount == 1) {
-            toDrop = this.inventory.extractOne(itemIndex);
+            if (coreTileEntity != null) {
+                toDrop = coreTileEntity.unifiedExtract(itemIndex, 2);
+            } else {
+                toDrop = this.inventory.extractOne(itemIndex);
+            }
         } else {
-            toDrop = this.inventory.extractStack(itemIndex);
+            if (coreTileEntity != null) {
+                toDrop = coreTileEntity.unifiedExtract(itemIndex, 1);
+            } else {
+                toDrop = this.inventory.extractStack(itemIndex);
+            }
         }
         if (toDrop != null && toDrop.stackSize > 0) {
             int maxStack = toDrop.getMaxStackSize();
@@ -182,7 +234,7 @@ public class ContainerStorageCore extends Container {
                 toDrop.stackSize -= dropSize;
                 player.dropPlayerItemWithRandomChoice(dropStack, false);
             }
-            EZInventoryManager.sendToClients(inventory);
+            EZInventoryManager.sendToClients(inventory, coreTileEntity);
         }
     }
 }

@@ -38,7 +38,7 @@ public class HandlerMsgReqCrafting implements IMessageHandler<MsgReqCrafting, IM
             }
 
             if (con.tryToPopulateCraftingGrid(recipe, player, true)) {
-                EZInventoryManager.sendToClients(con.inventory);
+                EZInventoryManager.sendToClients(con.inventory, con.coreTileEntity);
             }
         }
 

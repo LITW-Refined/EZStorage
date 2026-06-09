@@ -2,6 +2,7 @@ package com.zerofall.ezstorage.container;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import com.zerofall.ezstorage.storage.IStorageProvider;
+import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
 
@@ -41,6 +44,12 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 this.onCraftMatrixChanged(this.craftMatrix);
             }
         }
+    }
+
+    public ContainerStorageCoreCrafting(EntityPlayer player, World world, EZInventory inventory,
+        TileEntityStorageCore coreTileEntity) {
+        this(player, world, inventory);
+        this.coreTileEntity = coreTileEntity;
     }
 
     public ContainerStorageCoreCrafting(EntityPlayer player, World world) {
@@ -114,7 +123,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 }
 
                 if (hasChanges) {
-                    EZInventoryManager.sendToClients(inventory);
+                    EZInventoryManager.sendToClients(inventory, coreTileEntity);
                 }
 
                 if (resultStack == null || slotStack.stackSize == resultStack.stackSize) {
@@ -124,8 +133,12 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 return resultStack;
             } else {
                 ItemStack stackInSlot = slotObject.getStack();
-                slotObject.putStack(this.inventory.input(stackInSlot));
-                EZInventoryManager.sendToClients(inventory);
+                if (coreTileEntity != null) {
+                    slotObject.putStack(coreTileEntity.unifiedInput(stackInSlot));
+                } else {
+                    slotObject.putStack(this.inventory.input(stackInSlot));
+                }
+                EZInventoryManager.sendToClients(inventory, coreTileEntity);
             }
         }
         return null;
@@ -144,7 +157,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                         }
                         ItemStack result = super.slotClick(slotId, clickedButton, mode, playerIn);
                         if (result != null && tryToPopulateCraftingGrid(recipe, playerIn, false)) {
-                            EZInventoryManager.sendToClients(inventory);
+                            EZInventoryManager.sendToClients(inventory, coreTileEntity);
                         }
                         return result;
                     }
@@ -177,8 +190,13 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                     continue;
                 }
                 // Return wrong item to storage
-                ItemStack result = this.inventory.input(stackInSlot);
-                if (result == null) {
+                ItemStack result;
+                if (coreTileEntity != null) {
+                    result = coreTileEntity.unifiedInput(stackInSlot);
+                } else {
+                    result = this.inventory.input(stackInSlot);
+                }
+                if (result != null) {
                     playerIn.dropPlayerItemWithRandomChoice(result, false);
                 }
                 slot.putStack(null);
@@ -289,6 +307,24 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     }
 
     private ItemStack getMatchingItemFromStorage(ItemStack recipeItem) {
+        if (coreTileEntity != null) {
+            for (IStorageProvider provider : coreTileEntity.getProviders()) {
+                if (!provider.isValid()) continue;
+                List<ItemStack> items = provider.getAllItems();
+                for (int i = 0; i < items.size(); i++) {
+                    ItemStack group = items.get(i);
+                    if (isRecipeItemValid(recipeItem, group)) {
+                        if (group.stackSize >= recipeItem.stackSize) {
+                            ItemStack result = provider.extract(i, 2);
+                            if (result != null) {
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
         for (int i = 0; i < this.inventory.inventory.size(); i++) {
             ItemStack group = this.inventory.inventory.get(i);
             if (isRecipeItemValid(recipeItem, group)) {
@@ -379,7 +415,12 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = this.craftMatrix.getStackInSlot(i);
             if (stack != null) {
-                ItemStack result = this.inventory.input(stack);
+                ItemStack result;
+                if (coreTileEntity != null) {
+                    result = coreTileEntity.unifiedInput(stack);
+                } else {
+                    result = this.inventory.input(stack);
+                }
                 this.craftMatrix.setInventorySlotContents(i, null);
                 if (result != null) {
                     playerIn.dropPlayerItemWithRandomChoice(result, false);
@@ -389,7 +430,7 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
         }
 
         if (cleared && !playerIn.worldObj.isRemote) {
-            EZInventoryManager.sendToClients(inventory);
+            EZInventoryManager.sendToClients(inventory, coreTileEntity);
         }
     }
 }
