@@ -6,6 +6,7 @@ tile.input_port.name=物品代理接口
 tile.crafting_box.name=合成箱
 tile.storage_panel.name=存储面板
 tile.storage_cable.name=存储线缆
+tile.storage_adapter.name=存储适配器
 item.portable_storage_terminal.name=便携式存储终端
 itemGroup.Simple Storage=简易存储
 hud.msg.ezstorage.general.holdshift=§o<按住 Shift>

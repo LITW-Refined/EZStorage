@@ -6,6 +6,7 @@ tile.input_port.name=Inventory Proxy
 tile.crafting_box.name=Crafting Box
 tile.storage_panel.name=Storage Panel
 tile.storage_cable.name=Storage Cable
+tile.storage_adapter.name=Storage Adapter
 item.portable_storage_terminal.name=Portable Storage Panel
 itemGroup.Simple Storage=Simple Storage
 hud.msg.ezstorage.general.holdshift=§o<Hold Shift>
