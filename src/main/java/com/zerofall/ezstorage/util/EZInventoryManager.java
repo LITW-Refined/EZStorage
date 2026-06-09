@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -194,6 +197,35 @@ public class EZInventoryManager {
 
     public static void sendToClients(EZInventory inventory) {
         sendToClients(inventory, true);
+    }
+
+    /**
+     * Send unified (merged across all providers) item data to clients.
+     * Temporarily swaps the inventory's item list with the unified list,
+     * sends, then restores the original state.
+     */
+    public static void sendToClients(EZInventory inventory, TileEntityStorageCore core) {
+        if (core == null || core.getProviders()
+            .size() <= 1) {
+            sendToClients(inventory);
+            return;
+        }
+
+        List<ItemStack> unifiedItems = core.getUnifiedItemList();
+
+        // Temporarily swap the inventory's item list with the unified list
+        List<ItemStack> originalItems = inventory.inventory;
+        long originalMaxItems = inventory.maxItems;
+
+        try {
+            inventory.inventory = new ArrayList<ItemStack>(unifiedItems);
+            inventory.maxItems = core.getUnifiedCapacity();
+
+            sendToClients(inventory);
+        } finally {
+            inventory.inventory = originalItems;
+            inventory.maxItems = originalMaxItems;
+        }
     }
 
     public static void sendToClients(EZInventory inventory, boolean checkTileEntities) {

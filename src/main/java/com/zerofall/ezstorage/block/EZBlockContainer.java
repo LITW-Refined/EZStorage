@@ -1,9 +1,13 @@
 package com.zerofall.ezstorage.block;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -47,8 +51,24 @@ public class EZBlockContainer extends StorageMultiblock implements ITileEntityPr
         int z, TileEntityStorageCore core) {
         boolean enableCraftingGrid = core.hasCraftBox && !IntegrationUtils.isSpectatorMode(playerMP);
         EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
+        EZStorage.instance.guiHandler.coreRefs.put(playerMP, core);
         playerMP.openGui(EZStorage.instance, enableCraftingGrid ? 2 : 1, worldIn, x, y, z);
-        EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+
+        // Same swap technique as EZInventoryManager.sendToClients(EZInventory, TileEntityStorageCore)
+        if (core.getProviders().size() > 1) {
+            List<ItemStack> originalItems = inventory.inventory;
+            long originalMaxItems = inventory.maxItems;
+            try {
+                inventory.inventory = new ArrayList<ItemStack>(core.getUnifiedItemList());
+                inventory.maxItems = core.getUnifiedCapacity();
+                EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+            } finally {
+                inventory.inventory = originalItems;
+                inventory.maxItems = originalMaxItems;
+            }
+        } else {
+            EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+        }
     }
 
 }
