@@ -4,6 +4,8 @@ import java.util.Comparator;
 
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.registry.GameData;
+
 public class ItemStackNameComparator implements Comparator<ItemStack> {
 
     @Override
@@ -12,6 +14,12 @@ public class ItemStackNameComparator implements Comparator<ItemStack> {
         String n2 = o2.getDisplayName();
         if (n1 == null) n1 = "";
         if (n2 == null) n2 = "";
-        return n1.compareToIgnoreCase(n2);
+        int result = n1.compareToIgnoreCase(n2);
+        if (result != 0) return result;
+        String r1 = GameData.getItemRegistry().getNameForObject(o1.getItem());
+        String r2 = GameData.getItemRegistry().getNameForObject(o2.getItem());
+        if (r1 == null) r1 = "";
+        if (r2 == null) r2 = "";
+        return r1.compareTo(r2);
     }
 }
