@@ -3,10 +3,13 @@ package com.zerofall.ezstorage.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 
 import com.zerofall.ezstorage.util.EZInventory;
@@ -27,11 +30,34 @@ public class ExternalStorageProvider implements IStorageProvider {
         this.z = z;
     }
 
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getZ() { return z; }
+
     private IInventory getInventory() {
         if (world == null) return null;
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof IInventory) return (IInventory) te;
-        return null;
+        if (!(te instanceof IInventory)) return null;
+
+        if (te instanceof TileEntityChest chest) {
+            Block chestBlock = world.getBlock(x, y, z);
+            int[][] horizontalDirs = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
+            for (int[] dir : horizontalDirs) {
+                int nx = x + dir[0], nz = z + dir[2];
+                if (world.getBlock(nx, y, nz) == chestBlock) {
+                    TileEntity adjTe = world.getTileEntity(nx, y, nz);
+                    if (adjTe instanceof TileEntityChest adjChest) {
+                        if (dir[0] == -1 || dir[2] == -1) {
+                            return new InventoryLargeChest("Large Chest", adjChest, chest);
+                        } else {
+                            return new InventoryLargeChest("Large Chest", chest, adjChest);
+                        }
+                    }
+                }
+            }
+        }
+
+        return (IInventory) te;
     }
 
     private int[] getAccessibleSlots(IInventory inv) {
