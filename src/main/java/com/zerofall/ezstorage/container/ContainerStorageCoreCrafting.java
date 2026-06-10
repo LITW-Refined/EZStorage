@@ -132,13 +132,12 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
 
                 return resultStack;
             } else {
-                ItemStack stackInSlot = slotObject.getStack();
                 if (coreTileEntity != null) {
+                    ItemStack stackInSlot = slotObject.getStack();
                     slotObject.putStack(coreTileEntity.unifiedInput(stackInSlot));
-                } else {
-                    slotObject.putStack(this.inventory.input(stackInSlot));
                 }
                 EZInventoryManager.sendToClients(inventory, coreTileEntity);
+                forceSyncPlayerState(playerIn);
             }
         }
         return null;

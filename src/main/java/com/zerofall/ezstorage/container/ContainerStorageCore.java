@@ -3,12 +3,15 @@ package com.zerofall.ezstorage.container;
 import java.time.LocalDateTime;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.network.play.server.S30PacketWindowItems;
 
 import com.zerofall.ezstorage.tileentity.TileEntityStorageCore;
 import com.zerofall.ezstorage.util.EZInventory;
@@ -70,13 +73,12 @@ public class ContainerStorageCore extends Container {
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         Slot slotObject = (Slot) inventorySlots.get(index);
         if (slotObject != null && slotObject.getHasStack()) {
-            ItemStack stackInSlot = slotObject.getStack();
             if (coreTileEntity != null) {
+                ItemStack stackInSlot = slotObject.getStack();
                 slotObject.putStack(coreTileEntity.unifiedInput(stackInSlot));
-            } else {
-                slotObject.putStack(this.inventory.input(stackInSlot));
             }
             EZInventoryManager.sendToClients(inventory, coreTileEntity);
+            forceSyncPlayerState(playerIn);
         }
         return null;
     }
@@ -144,18 +146,16 @@ public class ContainerStorageCore extends Container {
                 result = stack;
             }
         } else {
-            ItemStack remainder;
             if (coreTileEntity != null) {
-                remainder = coreTileEntity.unifiedInput(heldStack);
-            } else {
-                remainder = this.inventory.input(heldStack);
+                ItemStack remainder = coreTileEntity.unifiedInput(heldStack);
+                playerIn.inventory.setItemStack(remainder);
             }
-            playerIn.inventory.setItemStack(remainder);
             sendToClients = true;
         }
 
         if (sendToClients) {
             EZInventoryManager.sendToClients(inventory, coreTileEntity);
+            forceSyncPlayerState(playerIn);
         }
 
         return result;
@@ -171,6 +171,22 @@ public class ContainerStorageCore extends Container {
 
     protected int rowCount() {
         return 6;
+    }
+
+    /**
+     * Force-sync the entire player container state (all slots + cursor) to the
+     * client. Needed because client-side prediction on a synthetic merged
+     * inventory view may diverge from the server's actual insertion result when
+     * external storage is involved. detectAndSendChanges alone is insufficient
+     * because the server may put the original stack back unchanged.
+     */
+    protected void forceSyncPlayerState(EntityPlayer player) {
+        if (player instanceof EntityPlayerMP playerMP) {
+            playerMP.playerNetServerHandler.sendPacket(
+                new S30PacketWindowItems(playerMP.openContainer.windowId, playerMP.openContainer.getInventory()));
+            playerMP.playerNetServerHandler.sendPacket(
+                new S2FPacketSetSlot(-1, -1, player.inventory.getItemStack()));
+        }
     }
 
     @Override
