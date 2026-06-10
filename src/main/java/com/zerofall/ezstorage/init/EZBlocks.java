@@ -64,9 +64,9 @@ public class EZBlocks {
             // Maybe will move them to another mod, an add-on.
             GameRegistry.registerBlock(storage_panel, storage_panel.getUnlocalizedName().substring(5));
             GameRegistry.registerBlock(storage_cable, storage_cable.getUnlocalizedName().substring(5));
+            GameRegistry.registerBlock(storage_adapter, storage_adapter.getUnlocalizedName().substring(5));
+            GameRegistry.registerTileEntity(TileEntityStorageAdapter.class, "TileEntityStorageAdapter");
         }
-        GameRegistry.registerBlock(storage_adapter, storage_adapter.getUnlocalizedName().substring(5));
-        GameRegistry.registerTileEntity(TileEntityStorageAdapter.class, "TileEntityStorageAdapter");
     }
 
     public static void registerRecipes() {
@@ -79,12 +79,12 @@ public class EZBlocks {
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(condensed_storage_box), "ACA", "EBE", "DCD", 'A', t2_1, 'B', storage_box, 'C', "ingotGold", 'D', t2_2, 'E', Blocks.chest));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(hyper_storage_box), "ABA", "ACA", "AAA", 'A', Blocks.obsidian, 'B', Items.nether_star, 'C', condensed_storage_box));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(inventory_proxy), " A ", " B ", " C ", 'A', Blocks.hopper, 'B', Blocks.piston, 'C', "blockQuartz"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_adapter), " A ", "BCB", " A ", 'A', "ingotIron", 'B', Blocks.chest, 'C', Items.comparator));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(crafting_box), " A ", " B ", " C ", 'A', Items.ender_pearl, 'B', Blocks.crafting_table, 'C', "gemDiamond"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_panel), "ABA", "BCB", "ABA", 'A', "logWood", 'B', "stickWood", 'C', "plankWood"));
         
         if (EZConfiguration.experimentalContent) {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_cable, 16), "ABA", "BBB", "ABA", 'A', "logWood", 'B', "stickWood"));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storage_adapter), " A ", "BCB", " A ", 'A', "ingotIron", 'B', Blocks.chest, 'C', Items.comparator));
         }
 
         if (OreDictionary.getOres("blockDarkSteel").size() != 0) {
