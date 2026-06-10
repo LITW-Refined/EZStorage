@@ -19,7 +19,8 @@ public class TileEntityInventoryProxy extends TileEntityMultiblock implements IS
         if (cachedItems != null) return;
         TileEntityStorageCore core = getCore();
         List<ItemStack> source;
-        if (core != null && core.getProviders().size() > 1) {
+        if (core != null && core.getProviders()
+            .size() > 1) {
             source = core.getUnifiedItemList();
         } else {
             EZInventory inventory = getInventory();
@@ -39,7 +40,8 @@ public class TileEntityInventoryProxy extends TileEntityMultiblock implements IS
 
     private boolean hasExternalProviders() {
         TileEntityStorageCore core = getCore();
-        return core != null && core.getProviders().size() > 1;
+        return core != null && core.getProviders()
+            .size() > 1;
     }
 
     @Override

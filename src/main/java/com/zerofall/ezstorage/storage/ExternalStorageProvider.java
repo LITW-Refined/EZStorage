@@ -30,9 +30,17 @@ public class ExternalStorageProvider implements IStorageProvider {
         this.z = z;
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getZ() { return z; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
 
     private IInventory getInventory() {
         if (world == null) return null;

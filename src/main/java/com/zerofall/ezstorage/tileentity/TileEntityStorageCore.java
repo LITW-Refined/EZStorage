@@ -239,8 +239,7 @@ public class TileEntityStorageCore extends TileEntity {
         if (provider == null) return;
         if (provider instanceof ExternalStorageProvider esp) {
             for (IStorageProvider existing : providers) {
-                if (existing instanceof ExternalStorageProvider existingEsp
-                    && existingEsp.getX() == esp.getX()
+                if (existing instanceof ExternalStorageProvider existingEsp && existingEsp.getX() == esp.getX()
                     && existingEsp.getY() == esp.getY()
                     && existingEsp.getZ() == esp.getZ()) {
                     return;

@@ -55,7 +55,8 @@ public class EZBlockContainer extends StorageMultiblock implements ITileEntityPr
         playerMP.openGui(EZStorage.instance, enableCraftingGrid ? 2 : 1, worldIn, x, y, z);
 
         // Same swap technique as EZInventoryManager.sendToClients(EZInventory, TileEntityStorageCore)
-        if (core.getProviders().size() > 1) {
+        if (core.getProviders()
+            .size() > 1) {
             List<ItemStack> originalItems = inventory.inventory;
             long originalMaxItems = inventory.maxItems;
             try {

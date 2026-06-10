@@ -16,8 +16,10 @@ public class ItemStackNameComparator implements Comparator<ItemStack> {
         if (n2 == null) n2 = "";
         int result = n1.compareToIgnoreCase(n2);
         if (result != 0) return result;
-        String r1 = GameData.getItemRegistry().getNameForObject(o1.getItem());
-        String r2 = GameData.getItemRegistry().getNameForObject(o2.getItem());
+        String r1 = GameData.getItemRegistry()
+            .getNameForObject(o1.getItem());
+        String r2 = GameData.getItemRegistry()
+            .getNameForObject(o2.getItem());
         if (r1 == null) r1 = "";
         if (r2 == null) r2 = "";
         return r1.compareTo(r2);
