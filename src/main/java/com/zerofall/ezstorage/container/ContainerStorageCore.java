@@ -184,8 +184,7 @@ public class ContainerStorageCore extends Container {
         if (player instanceof EntityPlayerMP playerMP) {
             playerMP.playerNetServerHandler.sendPacket(
                 new S30PacketWindowItems(playerMP.openContainer.windowId, playerMP.openContainer.getInventory()));
-            playerMP.playerNetServerHandler.sendPacket(
-                new S2FPacketSetSlot(-1, -1, player.inventory.getItemStack()));
+            playerMP.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, player.inventory.getItemStack()));
         }
     }
 
