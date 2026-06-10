@@ -372,6 +372,22 @@ public class TileEntityStorageCore extends TileEntity {
         }
         if (toExtract <= 0) return null;
 
+        return unifiedExtractExact(unifiedIndex, toExtract);
+    }
+
+    /**
+     * Extract an exact amount of items from the unified view by index.
+     */
+    public ItemStack unifiedExtractExact(int unifiedIndex, int amount) {
+        if (unifiedIndex < 0 || amount <= 0) return null;
+
+        List<ItemStack> unified = getUnifiedItemList();
+        if (unifiedIndex >= unified.size()) return null;
+
+        ItemStack target = unified.get(unifiedIndex);
+        int toExtract = Math.min(amount, target.stackSize);
+        if (toExtract <= 0) return null;
+
         ItemStack result = target.copy();
         result.stackSize = 0;
         int remaining = toExtract;

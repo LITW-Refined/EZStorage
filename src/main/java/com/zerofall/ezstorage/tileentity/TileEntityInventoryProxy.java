@@ -1,5 +1,8 @@
 package com.zerofall.ezstorage.tileentity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,64 +12,151 @@ import com.zerofall.ezstorage.util.EZInventory;
 
 public class TileEntityInventoryProxy extends TileEntityMultiblock implements ISidedInventory {
 
+    private List<ItemStack> cachedItems;
+    private int[] originalCounts;
+
+    private void ensureCache() {
+        if (cachedItems != null) return;
+        TileEntityStorageCore core = getCore();
+        List<ItemStack> source;
+        if (core != null && core.getProviders().size() > 1) {
+            source = core.getUnifiedItemList();
+        } else {
+            EZInventory inventory = getInventory();
+            source = inventory != null ? inventory.inventory : new ArrayList<ItemStack>();
+        }
+        cachedItems = new ArrayList<ItemStack>(source);
+        originalCounts = new int[source.size()];
+        for (int i = 0; i < source.size(); i++) {
+            originalCounts[i] = source.get(i).stackSize;
+        }
+    }
+
+    private void invalidateCache() {
+        cachedItems = null;
+        originalCounts = null;
+    }
+
+    private boolean hasExternalProviders() {
+        TileEntityStorageCore core = getCore();
+        return core != null && core.getProviders().size() > 1;
+    }
+
     @Override
     public int getSizeInventory() {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return 1;
-        }
-        int size = inventory.inventory.size();
-        if (inventory.getTotalCount() < inventory.maxItems
-            && (EZConfiguration.maxItemTypes == 0 || inventory.slotCount() < EZConfiguration.maxItemTypes)) {
-            size += 1;
+        ensureCache();
+        int size = cachedItems.size();
+        if (hasExternalProviders()) {
+            TileEntityStorageCore core = getCore();
+            if (core.getUnifiedCapacity() > core.getUnifiedTotalCount()) {
+                size += 1;
+            }
+        } else {
+            EZInventory inventory = getInventory();
+            if (inventory != null && inventory.getTotalCount() < inventory.maxItems
+                && (EZConfiguration.maxItemTypes == 0 || inventory.slotCount() < EZConfiguration.maxItemTypes)) {
+                size += 1;
+            }
         }
         return size;
     }
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        EZInventory inventory = getInventory();
-        if (inventory != null && index < inventory.inventory.size()) {
-            return inventory.inventory.get(index);
+        ensureCache();
+        if (index >= 0 && index < cachedItems.size()) {
+            return cachedItems.get(index);
         }
         return null;
     }
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return null;
+        TileEntityStorageCore core = getCore();
+        if (core == null) return null;
+
+        ensureCache();
+        if (index < 0 || index >= cachedItems.size()) return null;
+
+        ItemStack result;
+        if (hasExternalProviders()) {
+            result = core.unifiedExtractExact(index, count);
+        } else {
+            EZInventory inventory = getInventory();
+            if (inventory == null) return null;
+            result = inventory.getItemStackAt(index, count);
         }
-        ItemStack result = inventory.getItemStackAt(index, count);
-        getCore().updateTileEntity();
+        if (result != null) {
+            invalidateCache();
+            core.updateTileEntity();
+        }
         return result;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return;
-        } else if (stack == null || stack.stackSize == 0) {
-            inventory.inventory.remove(index);
-        } else if (index >= inventory.inventory.size()) {
-            inventory.input(stack);
-        } else if (isItemValidForSlot(index, stack)) {
-            inventory.inventory.set(index, stack);
-        } else {
+        TileEntityStorageCore core = getCore();
+        if (core == null) return;
+
+        if (stack == null || stack.stackSize == 0) {
+            invalidateCache();
+            core.updateTileEntity();
             return;
         }
-        getCore().updateTileEntity();
+
+        if (hasExternalProviders()) {
+            ensureCache();
+            int previousCount = 0;
+            if (index < cachedItems.size()) {
+                ItemStack previous = cachedItems.get(index);
+                if (previous != null && EZInventory.stacksEqual(previous, stack)) {
+                    previousCount = originalCounts[index];
+                }
+            }
+            int newCount = stack.stackSize - previousCount;
+
+            if (newCount > 0) {
+                ItemStack toInput = stack.copy();
+                toInput.stackSize = newCount;
+                core.unifiedInput(toInput);
+            }
+        } else {
+            EZInventory inventory = getInventory();
+            if (inventory != null) {
+                inventory.input(stack);
+            }
+        }
+
+        invalidateCache();
+        core.updateTileEntity();
+    }
+
+    @Override
+    public void markDirty() {
+        if (cachedItems != null && originalCounts != null && hasExternalProviders()) {
+            TileEntityStorageCore core = getCore();
+            if (core != null) {
+                for (int i = 0; i < cachedItems.size() && i < originalCounts.length; i++) {
+                    ItemStack cached = cachedItems.get(i);
+                    int diff = cached.stackSize - originalCounts[i];
+                    if (diff > 0) {
+                        ItemStack toInput = cached.copy();
+                        toInput.stackSize = diff;
+                        core.unifiedInput(toInput);
+                    } else if (diff < 0) {
+                        core.unifiedExtractExact(i, -diff);
+                    }
+                }
+                invalidateCache();
+                core.updateTileEntity();
+            }
+        }
+        super.markDirty();
     }
 
     @Override
     public int getInventoryStackLimit() {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return 0;
-        }
-        return (int) Math.min(inventory.maxItems, Integer.MAX_VALUE);
+        return 64;
     }
 
     @Override
@@ -75,53 +165,14 @@ public class TileEntityInventoryProxy extends TileEntityMultiblock implements IS
     }
 
     @Override
-    public void openInventory() {
-        // Nothing todo here
-    }
+    public void openInventory() {}
 
     @Override
-    public void closeInventory() {
-        // Nothing todo here
-    }
+    public void closeInventory() {}
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return false;
-        }
-
-        int foundIndex = -1;
-        int itemsCount = inventory.inventory.size();
-
-        // Search for existing group of the given item type
-        for (int i = 0; i < itemsCount; i++) {
-            ItemStack group = inventory.inventory.get(i);
-            if (EZInventory.stacksEqual(group, stack)) {
-                foundIndex = i;
-            }
-        }
-
-        // Permit if the destination is a new slot and the item doesn't exist
-        if (index >= inventory.inventory.size()) {
-            return true; // return foundIndex == -1;
-        }
-
-        // Permit if the item eixsts and is in the destination slot
-        if (foundIndex == index) {
-            return true;
-        }
-
-        // If the item doesn't exist, permit if the destination slot is empty
-        if (index == -1) {
-            ItemStack group = inventory.inventory.get(index);
-            if (group == null || group.stackSize == 0) {
-                return true;
-            }
-        }
-
-        // Permit if the item exists but in another slot
-        return false;
+        return stack != null;
     }
 
     @Override
@@ -131,19 +182,10 @@ public class TileEntityInventoryProxy extends TileEntityMultiblock implements IS
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, int direction) {
-        EZInventory inventory = getInventory();
-        if (inventory == null) {
-            return false;
-        }
-
-        // Check if the slot is empty and if the item does not exist yet
-        if (index >= inventory.inventory.size()) {
-            return false;
-        }
-
-        // The item in the slot needs to be the same as the given item
-        ItemStack theGroup = inventory.inventory.get(index);
-        return theGroup != null && EZInventory.stacksEqual(theGroup, stack);
+        ensureCache();
+        if (index >= cachedItems.size()) return false;
+        ItemStack slot = cachedItems.get(index);
+        return slot != null && EZInventory.stacksEqual(slot, stack);
     }
 
     @Override
@@ -163,12 +205,7 @@ public class TileEntityInventoryProxy extends TileEntityMultiblock implements IS
 
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
-        ItemStack stack = getStackInSlot(index);
-        if (stack != null) {
-            setInventorySlotContents(index, null);
-            getCore().updateTileEntity();
-        }
-        return stack;
+        return null;
     }
 
     @Override
