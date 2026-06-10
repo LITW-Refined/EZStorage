@@ -234,11 +234,20 @@ public class TileEntityStorageCore extends TileEntity {
         return (InternalStorageProvider) providers.get(0);
     }
 
-    /** Add an external storage provider */
+    /** Add an external storage provider (deduplicated by coordinates) */
     public void addExternalProvider(IStorageProvider provider) {
-        if (provider != null) {
-            providers.add(provider);
+        if (provider == null) return;
+        if (provider instanceof ExternalStorageProvider esp) {
+            for (IStorageProvider existing : providers) {
+                if (existing instanceof ExternalStorageProvider existingEsp
+                    && existingEsp.getX() == esp.getX()
+                    && existingEsp.getY() == esp.getY()
+                    && existingEsp.getZ() == esp.getZ()) {
+                    return;
+                }
+            }
         }
+        providers.add(provider);
     }
 
     /** Clear all external providers (keeps only internal) */
