@@ -94,9 +94,9 @@ public class TileEntityStorageCore extends TileEntity {
         writeToNBT(nbtTag);
         EZInventory inventory = getInventory(true);
         if (inventory != null) {
-            nbtTag.setLong("inventoryItemsStored", inventory.getTotalCount());
-            nbtTag.setLong("inventoryItemsMax", inventory.maxItems);
-            nbtTag.setInteger("inventoryTypesStored", inventory.slotCount());
+            nbtTag.setLong("inventoryItemsStored", getUnifiedTotalCount());
+            nbtTag.setLong("inventoryItemsMax", getUnifiedCapacity());
+            nbtTag.setInteger("inventoryTypesStored", getUnifiedSlotCount());
             nbtTag.setInteger("inventoryTypesMax", EZConfiguration.maxItemTypes);
         }
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, getBlockMetadata(), nbtTag);
