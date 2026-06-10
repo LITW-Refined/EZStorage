@@ -100,7 +100,13 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
 
                     if (isInRange(itemStackIn, reference, playerMP)) {
                         inRange = true;
+                        TileEntity te = reference.getWorld()
+                            .getTileEntity(reference.blockX, reference.blockY, reference.blockZ);
+                        TileEntityStorageCore core = te instanceof TileEntityStorageCore c ? c : null;
                         EZStorage.instance.guiHandler.inventoryIds.put(playerMP, inventory.id);
+                        if (core != null) {
+                            EZStorage.instance.guiHandler.coreRefs.put(playerMP, core);
+                        }
                         player.openGui(
                             EZStorage.instance,
                             this.getHasCraftingArea(itemStackIn) && !IntegrationUtils.isSpectatorMode(playerMP) ? 2 : 1,
@@ -108,7 +114,11 @@ public class ItemPortableStoragePanel extends EZItem implements IBauble, IBauble
                             reference.blockX,
                             reference.blockY,
                             reference.blockZ);
-                        EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+                        if (core != null) {
+                            EZInventoryManager.sendToClients(inventory, core);
+                        } else {
+                            EZStorage.instance.network.sendTo(new MsgStorage(inventory), playerMP);
+                        }
                     }
                 }
             }
