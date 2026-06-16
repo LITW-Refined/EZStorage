@@ -23,6 +23,10 @@ public class LateMixinPlugin implements ILateMixinLoader {
             list.add("Mixin_Jabba_ItemBarrelMover");
         }
 
+        if (loadedMods.contains("NotEnoughItems")) {
+            list.add("MixinNEIAutoCraftingManager");
+        }
+
         return list;
     }
 }
