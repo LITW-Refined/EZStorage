@@ -24,7 +24,7 @@ hud.msg.ezstorage.portable.upgrades=可用升级:
 hud.msg.ezstorage.portable.upgrade.nexttier=下一等级: %s + %s + %s
 hud.msg.ezstorage.portable.upgrade.crafting=合成箱: %s + %s + %s
 hud.msg.ezstorage.storage.capacity=容量: %s 个物品
-chat.msg.storagecore_connected=已连接到位于 x
+chat.msg.storagecore_connected=已连接到位于 x=%s y=%s z=%s
 chat.msg.storagecore_not_found=无法找到存储核心
 chat.msg.storagecore_out_of_range=存储核心超出范围
 chat.msg.ezstorage.inventory_full=无可用背包，请先空出位置。
