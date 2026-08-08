@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -202,11 +203,23 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 ItemStack recipeItemOne = recipeItem.copy();
                 recipeItemOne.stackSize = 1;
 
-                // 1) Try storage first
-                retrieved = getMatchingItemFromStorage(recipeItemOne);
-                if (retrieved != null) {
-                    hasChanges = true;
-                    break;
+                if (!usePlayerInv) {
+                    MatchingIngredient matching = getMatchingItemForCraftingRefill(
+                        recipeItemOne,
+                        this.inventory,
+                        playerIn.inventory);
+                    if (matching != null) {
+                        retrieved = matching.stack;
+                        hasChanges |= matching.fromStorage;
+                        break;
+                    }
+                } else {
+                    // Try storage first
+                    retrieved = getMatchingItemFromStorage(recipeItemOne);
+                    if (retrieved != null) {
+                        hasChanges = true;
+                        break;
+                    }
                 }
 
                 // 2) Try player inventory if allowed
@@ -289,30 +302,78 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     }
 
     private ItemStack getMatchingItemFromStorage(ItemStack recipeItem) {
-        for (int i = 0; i < this.inventory.inventory.size(); i++) {
-            ItemStack group = this.inventory.inventory.get(i);
-            if (isRecipeItemValid(recipeItem, group)) {
-                if (group.stackSize >= recipeItem.stackSize) {
-                    ItemStack stack = group.copy();
-                    stack.stackSize = recipeItem.stackSize;
-                    group.stackSize -= recipeItem.stackSize;
-                    if (group.stackSize <= 0) {
-                        this.inventory.inventory.remove(i);
-                    }
-                    this.inventory.setHasChanges();
-                    return stack;
+        return getMatchingItemFromStorage(this.inventory, recipeItem);
+    }
+
+    private static ItemStack getMatchingItemFromStorage(EZInventory inventory, ItemStack recipeItem) {
+        for (int i = 0; i < inventory.inventory.size(); i++) {
+            ItemStack group = inventory.inventory.get(i);
+            if (isRecipeItemValid(recipeItem, group) && group.stackSize >= recipeItem.stackSize) {
+                ItemStack stack = group.copy();
+                stack.stackSize = recipeItem.stackSize;
+                group.stackSize -= recipeItem.stackSize;
+                if (group.stackSize <= 0) {
+                    inventory.inventory.remove(i);
                 }
+                inventory.setHasChanges();
+                return stack;
             }
         }
         return null;
     }
 
+    static MatchingIngredient getMatchingItemForCraftingRefill(ItemStack recipeItem, EZInventory inventory,
+        InventoryPlayer playerInventory) {
+        if (isReusableCraftingTool(recipeItem)) {
+            ItemStack retrieved = getMatchingItemFromPlayerInventory(recipeItem, playerInventory);
+            if (retrieved != null) {
+                return new MatchingIngredient(retrieved, false);
+            }
+        }
+
+        ItemStack retrieved = getMatchingItemFromStorage(inventory, recipeItem);
+        if (retrieved != null) {
+            return new MatchingIngredient(retrieved, true);
+        }
+        return null;
+    }
+
+    private static ItemStack getMatchingItemFromPlayerInventory(ItemStack recipeItem, InventoryPlayer playerInventory) {
+        for (int i = 0; i < playerInventory.mainInventory.length; i++) {
+            ItemStack candidate = playerInventory.mainInventory[i];
+            if (isRecipeItemValid(recipeItem, candidate)) {
+                return playerInventory.decrStackSize(i, recipeItem.stackSize);
+            }
+        }
+        return null;
+    }
+
+    private static boolean isReusableCraftingTool(ItemStack recipeItem) {
+        if (recipeItem == null || recipeItem.getItem() == null
+            || !recipeItem.getItem()
+                .hasContainerItem(recipeItem)) {
+            return false;
+        }
+
+        ItemStack containerItem = recipeItem.getItem()
+            .getContainerItem(recipeItem);
+        return containerItem != null && isRecipeItemValid(recipeItem, containerItem);
+    }
+
+    static final class MatchingIngredient {
+
+        final ItemStack stack;
+        final boolean fromStorage;
+
+        MatchingIngredient(ItemStack stack, boolean fromStorage) {
+            this.stack = stack;
+            this.fromStorage = fromStorage;
+        }
+    }
+
     private static boolean isRecipeItemValid(ItemStack recipeItem, ItemStack candidate) {
         if (recipeItem == null || candidate == null || recipeItem.getItem() == null || candidate.getItem() == null)
             return false;
-        if (OreDictionary.itemMatches(recipeItem, candidate, false)) {
-            return true;
-        }
         // Custom flexible check for tools & specific mod items where OreDictionary might be bypassed
         if (recipeItem.getItem() == candidate.getItem()) {
             if (recipeItem.getItemDamage() == OreDictionary.WILDCARD_VALUE
@@ -320,6 +381,9 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
                 || recipeItem.isItemStackDamageable()) {
                 return true;
             }
+        }
+        if (OreDictionary.itemMatches(recipeItem, candidate, false)) {
+            return true;
         }
         // Fallback for special items that might not match with OreDictionary standard (but vanilla handles)
         return EZInventory.stacksEqual(recipeItem, candidate);
