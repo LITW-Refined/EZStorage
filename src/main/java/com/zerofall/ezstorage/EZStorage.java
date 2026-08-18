@@ -8,17 +8,21 @@ import com.zerofall.ezstorage.network.client.HandlerMsgPickBlockResponse;
 import com.zerofall.ezstorage.network.client.HandlerMsgStorage;
 import com.zerofall.ezstorage.network.client.MsgBulkImport;
 import com.zerofall.ezstorage.network.client.MsgClearCraftingGrid;
+import com.zerofall.ezstorage.network.client.MsgCraftRecipe;
 import com.zerofall.ezstorage.network.client.MsgDropItem;
 import com.zerofall.ezstorage.network.client.MsgInvSlotClicked;
 import com.zerofall.ezstorage.network.client.MsgPickBlockFromTerminal;
+import com.zerofall.ezstorage.network.client.MsgPullBookmarkItems;
 import com.zerofall.ezstorage.network.client.MsgReqCrafting;
 import com.zerofall.ezstorage.network.client.MsgReqOpenInvGui;
 import com.zerofall.ezstorage.network.client.MsgReqStorage;
 import com.zerofall.ezstorage.network.server.HandlerMsgBulkImport;
 import com.zerofall.ezstorage.network.server.HandlerMsgClearCraftingGrid;
+import com.zerofall.ezstorage.network.server.HandlerMsgCraftRecipe;
 import com.zerofall.ezstorage.network.server.HandlerMsgDropItem;
 import com.zerofall.ezstorage.network.server.HandlerMsgInvSlotClicked;
 import com.zerofall.ezstorage.network.server.HandlerMsgPickBlockFromTerminal;
+import com.zerofall.ezstorage.network.server.HandlerMsgPullBookmarkItems;
 import com.zerofall.ezstorage.network.server.HandlerMsgReqCrafting;
 import com.zerofall.ezstorage.network.server.HandlerMsgReqOpenInvGui;
 import com.zerofall.ezstorage.network.server.HandlerMsgReqStorage;
@@ -77,6 +81,9 @@ public class EZStorage {
             .registerMessage(HandlerMsgPickBlockFromTerminal.class, MsgPickBlockFromTerminal.class, d++, Side.SERVER);
         instance.network
             .registerMessage(HandlerMsgPickBlockResponse.class, MsgPickBlockResponse.class, d++, Side.CLIENT);
+        instance.network
+            .registerMessage(HandlerMsgPullBookmarkItems.class, MsgPullBookmarkItems.class, d++, Side.SERVER);
+        instance.network.registerMessage(HandlerMsgCraftRecipe.class, MsgCraftRecipe.class, d++, Side.SERVER);
     }
 
     @EventHandler

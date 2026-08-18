@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 
 import com.zerofall.ezstorage.util.EZInventory;
 import com.zerofall.ezstorage.util.EZInventoryManager;
@@ -124,6 +125,35 @@ public class ContainerStorageCore extends Container {
         }
 
         return result;
+    }
+
+    /** NEI bookmark autocraft (Shift+C): pull the requested items out of storage into the player's inventory. */
+    public void pullBookmarkItems(NBTTagList requested, EntityPlayer playerIn) {
+        if (requested == null) {
+            return;
+        }
+        boolean changed = false;
+        for (int i = 0; i < requested.tagCount(); i++) {
+            ItemStack wanted = ItemStack.loadItemStackFromNBT(requested.getCompoundTagAt(i));
+            if (wanted == null) {
+                continue;
+            }
+            int index = this.inventory.getIndexOf(wanted);
+            if (index < 0) {
+                continue;
+            }
+            ItemStack extracted = this.inventory.getItemStackAt(index, wanted.stackSize);
+            if (extracted == null) {
+                continue;
+            }
+            if (!this.mergeItemStack(extracted, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
+                this.inventory.input(extracted);
+            }
+            changed = true;
+        }
+        if (changed) {
+            EZInventoryManager.sendToClients(inventory);
+        }
     }
 
     protected int playerInventoryX() {

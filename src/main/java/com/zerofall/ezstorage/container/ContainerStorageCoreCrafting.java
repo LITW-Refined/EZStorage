@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,6 +14,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -289,25 +291,35 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
     }
 
     private ItemStack getMatchingItemFromStorage(ItemStack recipeItem) {
-        for (int i = 0; i < this.inventory.inventory.size(); i++) {
-            ItemStack group = this.inventory.inventory.get(i);
-            if (isRecipeItemValid(recipeItem, group)) {
-                if (group.stackSize >= recipeItem.stackSize) {
-                    ItemStack stack = group.copy();
-                    stack.stackSize = recipeItem.stackSize;
-                    group.stackSize -= recipeItem.stackSize;
-                    if (group.stackSize <= 0) {
-                        this.inventory.inventory.remove(i);
+        return getMatchingItemFromStorage(this.inventory, recipeItem);
+    }
+
+    public static ItemStack getMatchingItemFromStorage(EZInventory inventory, ItemStack recipeItem) {
+        return getMatchingItemFromStorage(inventory, recipeItem, recipeItem.stackSize);
+    }
+
+    public static ItemStack getMatchingItemFromStorage(EZInventory inventory, ItemStack recipeItem, int size) {
+        synchronized (inventory.inventory) {
+            for (int i = 0; i < inventory.inventory.size(); i++) {
+                ItemStack group = inventory.inventory.get(i);
+                if (isRecipeItemValid(recipeItem, group)) {
+                    if (group.stackSize >= size) {
+                        ItemStack stack = group.copy();
+                        stack.stackSize = size;
+                        group.stackSize -= size;
+                        if (group.stackSize <= 0) {
+                            inventory.inventory.remove(i);
+                        }
+                        inventory.setHasChanges();
+                        return stack;
                     }
-                    this.inventory.setHasChanges();
-                    return stack;
                 }
             }
         }
         return null;
     }
 
-    private static boolean isRecipeItemValid(ItemStack recipeItem, ItemStack candidate) {
+    public static boolean isRecipeItemValid(ItemStack recipeItem, ItemStack candidate) {
         if (recipeItem == null || candidate == null || recipeItem.getItem() == null || candidate.getItem() == null)
             return false;
         if (OreDictionary.itemMatches(recipeItem, candidate, false)) {
@@ -323,6 +335,55 @@ public class ContainerStorageCoreCrafting extends ContainerStorageCore {
         }
         // Fallback for special items that might not match with OreDictionary standard (but vanilla handles)
         return EZInventory.stacksEqual(recipeItem, candidate);
+    }
+
+    public static ItemStack takeFromPlayerInventory(InventoryPlayer playerInv, ItemStack recipeItem, int amount) {
+        for (int i = 0; i < playerInv.mainInventory.length; i++) {
+            ItemStack stack = playerInv.mainInventory[i];
+            if (stack != null && isRecipeItemValid(recipeItem, stack) && stack.stackSize >= amount) {
+                return playerInv.decrStackSize(i, amount);
+            }
+        }
+        return null;
+    }
+
+    // GT tools track durability via an NBT tag instead of vanilla item damage.
+    public static boolean isGregTechTool(ItemStack stack) {
+        if (stack == null || !stack.hasTagCompound()) {
+            return false;
+        }
+        return stack.getTagCompound()
+            .hasKey("GT.ToolStats");
+    }
+
+    public static long gregTechDurability(ItemStack stack) {
+        NBTTagCompound stats = stack.getTagCompound()
+            .getCompoundTag("GT.ToolStats");
+        return stats.getLong("MaxDamage") - stats.getLong("Damage");
+    }
+
+    public static void damageGregTechTool(ItemStack stack, int amount) {
+        NBTTagCompound stats = stack.getTagCompound()
+            .getCompoundTag("GT.ToolStats");
+        stats.setLong("Damage", stats.getLong("Damage") + amount);
+    }
+
+    public static ItemStack afterCraftingUse(ItemStack material) {
+        if (material == null) {
+            return null;
+        }
+        if (isGregTechTool(material)) {
+            ItemStack tool = material.copy();
+            damageGregTechTool(tool, 1);
+            return gregTechDurability(tool) > 0 ? tool : null;
+        }
+        if (material.getItem()
+            .hasContainerItem(material)) {
+            ItemStack container = material.getItem()
+                .getContainerItem(material);
+            return container != null ? container.copy() : null;
+        }
+        return null;
     }
 
     private static ItemStack getMatchingItemStackForRecipe(ItemStack[] recipeItems, ItemStack stack) {

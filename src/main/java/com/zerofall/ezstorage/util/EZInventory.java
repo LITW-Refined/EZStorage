@@ -21,7 +21,9 @@ public class EZInventory {
     public ItemStack[] craftMatrix;
 
     public EZInventory() {
-        inventory = new ArrayList<ItemStack>();
+        // NEI's autocraft engine touches this from its own thread while the client thread renders/filters it.
+        // Callers that iterate (not just get/set/remove) must synchronize on `inventory` for the loop's duration.
+        inventory = Collections.synchronizedList(new ArrayList<ItemStack>());
     }
 
     public boolean getHasChanges() {
@@ -64,30 +66,34 @@ public class EZInventory {
     }
 
     public void sort() {
-        Collections.sort(this.inventory, new ItemStackCountComparator());
+        synchronized (inventory) {
+            Collections.sort(this.inventory, new ItemStackCountComparator());
+        }
         setHasChanges();
     }
 
     private ItemStack mergeStack(ItemStack itemStack, int amount) {
         boolean found = false;
-        for (ItemStack group : inventory) {
-            if (stacksEqual(group, itemStack)) {
-                group.stackSize += amount;
-                setHasChanges();
-                found = true;
-                break;
+        synchronized (inventory) {
+            for (ItemStack group : inventory) {
+                if (stacksEqual(group, itemStack)) {
+                    group.stackSize += amount;
+                    setHasChanges();
+                    found = true;
+                    break;
+                }
             }
-        }
 
-        // Add new group, if needed
-        if (!found) {
-            if (EZConfiguration.maxItemTypes != 0 && slotCount() > EZConfiguration.maxItemTypes) {
-                return itemStack;
+            // Add new group, if needed
+            if (!found) {
+                if (EZConfiguration.maxItemTypes != 0 && slotCount() > EZConfiguration.maxItemTypes) {
+                    return itemStack;
+                }
+                ItemStack copy = itemStack.copy();
+                copy.stackSize = amount;
+                inventory.add(copy);
+                setHasChanges();
             }
-            ItemStack copy = itemStack.copy();
-            copy.stackSize = amount;
-            inventory.add(copy);
-            setHasChanges();
         }
 
         // Adjust input/return stack
@@ -155,20 +161,22 @@ public class EZInventory {
     }
 
     public ItemStack getItems(ItemStack[] itemStacks) {
-        for (ItemStack group : inventory) {
-            for (ItemStack itemStack : itemStacks) {
-                if (stacksEqual(group, itemStack)) {
-                    if (group.stackSize >= itemStack.stackSize) {
-                        ItemStack stack = group.copy();
-                        stack.stackSize = itemStack.stackSize;
-                        group.stackSize -= itemStack.stackSize;
-                        if (group.stackSize <= 0) {
-                            inventory.remove(group);
+        synchronized (inventory) {
+            for (ItemStack group : inventory) {
+                for (ItemStack itemStack : itemStacks) {
+                    if (stacksEqual(group, itemStack)) {
+                        if (group.stackSize >= itemStack.stackSize) {
+                            ItemStack stack = group.copy();
+                            stack.stackSize = itemStack.stackSize;
+                            group.stackSize -= itemStack.stackSize;
+                            if (group.stackSize <= 0) {
+                                inventory.remove(group);
+                            }
+                            setHasChanges();
+                            return stack;
                         }
-                        setHasChanges();
-                        return stack;
+                        return null;
                     }
-                    return null;
                 }
             }
         }
@@ -236,8 +244,10 @@ public class EZInventory {
 
     public long getTotalCount() {
         long count = 0;
-        for (ItemStack group : inventory) {
-            count += group.stackSize;
+        synchronized (inventory) {
+            for (ItemStack group : inventory) {
+                count += group.stackSize;
+            }
         }
         return count;
     }
@@ -280,7 +290,9 @@ public class EZInventory {
         NBTTagList nbttaglist = tag.getTagList("Internal", 10);
 
         if (nbttaglist != null) {
-            inventory = new ArrayList<ItemStack>();
+            // Build off to the side and swap the reference at the end, so a reader on another thread never
+            // sees this list half-populated (and never falls back to a plain, non-synchronized ArrayList).
+            List<ItemStack> loaded = new ArrayList<ItemStack>();
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
                 ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
@@ -293,8 +305,9 @@ public class EZInventory {
                 } else if (nbttagcompound1.hasKey("InternalCount", 4)) {
                     stack.stackSize = (int) nbttagcompound1.getLong("InternalCount");
                 }
-                this.inventory.add(stack);
+                loaded.add(stack);
             }
+            this.inventory = Collections.synchronizedList(loaded);
         }
         this.maxItems = tag.getLong("InternalMax");
         this.disabled = tag.getBoolean("isDisabled");

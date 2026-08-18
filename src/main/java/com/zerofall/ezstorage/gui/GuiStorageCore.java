@@ -173,6 +173,20 @@ public class GuiStorageCore extends GuiContainer {
         return ((ContainerStorageCore) inventorySlots).inventory;
     }
 
+    public List<ItemStack> copyStorageStacks() {
+        EZInventory inventory = getInventory();
+        if (inventory == null) {
+            return Collections.emptyList();
+        }
+        List<ItemStack> stacks = new ArrayList<ItemStack>(inventory.inventory.size());
+        synchronized (inventory.inventory) {
+            for (ItemStack stack : inventory.inventory) {
+                stacks.add(stack.copy());
+            }
+        }
+        return stacks;
+    }
+
     public boolean isOverTextField(int mousex, int mousey) {
         int fx = this.searchField.xPosition;
         int fy = this.searchField.yPosition;
@@ -663,30 +677,34 @@ public class GuiStorageCore extends GuiContainer {
 
         if (forceFullUpdate || !GuiScreen.isShiftKeyDown()) {
             filteredList.clear();
-            filterItems(searchText, getInventory().inventory);
+            synchronized (getInventory().inventory) {
+                filterItems(searchText, getInventory().inventory);
+            }
             sortFilteredList();
             needFullUpdate = false;
         } else {
             List<ItemStack> listNewStacks = new ArrayList<ItemStack>();
-            for (ItemStack stackSrc : getInventory().inventory) {
-                boolean found = false;
-                for (ItemStack stackDest : filteredList) {
-                    if (EZInventory.stacksEqual(stackDest, stackSrc)) {
-                        stackDest.stackSize = stackSrc.stackSize;
-                        found = true;
-                    }
-                }
-                if (!found) listNewStacks.add(stackSrc);
-            }
-            for (ItemStack stackDest : filteredList) {
-                boolean found = false;
+            synchronized (getInventory().inventory) {
                 for (ItemStack stackSrc : getInventory().inventory) {
-                    if (EZInventory.stacksEqual(stackDest, stackSrc)) {
-                        found = true;
-                        break;
+                    boolean found = false;
+                    for (ItemStack stackDest : filteredList) {
+                        if (EZInventory.stacksEqual(stackDest, stackSrc)) {
+                            stackDest.stackSize = stackSrc.stackSize;
+                            found = true;
+                        }
                     }
+                    if (!found) listNewStacks.add(stackSrc);
                 }
-                if (!found) stackDest.stackSize = 0;
+                for (ItemStack stackDest : filteredList) {
+                    boolean found = false;
+                    for (ItemStack stackSrc : getInventory().inventory) {
+                        if (EZInventory.stacksEqual(stackDest, stackSrc)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) stackDest.stackSize = 0;
+                }
             }
             if (!listNewStacks.isEmpty()) filterItems(searchText, listNewStacks);
             needFullUpdate = true;
