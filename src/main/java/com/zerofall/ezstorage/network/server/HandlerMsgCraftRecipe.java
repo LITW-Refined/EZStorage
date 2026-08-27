@@ -118,7 +118,9 @@ public class HandlerMsgCraftRecipe implements IMessageHandler<MsgCraftRecipe, IM
         returnContainerItems(inventory, extracted);
 
         result = result.copy();
-        if (!player.inventory.addItemStackToInventory(result)) {
+        // Returns true on partial placement too; check the leftover, not the boolean.
+        player.inventory.addItemStackToInventory(result);
+        if (result.stackSize > 0) {
             ItemStack leftover = inventory.input(result);
             if (leftover != null) {
                 player.dropPlayerItemWithRandomChoice(leftover, false);

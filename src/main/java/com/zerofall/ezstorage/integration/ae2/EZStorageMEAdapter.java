@@ -1,5 +1,6 @@
 package com.zerofall.ezstorage.integration.ae2;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,11 +25,17 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
 
     @Override
     public Iterator<ItemSlot> iterator() {
+        // Snapshot under lock; hasNext()/next() run unsynchronized across separate calls.
+        List<ItemStack> live = teInvProxy.getInventory().inventory;
+        List<ItemStack> snapshot;
+        synchronized (live) {
+            snapshot = new ArrayList<ItemStack>(live);
+        }
 
         return new Iterator<ItemSlot>() {
 
             private int index = 0;
-            private List<ItemStack> inventory = teInvProxy.getInventory().inventory;
+            private final List<ItemStack> inventory = snapshot;
 
             @Override
             public boolean hasNext() {
@@ -117,9 +124,11 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
         if (inventory == null) {
             return false;
         }
-        for (ItemStack itemStack : inventory.inventory) {
-            if (itemStack != null) {
-                return true;
+        synchronized (inventory.inventory) {
+            for (ItemStack itemStack : inventory.inventory) {
+                if (itemStack != null) {
+                    return true;
+                }
             }
         }
         return false;
