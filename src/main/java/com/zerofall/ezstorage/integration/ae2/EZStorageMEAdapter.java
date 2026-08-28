@@ -26,10 +26,10 @@ public class EZStorageMEAdapter extends InventoryAdaptor {
     @Override
     public Iterator<ItemSlot> iterator() {
         // Snapshot under lock; hasNext()/next() run unsynchronized across separate calls.
-        List<ItemStack> live = teInvProxy.getInventory().inventory;
+        List<ItemStack> inventory = teInvProxy.getInventory().inventory;
         List<ItemStack> snapshot;
-        synchronized (live) {
-            snapshot = new ArrayList<ItemStack>(live);
+        synchronized (inventory) {
+            snapshot = new ArrayList<ItemStack>(inventory);
         }
 
         return new Iterator<ItemSlot>() {
