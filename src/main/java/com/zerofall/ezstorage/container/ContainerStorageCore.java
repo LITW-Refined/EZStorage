@@ -92,7 +92,7 @@ public class ContainerStorageCore extends Container {
                 if (all != null) {
                     this.mergeItemStack(all, this.rowCount() * 9, this.rowCount() * 9 + 36, true);
                     if (all.stackSize > 0) {
-                        this.inventory.input(all);
+                        this.inventory.input(all, true);
                     }
                     sendToClients = true;
                 }
@@ -107,7 +107,7 @@ public class ContainerStorageCore extends Container {
                 // Shift click
                 if (clickedButton == 0 && mode == 1) {
                     if (!this.mergeItemStack(stack, this.rowCount() * 9, this.rowCount() * 9 + 36, true)) {
-                        this.inventory.input(stack);
+                        this.inventory.input(stack, true);
                     }
                 } else {
                     playerIn.inventory.setItemStack(stack);

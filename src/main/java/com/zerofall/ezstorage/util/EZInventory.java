@@ -39,11 +39,17 @@ public class EZInventory {
     }
 
     public ItemStack input(ItemStack itemStack) {
+        return input(itemStack, false);
+    }
+
+    public ItemStack input(ItemStack itemStack, boolean force) {
         // Inventory is full
-        if (getTotalCount() >= maxItems) {
+        long totalItemCount = getTotalCount();
+        long maxPossible = force ? Long.MAX_VALUE : maxItems;
+        if (totalItemCount >= maxPossible) {
             return itemStack;
         }
-        long space = maxItems - getTotalCount();
+        long space = maxPossible - totalItemCount;
         // Only part of the stack can fit
         int amount = (int) Math.min(space, (long) itemStack.stackSize);
         ItemStack stack = mergeStack(itemStack, amount);
