@@ -29,14 +29,28 @@ public class EZStorageBookmarkContainerHandler implements IBookmarkContainerHand
     @Override
     public void pullBookmarkItemsFromContainer(GuiContainer guiContainer, ArrayList<ItemStack> bookmarkItems) {
         NBTTagList list = new NBTTagList();
+
         for (ItemStack stack : bookmarkItems) {
             if (stack == null || stack.stackSize <= 0) {
                 continue;
             }
-            NBTTagCompound tag = new NBTTagCompound();
-            stack.writeToNBT(tag);
-            list.appendTag(tag);
+
+            int stackSize = stack.stackSize;
+            int chunk = Math.max(1, Math.min(stack.getMaxStackSize(), 64));
+
+            while (stackSize > 0) {
+                int partSize = Math.min(chunk, stackSize);
+                NBTTagCompound tag = new NBTTagCompound();
+
+                ItemStack part = stack.copy();
+                part.stackSize = partSize;
+                part.writeToNBT(tag);
+                list.appendTag(tag);
+
+                stackSize -= partSize;
+            }
         }
+
         NBTTagCompound wrapper = new NBTTagCompound();
         wrapper.setTag("items", list);
         EZStorage.instance.network.sendToServer(new MsgPullBookmarkItems(wrapper));
